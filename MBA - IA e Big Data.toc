@@ -42,3 +42,12 @@
 \contentsline {section}{\numberline {3.5}Pontos Positivos (Por que é crucial?)}{24}{section.3.5}%
 \contentsline {section}{\numberline {3.6}Pontos Negativos (Cuidados)}{24}{section.3.6}%
 \contentsline {section}{\numberline {3.7}Conclusão}{25}{section.3.7}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {4}\MakeTextUppercase []{Random Forest}}{27}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Para que é utilizado?}{27}{section.4.1}%
+\contentsline {section}{\numberline {4.2}O Algoritmo: Como Funciona? (Conceito e Pseudocódigo)}{28}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Exemplo Prático: Prever se uma pessoa gosta de filme de ação}{29}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Exmplo em Python}{29}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Pontos Positivos (Vantagens)}{31}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Pontos Negativos (Desvantagens)}{31}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Conclusão}{32}{section.4.7}%

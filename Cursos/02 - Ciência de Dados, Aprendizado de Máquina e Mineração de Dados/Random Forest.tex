@@ -1,1 +1,222 @@
 \chapter[Random Forest]{Random Forest}
+
+O Random Forest é um algoritmo de aprendizado supervisionado usado para classificação e regressão. Ele pertence à categoria de método ensemble (conjunto), especificamente ao tipo bagging.
+
+A ideia central por trás do Random Forest é simples, mas brilhante:
+
+\begin{itemize}
+	\item Em vez de confiar em uma única Árvore de Decisão, treine centenas ou milhares delas e combine suas previsões para obter um resultado mais preciso e estável.
+\end{itemize}
+
+O "Aleatório" no nome vem de duas fontes de aleatoriedade introduzidas durante o treinamento de cada árvore:
+
+\begin{enumerate}
+	\item \textbf{Bagging (Bootstrap Aggregating)}: Cada árvore é treinada em um subconjunto diferente dos dados de treinamento, criado através de amostragem com reposição.
+	
+	\item \textbf{Seleção Aleatória de Features}: Ao buscar a melhor feature para fazer uma divisão em um nó, o algoritmo só considera um subconjunto aleatório de todas as features disponíveis.
+\end{enumerate}
+
+Essas duas técnicas combatem diretamente o principal problema das Árvores de Decisão: o \textbf{overfitting}.
+
+
+\section{Para que é utilizado?}
+
+O Random Forest é um algoritmo extremamente versátil, aplicado em uma vasta gama de problemas:
+
+\begin{enumerate}
+	\item \textbf{Problemas de Classificação}:
+	
+	\begin{itemize}
+		\item \textbf{Diagnóstico Médico}: Classificar se um paciente tem ou não uma doença com base em sintomas e exames.
+		
+		\item \textbf{Detecção de Fraude}: Identificar transações financeiras fraudulentas.
+		
+		\item \textbf{Marketing}: Prever se um cliente irá ou não cancelar um serviço (churn).
+		
+		\item \textbf{Classificação de Imagens}: Identificar objetos em imagens (embora redes neurais convolucionais sejam mais comuns para isso hoje).
+	\end{itemize}
+	
+	\item \textbf{Problemas de Regressão}:
+
+	\begin{itemize}
+		\item \textbf{Previsão de Demanda}: Prever as vendas de um produto.
+		
+		\item \textbf{Precificação de Ativos}: Estimar o valor de imóveis ou outros bens.
+	\end{itemize}
+	
+	\item \textbf{Seleção de Features}: Por sua natureza, o Random Forest pode rankear a importância de cada variável para a previsão, sendo um ferramenta valiosa para feature engineering.
+	
+
+	\item \textbf{Big Data}: Sua natureza paralelizável o torna excelente para ser executado em clusters de computadores (usando frameworks como Spark), lidando eficientemente com grandes volumes de dados.
+\end{enumerate}
+
+
+\section{O Algoritmo: Como Funciona? (Conceito e Pseudocódigo)}
+
+O treinamento de um Random Forest segue os seguintes passos:
+
+\begin{enumerate}
+	\item \textbf{Criação de Múltiplos Conjuntos de Dados (Bootstrapping)}:
+	
+	\begin{itemize}
+		\item Para cada árvore $t$ na floresta (de $T$ árvores), crie um novo conjunto de treinamento $D_t$ amostrando $N$ exemplos do conjunto original de treinamento com reposição. Isso significa que alguns exemplos serão repetidos e outros não serão relacionados (estes são chamados de exmplos "out-of-bag" - OOB).
+	\end{itemize}
+
+	\item \textbf{Treinamento de Árvores com Aleatoriedade}:
+
+	\begin{itemize}
+		\item Para cada árvore $t$, treine uma Árovre de Decição completa no conjunto $D_t$.
+		
+		\item \textbf{Critério de Aleatoriedade}: Em cada nó de cada árvore, ao buscar a melhor feature para dividir os dados, considere apenas um subconjunto de $m$ features de um total de $M$ features. Um valor comum é $m = \sqrt{M}$ para classificação.
+		
+		\item A árvore é crescida até seu tamanho máximo, sem poda.
+	\end{itemize}
+	
+	\item \textbf{Combinação das Previsões (Aggregation)}:
+
+	\begin{itemize}
+		\item \textbf{Classificação}: A previsão final da floresta é a classe que recebeu a maioria dos votos (moda) de todas as árvores.
+		
+		\item \textbf{Regressão}: A previsão final é a média das previsão de todas as árvores.
+	\end{itemize}
+\end{enumerate}
+
+\textbf{Fórmula para Regressão}:
+
+$\hat{y} = \frac{1}{T} \sum_{t=1}^{T} \hat{y}_t$ onde $\hat{y}_t$ é a previsão da árvore $t$.
+
+
+\section{Exemplo Prático: Prever se uma pessoa gosta de filme de ação}
+
+Suponha que teos dados sobre pessoas (idade, gênero, profissão) e se elas gostam de filmes de ação.
+
+\begin{enumerate}
+	\item \textbf{Bootstrapping}: O algoritmo cria 500 conjuntos de dados diferentes (cada um com $\sim$ 63\% dos dados originais).
+	
+	\item \textbf{Treinamento Aleatório}: Para a Árvore 1, o nó raiz pode ser forçado a escolher apenas entre as features "idade" e "profissão" (em vez de todas as features). Ela escolhe "idade < 25" e se divide.
+	
+	\item \textbf{Continua}: A próxima divisão na Árvore pode considerar "gênero" e "profissão", e assim por diante. A Árvore 2 será treinada em um conjunto de dados ligeiramente diferente e, em seus nós, considerará subconjuntos aleatórios diferentes de features.
+	
+	\item \textbf{Previsão}: Uma nova pessoa (idade=30, profissão=Engenheiro, gênero=Masculino) é mostrada para todas as 500 árvores:
+	
+	\begin{itemize}
+		\item 300 árvores votam "Gosta".
+		
+		\item 200 árvores votam "Não Gosta".
+		
+		\item \textbf{Previsão Final}: "Gosta" (voto majoritário).
+	\end{itemize}
+\end{enumerate}
+
+
+\section{Exmplo em Python}
+
+\begin{lstlisting}[language=Python]
+# Importando bibliotecas
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+
+# 1. Carregar dataset
+data = load_breast_cancer()
+X, y = data.data, data.target
+feature_names = data.feature_names
+
+# 2. Dividir em treino e teste
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# 3. Treinar Random Forest
+clf = RandomForestClassifier(
+n_estimators=100,       # número de árvores
+max_depth=None,         # profundidade ilimitada
+random_state=42,
+n_jobs=-1               # usar todos os núcleos do processador
+)
+clf.fit(X_train, y_train)
+
+# 4. Avaliacao
+y_pred = clf.predict(X_test)
+y_prob = clf.predict_proba(X_test)[:,1]
+
+print("Relatorio de Classificacao:\n", classification_report(y_test, y_pred, target_names=data.target_names))
+print("AUC-ROC:", roc_auc_score(y_test, y_prob))
+
+# 5. Matriz de Confusao
+cm = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(6,5))
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=data.target_names, yticklabels=data.target_names)
+plt.xlabel("Previsto")
+plt.ylabel("Real")
+plt.title("Matriz de Confusao - Random Forest")
+plt.show()
+
+# 6. Importancia das Variaveis
+importances = clf.feature_importances_
+df_importances = pd.DataFrame({"feature": feature_names, "importance": importances})
+df_importances = df_importances.sort_values("importance", ascending=False).head(10)
+
+plt.figure(figsize=(8,6))
+sns.barplot(x="importance", y="feature", data=df_importances, palette="viridis")
+plt.title("Top 10 Variáveis Mais Importantes - Random Forest")
+plt.show()
+
+\end{lstlisting}
+
+\textbf{O que esse código faz}:
+
+\begin{enumerate}
+	\item Carrega o dataset de câncer de mama.
+	
+	\item Divide em treino (70\%) e teste (30\%).
+	
+	\item Treina um Random Forest com 100 árvores.
+	
+	\item Avalia o modelo com precisão, recal, F1-Score e AUC-ROC.
+	
+	\item Mostra a matriz de confusão.
+	
+	\item  Exibe as 10 variáveis mais importantes para a classificação.
+\end{enumerate}
+
+
+\section{Pontos Positivos (Vantagens)}
+
+\begin{itemize}
+	\item \textbf{Alta Precisão}: Geralmente oferece performance de ponta ("state-of-the-art") em uma ampla variedade de problemas, competindo com algoritmos muito mais complexos.
+	
+	\item \textbf{Robusto contra Overfitting}: A aleatoridade e a média de muitas árvores previnem que o modelo memorize o ruído dos dados de treinamento. Isso é sua maior vantagem sobre uma Árvore de Decisão única.
+	
+	\item \textbf{Lida Bem com Grandes Conjuntos de Dados}: O algoritmo é altamente paralelizável. Cada árvore pode ser treinada independentemente em um núcleo de CPU diferente, tonando-o ideal para Big Data.
+	
+	\item \textbf{Fornece Importância de Features}: Calcula automaticamente quais features são mais preditivas, o que é valioso para entendimento do problema.
+	
+	\item \textbf{Versátil}: Funciona para classificação e regressão.
+	
+	\item \textbf{Lida com Dados Desbalanceados}: Oferece opções para balanceament de classes (ex: class_weight no Scikit-learn).
+	
+	\item \textbf{Não Requer Normalização de Dados}: Como é baseado em árvores, não é afetado pela escala das features.
+\end{itemize}
+
+
+\section{Pontos Negativos (Desvantagens)}
+
+\begin{itemize}
+	\\item \textbf{Pouco Interpretável ("Black Box")}: Enquanto um única árvore é fácil de explicar, uma floresta com 500 árvores não é. É difícil extrair regras simples de negócio.
+	
+	\item \textbf{Computacionalmente Intensivo e Lento para Prever}: Treinar e fazer previsões com centenas de árvores consume mais recursos computacionais e tempo do que um modelo simples como Regressão Logística. Não é ideal para aplicações que exigem previsões em tempo real muito rápido (low-latency).
+	
+	\item \textbf{Pode ser Propenso a Overfitting em Dados Muito Ruidosos}: Embora muito mais robusto que uma árvore única, se os dados forem extremamente ruidosos, a floresta acaba sobreajustando.
+	
+	\item \textbf{Tendência de Interpolar Mal}: Em tarefas de regressão, as previsões do Random Forest tendem a ser "suavizadas" e não extrapolam bem para fora do intervalo dos dados de treinamento. Ele não produz previsões fora do range visto durante o treinamento.
+\end{itemize}
+
+
+\section{Conclusão}
+
+O Random Forest é um algoritmo poderoso, robusto e incrivelmente popular que resolve as principais fraquezas das Árvores de Decisão. Sua capacidade de lidar com dados complexos, sua alta precisão e sua natureza paralelizável o tornam uma ferramenta indispensável no toolkit de qualquer Cientista de Dados ou Engenheiro de Machine Learning, especialmente no contexto de Big Data.
+
+Ele é frequentemente a segunda melhor opção para quase qualquer problema: não é sempre o absoluto melhor, mas é quase sempre excepcinalmente bom e confiável. É excente ponto de partida após criar uma baseline com um modelo mais simples, antes de partir para algoritmos de boosting mais complexos como XGBoost ou LightGBM.
