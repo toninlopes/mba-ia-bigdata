@@ -1,0 +1,44 @@
+\changetocdepth {4}
+\babel@toc {brazil}{}\relax 
+\babel@toc {brazil}{}\relax 
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\contentsline {part}{\partnumberline {I}\MakeTextUppercase []{Curso 2 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dados}}{5}{part.1}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {1}\MakeTextUppercase []{Naive Bayes}}{7}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Para que é utilizado?}{7}{section.1.1}%
+\contentsline {section}{\numberline {1.2}A Base Teórica: O Teorema de Bayes}{7}{section.1.2}%
+\contentsline {section}{\numberline {1.3}O "Naive" (Ingênuo) e a Fórmula para Múltiplas Características}{8}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Tipos de Naive Bayes}{8}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Exemplo Prático: Filtro de Spam}{9}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Exemplo em Python}{9}{section.1.6}%
+\contentsline {section}{\numberline {1.7}Pontos Positivos (Vantagens)}{11}{section.1.7}%
+\contentsline {section}{\numberline {1.8}Pontos Negativos (Desvantagens e Cuidados)}{11}{section.1.8}%
+\contentsline {section}{\numberline {1.9}Conclusão}{12}{section.1.9}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {2}\MakeTextUppercase []{Árvore de Decisão}}{13}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Para que é utilizado?}{13}{section.2.1}%
+\contentsline {section}{\numberline {2.2}O Conceito Central: Como a Árvore "Aprende"?}{13}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Entropia}{14}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Ganho de Informação}{14}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Índice Gini}{14}{subsection.2.2.3}%
+\contentsline {section}{\numberline {2.3}Exemplo Prático: Jogar Tênis?}{15}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Exemplo em Python}{15}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Pontos Positivos (Vantages)}{16}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Pontos Negativos (Desvantagens)}{17}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Como Mitigar as Desvantagens no Contexto de Big Data?}{17}{section.2.7}%
+\contentsline {section}{\numberline {2.8}Conclusão}{17}{section.2.8}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {3}\MakeTextUppercase []{Avaliação de Classificadores}}{19}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Para que é utilizado?}{19}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Conceitos e Métricas Fundamentasi (Com Fórmulas)}{19}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Matriz de Confusão (Confusion Matrix)}{20}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Acurácia (Accuracy)}{20}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Precisão (Precision)}{20}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}Revocação (Recall ou Sensibilidade)}{21}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.5}Pontuação F1 (F1-Score)}{21}{subsection.3.2.5}%
+\contentsline {subsection}{\numberline {3.2.6}Curva ROC e AUC (Área Sob a Curva)}{21}{subsection.3.2.6}%
+\contentsline {section}{\numberline {3.3}Exemplo Prático}{22}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Exemplo em Python}{22}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Pontos Positivos (Por que é crucial?)}{24}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Pontos Negativos (Cuidados)}{24}{section.3.6}%
+\contentsline {section}{\numberline {3.7}Conclusão}{25}{section.3.7}%

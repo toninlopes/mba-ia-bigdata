@@ -1,0 +1,205 @@
+\chapter[Árvore de Decisão]{Árvore de Decisão}
+
+Uma Árvore de Decisão é um algoritmo de aprendizado supervisionado usado para classificação e regressão. Sua estrutura mimics a forma como os humanos tomam decisões naturalmente, através de uma sequência de perguntas sim/não (ou condições) que levam a uma conclusão.
+
+A estrutura do algoritmo é uma árvore invertida, composta por:
+
+\begin{itemize}
+	\item \textbf{Nó Raiz (Root Node)}: Representa toda a população ou amostra de dados. É o ponto de partida, onde é feita a primeira pergunta/divisão.
+	\item \textbf{Nós de Decisão (Internal Nodes)}: Representam uma pergunta sobre uma característica (feature) e a divisão (ramificação) dos dados.
+	\item \textbf{Folhas (Leaf Nodes)}: São os nós finais que contêm a resposta ou a decisão (a classe predita em classificação, ou um valor contínuo em regressão).
+\end{itemize}
+
+
+\section{Para que é utilizado?}
+
+As Árvores de Decisão são incrivelmente versáteis:
+
+\begin{enumerate}
+	\item \textbf{Classificação}: Prever uma categoria.
+	\begin{itemize}
+		\item Exemplo: Um banco decidir se concede ou não um empréstimo com base em idade, salário e histórico de crédito.
+	\end{itemize}
+	
+	\item \textbf{Regressão}: Prever um valor numérico.
+	\begin{itemize}
+		\item Exemplo: Prever o preço de uma casa com base em seu tamanho, número de quartos e localização.
+	\end{itemize}
+	
+	\item \textbf{Engenharia de Features}: Identificar as características mais importantes para um problema.
+	\item \textbf{Base para Algoritmos Ensemble}: Árvores simples são os "tijolos" que constroem algoritmos campeões como Random Forest e Gradient Boosting (XGBoost, LightGBM), amplamente usados em Big Data.
+\end{enumerate}
+
+
+\section{O Conceito Central: Como a Árvore "Aprende"?}
+
+O algoritmo aprende dividindo o conjunto de treinamento de forma recursiva, escolhendo a melhor pergunta (a melhor característica e o melhor ponto de corte) a ser feita em cada nó. O objetivo é criar subconjuntos (ramos) que sejam cada vez mais puros – ou seja, que contenham predominantemente exemplos de uma única classe.
+
+Para medir a "impureza" de um nó e encontrar a melhor divisão, são usadas métricas. As principais fórmulas são Entropia, Ganho de Informação (Information Gain) e Índice de Gini.
+
+
+\subsection{Entropia}
+
+Mede o grau de desordem ou impureza de um conjunto de dados. A entropia é máxima (1.0) quando as classes estão perfeitamente misturadas (50\% de cada) e zero (0.0) quando o nó é perfeitamente puro.
+
+\textbf{Fórmula da Entropia}:
+
+$Entropia(S) = \sum_{i=1}^{c} p_i \log_2(p_i)$
+
+\begin{itemize}
+	\item $S$: O conjunto de dados no nó.
+	\item $p_i$: A proporção da clase $i$ no nó.
+\end{itemize}
+
+
+\subsection{Ganho de Informação}
+
+Mede a redução da entropia que uma divisão proporciona. O algoritmo escolhe a característica e o ponto de corte que maximizam o Ganho de Informação.
+
+\textbf{Fórmula do Ganho de Informação}:
+
+$Ganho(S, A) = Entropia(S) - \sum_{v \in Valores(A)} \frac{|S_v|}{|S|} Entropia(S_v)$
+
+\begin{itemize}
+	\item $A$: A característica pela qual estamos dividindo.
+	\item $S_v$: O subconjunto de dados onde a característica $A$ tem o valor $v$.
+\end{itemize}
+
+
+\subsection{Índice Gini}
+
+Uma alternativa muito comum à Entropia. Mede a impureza de forma semelhante, mas é computacionalmente mais eficiente.
+
+\textbf{Fórmula do Índice Gini}:
+
+$Gini(S) = 1 - \sum_{i=1}^{c} p_i^2$
+
+\begin{itemize}
+	\item Um índice Gini de 0 significa pureza perfeita.
+\end{itemize}
+
+O algoritmo escolhe a divisão que minimiza o índice Gini médio dos nós filhos. Na prática, o resultado final (Gini vs. Entropia) é frequentemente muito similar.
+
+
+\section{Exemplo Prático: Jogar Tênis?}
+
+Vamos usar um exemplo clássico. Queremos prever se uma pessoa vai jogar tênis com base nas condições do tempo.
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{lllll}
+		\hline
+		\textbf{Tempo} &	\textbf{Temperatura} &	\textbf{Umidade}& \textbf{Vento} &	\textbf{Jogar?} \\
+		\hline
+		Sunny & Hot	& High	& Weak	& No \\
+		Sunny& Hot & High & Strong & No \\
+		Overcast	& Hot	& High	& Weak	& Yes \\
+		Rainy	& Mild	& High	& Weak	& Yes \\
+		Rainy	& Cool	& Normal	& Weak	& Yes \\
+		Rainy	& Cool	& Normal	& Strong	& No \\
+		Overcast	& Cool	& Normal	& Strong	& Yes \\
+		... & ... & ... & ... & ... \\
+		\hline
+	\end{tabular}
+\end{table}
+
+O algoritmo começa no nó raiz com todos os exemplos. Ele calcula a impureza (ex: Entropia) para o estado inicial.
+
+Em seguida, ele testa cada característica (Outlook, Temperature, etc.) para ver qual delas, ao dividir os dados, proporciona o maior Ganho de Informação.
+
+\begin{enumerate}
+	\item Suponha que Outlook seja a característica com maior ganho. Ela se torna o nó raiz, com ramos para Sunny, Overcast, e Rainy.
+	\item O ramo Overcast já é puro (todos os exemplos são "Yes"). Ele se torna uma folha com a decisão "Yes".
+	\item O ramo Sunny ainda é impuro. O algoritmo repete o processo apenas para os exemplos onde Outlook = Sunny, buscando a próxima melhor característica para dividi-los (ex: Humidity). Esse processo continua até que todos os ramos terminem em folhas puras ou até que um critério de parada seja atingido.
+\end{enumerate}
+
+
+\section{Exemplo em Python}
+
+\begin{lstlisting}[language=Python]
+# Importando bibliotecas
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+import matplotlib.pyplot as plt
+
+# 1. Carregar dataset Iris
+iris = load_iris()
+X = iris.data   # atributos (comprimento e largura de sepalas e petalas)
+y = iris.target # classes (Setosa, Versicolor, Virginica)
+
+# 2. Dividir em treino e teste
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# 3. Criar e treinar Arvore de Decisao
+clf = DecisionTreeClassifier(criterion="entropy", max_depth=3, random_state=42)
+clf.fit(X_train, y_train)
+
+# 4. Avaliar acuracia
+accuracy = clf.score(X_test, y_test)
+print(f"Acuracia no teste: {accuracy:.2f}")
+
+# 5. Visualizar a Arvore
+plt.figure(figsize=(12,8))
+plot_tree(clf, feature_names=iris.feature_names, 
+class_names=iris.target_names, 
+filled=True, rounded=True)
+plt.show()
+\end{lstlisting}
+
+\textbf{O que acontece nesse código:}
+\begin{enumerate}
+	\item Carrega o dataset Iris.
+	
+	\item Divide em treino (70\%) e teste (30\%).
+	
+	\item Cria uma árvore de decisão com critério de entropia e profundidade máxima 3.
+	
+	\item Calcula a acurácia no conjunto de teste.
+	
+	\item Desenha a árvore de decisão.
+\end{enumerate}
+
+O gráfico gerado vai mostrar as divisões baseadas nas features (ex.: comprimento da pétala $\le $ 2.45 $\to$ Setosa).
+
+
+\section{Pontos Positivos (Vantages)}
+
+\begin{itemize}
+	\item \textbf{Extremamente Intuitivo e Interpretável}: A lógica da árvore pode ser facilmente explicada e visualizada, mesmo para não-especialistas. Isso é crucial em áreas como medicina e finança ("caixa preta transparente").	
+	
+	\item \textbf{Não Requer Pré-processamento Complexo}: Lida bem com dados numéricos e categóricos e não exige normalização ou padronização dos dados.
+	
+	\item \textbf{Lida Bem com Características Irrelevantes}: O processo de seleção de divisões naturalmente identifica e usa as features mais importantes, ignorando as menos relevantes.
+	
+	\item \textbf{Versátil}: Pode resolver problemas de classificação e regressão.
+\end{itemize}
+
+
+\section{Pontos Negativos (Desvantagens)}
+
+\begin{itemize}
+	\item \textbf{Propenso a Overfitting (Super-ajuste)}: Árvores muito profundas e complexas memorizam o ruído e os detalhes do conjunto de treinamento, perdendo a capacidade de generalizar para dados novos. Isso é um grande problema.
+	
+	\item \textbf{Instabilidade}: Pequenas mudanças nos dados de treinamento podem resultar em uma árvore de estrutura completamente diferente.
+	
+	\item \textbf{Viés para Classes Dominantes}: Em conjuntos desbalanceados, a árvore pode ficar enviesada para a classe com mais exemplos.
+	
+	\item \textbf{Dificuldade com Relações Não-Lineares Complexas}: Embora capturem não-linearidades, podem não ser a melhor escolha para problemas extremamente complexos se usadas sozinhas.
+\end{itemize}
+
+
+\section{Como Mitigar as Desvantagens no Contexto de Big Data?}
+
+As desvantagens principais são resolvidas usando Técnicas de Ensemble (Conjunto):
+
+\begin{itemize}
+	\item \textbf{Floresta Aleatória (Random Forest)}: Constrói centenas de árvores, cada uma treinada em um subconjunto aleatório dos dados e features. O resultado final é uma "votação" entre todas as árvores. Isso reduz drasticamente o overfitting e a instabilidade.
+	
+	\item \textbf{Gradient Boosting (XGBoost, LightGBM, CatBoost)}: Constrói árvores sequencialmente, onde cada nova árvore tenta corrigir os erros da árvore anterior. São algoritmos extremamente poderosos e dominantes em competições de machine learning.
+\end{itemize}
+
+
+\section{Conclusão}
+
+A Árvore de Decisão é um algoritmo fundamental, servindo tanto como uma ferramenta poderosa por si só quanto como a base para os métodos de ensemble mais sofisticados que dominam o cenário atual de Big Data e Aprendizado de Máquina. Sua simplicidade e interpretabilidade a tornam uma escolha valiosa para explorar dados, criar baselines e para aplicações onde entender a decisão do modelo é tão importante quanto a sua precisão.

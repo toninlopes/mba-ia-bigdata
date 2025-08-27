@@ -1,0 +1,183 @@
+\chapter[Naive Bayes]{Naive Bayes}
+O Naive Bayes é um algoritmo de aprendizado de máquina supervisionado usado principalmente para problemas de classificação. Ele é baseado no Teorema de Bayes da teoria da probabilidade, com uma suposição "ingênua" (naive): a de que as características (features) usadas para prever uma classe são independentes umas das outras, dado o valor da classe.
+
+Embora essa suposição de independência raramente seja verdadeira no mundo real (daí o termo "ingênuo"), o algoritmo surpreendentemente funciona muito bem em uma vasta gama de problemas, especialmente em processamento de linguagem natural (NLP) e mineração de texto.
+
+
+\section{Para que é utilizado?}
+O Naive Bayes é incrivelmente versátil e rápido, sendo aplicado em:
+\begin{enumerate}
+	\item Filtro de Spam: Seu uso mais famoso. Classifica e-mails como "spam" ou "não spam" com base nas palavras que contêm.
+	\item Análise de Sentimento: Classifica textos (como reviews, tweets) como positivos, negativos ou neutros.	
+	\item Classificação de Documentos: Categoriza artigos de notícias em temas como "esportes", "política", "tecnologia", etc.	
+	\item Sistemas de Recomendação: Pode ser usado para recomendar produtos com base em características simples.
+	\item Diagnóstico Médico: Auxilia no diagnóstico de doenças com base em sintomas (embora com cautela, devido à suposição de independência).
+\end{enumerate}
+
+
+\section{A Base Teórica: O Teorema de Bayes}
+A fórmula central do algoritmo é uma aplicação direta do Teorema de Bayes:
+
+$ P(A|B) = \frac{P(B|A) * P(A)}{P(A)}$
+
+Onde:
+\begin{itemize}
+	\item P(A|B) é a probabilidade posterior. É o que queremos descobrir: a probabilidade da classe A (ex: "spam") dado que as características B (ex: palavras "oferta", "grátis") ocorreram.
+	\item P(B|A) é a verossimilhança (likelihood). A probabilidade de observar as características B dado que a classe é A.
+	\item P(A) é a probabilidade anterior (prior). A probabilidade inicial da classe A (ex: a proporção de e-mails que são spam na sua base de treino).
+	\item P(B) é a probabilidade marginal (evidence). A probabilidade geral de observar as características B. Age como uma constante de normalização.
+\end{itemize}
+
+Na prática, para classificação, calculamos a probabilidade posterior para cada classe possível e escolhemos a classe com a maior probabilidade.
+
+
+\section{O "Naive" (Ingênuo) e a Fórmula para Múltiplas Características}
+A suposição "ingênua" de independência permite que simplifiquemos drasticamente o cálculo. Se temos várias características $(B_1, B_2, B_3, ..., B_n)$, a probabilidade $P(B|A)$ se torna o produto das probabilidades de cada característica individual:
+
+$P(B_1, B_2, ..., B_3 | A) \simeq P(B_1|A) * P(B_2|A) * ... * P(B_n|A)$
+
+Portanto, a fórmula do Naive Bayes para uma classe A fica:
+
+$P(A | B_1, B_2, ..., B_n) \simeq \frac{P(A) * P(B_1|A) * P(B_2|A) * ... * P(B_n|A)}{P(B)} $
+
+Como $P(B)$ é igual para todas as classes, podemos ignorá-lo para comparação e simplesmente encontrar a classe A que maximiza o numerador:
+
+$Classe Predita = argmax [P(A) * \prod_{i=1}^{n}P(B_1|A)]$ (para i de 1 até n características)
+
+
+\section{Tipos de Naive Bayes}
+
+A maneira de calcular $P(B_i|A)$ (a probabilidade de uma característica dada uma classe) pode variar, dando origem a diferentes variantes:
+
+\begin{enumerate}
+	
+	\item \textbf{Gaussian Naive Bayes}: Assume que os valores das características contínuas seguem uma distribuição normal (gaussiana). Usado quando os dados são numéricos.
+	
+	\item \textbf{Multinomial Naive Bayes}: Usa uma distribuição multinominal para modelar a contagem de frequência de palavras. É a variante mais comum para classificação de texto.
+	
+	\item \textbf{Bernoulli Naive Bayes}: Projetado para características binárias (ex: 0 ou 1, verdadeiro ou falso). Assume que as características são geradas por ma distribuição de Bernoulli (lançamento de moeda).
+\end{enumerate}
+
+
+\section{Exemplo Prático: Filtro de Spam}
+
+Vamos imaginar um dataset minúsculo de 10 e-mails para treinar nosso modelo.
+
+\begin{description}
+	\item \textbf{Passo 1: Calcular os Priors $P(A)$}
+	\begin{itemize}
+		\item 6 e-mails são spam -> $P(Spam) = 6/10 = 0.6$
+		\item 4 e-mails não são spam (ham) -> $P(Ham) = 4/10 = 0.4$
+	\end{itemize}
+\end{description}
+
+\begin{description}
+	\item \textbf{Passo 2: Calcular as Likelihoods $P(Palavra|Classe)$. Vamos analisar a palavra "oferta".}
+	\begin{itemize}
+		\item A palavra "oferta" aparece em 4 e-mails spam.
+		\item A palavra "oferta" aparece em 1 e-mail ham.
+		\item $P(oferta | Spam) = 4/6 \simeq 0.666$
+		\item $P(oferta | Ham) = 1/4 = 0.25$
+	\end{itemize}
+\end{description}
+
+\begin{description}
+	\item \textbf{Passo 3: Fazer uma Previsão (Classificação)}
+	\begin{description}
+		\item Suponha que recebemos um NOVO e-mail que contém a palavra "oferta".
+		\item É spam ou ham?
+		\item Calculamos a probabilidade para cada classe (ignorando o denominador $P(oferta)$):
+	\end{description}
+
+	\begin{enumerate}
+		\item $P(Spam | oferta) \alpha P(Spam) * P(oferta | Spam) = 0.6 * 0.666 \simeq 0.4$
+		\item $P(Ham | oferta) \alpha P(Ham) * P(oferta | Ham) = 0.4 * 0.25 = 0.1$
+	\end{enumerate}
+	
+\end{description}
+
+Como 0.4 (Spam) > 0.1 (Ham), o modelo classifica este novo e-mail como SPAM.
+
+Na realidade, usamos dezenas de milhares de palavras, e o cálculo é o produto de todas as probabilidades.
+
+
+\section{Exemplo em Python}
+
+\begin{lstlisting}[language=Python]
+# Exemplo de Naive Bayes para classificar mensagens (spam ou nao spam)
+
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, classification_report
+
+# Dataset simples de mensagens
+mensagens = [
+	"Promocao imperdivel, compre ja!",
+	"Oferta exclusiva para voce",
+	"Nosso encontro esta confirmado amanha",
+	"Lembrete da reuniao as 10h",
+	"Ganhe dinheiro facil e rapido",
+	"Voce foi selecionado para um premio"
+]
+
+# Classes (Spam = 1, Nao Spam = 0)
+rotulos = [1, 1, 0, 0, 1, 1]
+
+# 1. Transformar texto em vetores de contagem (Bag of Words)
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(mensagens)
+
+# 2. Dividir em treino e teste
+X_train, X_test, y_train, y_test = train_test_split(X, rotulos, test_size=0.3, random_state=42)
+
+# 3. Criar e treinar o classificador
+modelo = MultinomialNB()
+modelo.fit(X_train, y_train)
+
+# 4. Prever no conjunto de teste
+y_pred = modelo.predict(X_test)
+
+# 5. Avaliacao
+print("Acuracia:", accuracy_score(y_test, y_pred))
+print("Relatorio de classificacao:\n", classification_report(y_test, y_pred))
+
+# 6. Testar uma nova mensagem
+nova_msg = ["Promocao exclusiva so hoje"]
+nova_msg_vec = vectorizer.transform(nova_msg)
+print("Nova mensagem classificada como:", modelo.predict(nova_msg_vec))
+\end{lstlisting}
+
+\textbf{O que acontece nesse código:}
+\begin{enumerate}
+	\item Transformação do texto → usamos CountVectorizer para converter palavras em vetores de frequência (Bag of Words).
+	\item Treinamento → MultinomialNB aprende as probabilidades a partir dos dados.
+	\item Avaliação → usamos accuracy\_score e classification\_report para medir a performance.
+	\item Previsão → o modelo classifica uma nova mensagem como Spam (1) ou Não Spam (0).
+\end{enumerate}
+
+\section{Pontos Positivos (Vantagens)}
+
+\begin{itemize}
+	\item \textbf{Extremamente Rápido}: Tanto para treinar quanto para prever, pois são apenas cálculos de probabilidade. É ideal para Big Data onde o volume de dados é enorme.
+	\item \textbf{Simples e Intuitivo}: Fácil de entender e implementar.
+	\item \textbf{Funciona Bem com Poucos Dados}: Dá bons resultados mesmo com conjuntos de treinamento relativamente pequenos.
+	\item \textbf{Lida Bem com Alta Dimensionalidade}: Desempenho muito bom mesmo quando existem milhares de características (como em processamento de texto).
+	\item \textbf{Robusto a Ruídos}: Dados irrelevantes ou ruidosos tendem a ser "cancelados" na multiplicação das probabilidades.
+\end{itemize}
+
+
+\section{Pontos Negativos (Desvantagens e Cuidados)}
+
+\begin{itemize}
+	\item \textbf{Suposição de Independência "Ingênua"}: Esta é sua maior fraqueza. No mundo real, as características costumam ser correlacionadas (ex: a palavra "futebol" e a palavra "gol" não são independentes). Isso pode levar a estimativas de probabilidade imprecisas.
+	\item \textbf{Problema de Frequência Zero (Zero-Frequency)}: Se uma categoria de característica não foi observada no conjunto de treinamento, sua probabilidade se torna zero ($P(B_i|A) = 0$). Como estamos multiplicando probabilidades, um único zero "zera" toda a previsão. Isso é resolvido usando Suavização de Laplace (adicionar 1 a todas as contagens).
+	\item \textbf{Previsões Probabilísticas Não Confiáveis}: Embora seja ótimo para classificação (escolher uma categoria), as probabilidades brutas que ele gera ($P(Classe|Características)$) costumam ser mal calibradas e não devem ser tomadas como valores absolutos de confiança.
+\end{itemize}
+
+
+\section{Conclusão}
+
+O Naive Bayes é um algoritmo poderoso, eficiente e surpreendentemente eficaz, apesar de sua suposição simplificadora. Ele é uma ferramenta excelente para ser usada como baseline (linha de base) em qualquer projeto de classificação, especialmente com dados textuais. Sua velocidade o torna uma escolha primordial para aplicações em tempo real e para lidar com os vastos volumes de dados do universo do Big Data.
+
+Se você tem um problema de classificação, comece com o Naive Bayes. Ele lhe dará rapidamente uma boa ideia do desempenho que você pode esperar e, a partir daí, você pode experimentar algoritmos mais complexos como Random Forest ou XGBoost para tentar superá-lo.

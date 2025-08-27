@@ -1,0 +1,280 @@
+\chapter[Avaliação de Classificadores]{Avaliação de Classificadores}
+
+É o processo de medir o desempenho e a qualidade de um modelo de Marchine Learning treinado para tarefas de classificação. Não basta apenas treinar o modelo, é fundamental quantificar o quão bem ele generaliza para dadps não bistos durante o treinamento. Isso no permite:
+
+\begin{itemize}
+	\item Comparar diferentes modelos (ex: Naive Bayes vs. Árvore de Decisão vs. Random Forest) de forma objetiva.
+	
+	\item Ajustar hiperparâmetros (tuning) para melhorar o modelo.
+	
+	\item Guarantir que o modelo atenda aos requisitos do negócio antes de colocá-lo em produção.
+	
+	\item Identificar vieses e problemas específicos, como desempenho ruim em uma classe particular.
+\end{itemize}
+
+No contexto de Big Data, onde os modelos são complexos e os impactos das decisões automatizadas são grandes, a avaliação rigorosa é não apenas uma boa prática, mas uma necessidade.
+
+
+\section{Para que é utilizado?}
+
+A avaliação é utilizada em absolutamente todo projeto de classifcação, como:
+
+\begin{itemize}
+	\item \textbf{Sistemas de Recomendações}: Avaliar se as recomendações são relevantes.
+	
+	\item \textbf{Diagnóstico Médico}: Medir a precisão de um modelo em detectar uma doença (é cricial aqui evitar falsos negativos).
+	
+	\item \textbf{Detecção de Fraude}: Avaliar a capacidade de identificar transações fraudulentas sem incomodar clientes legítimos com alarmes falsos (falsos positivos).
+	
+	\item \textbf{Análise de Sentimento}: Verificar se a classificação de textos como positivo/negativo/neutro está correta.
+\end{itemize}
+
+
+\section{Conceitos e Métricas Fundamentasi (Com Fórmulas)}
+
+A avaliação começa com a \textbf{Matriz de Confusão}, uma tabela que resume as previsões do modelo versus os valores reais.
+
+\subsection{Matriz de Confusão (Confusion Matrix)}
+
+Imagine um problema binário (classe positiva: 1, clase negativa: 0).
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{lll}
+		\hline
+		\textbf{ } & \textbf{Previsão Negativo (0)} &	\textbf{Previsão Positivo (1)} \\
+		\hline
+		\textbf{Real Negativo (0)} & Verdadeiro Negativo (TN) & Falso Positivo (FP) \\
+		\textbf{Real Positivo(1)} & Falso Negativo (FN) & Verdadeiro Positivo (TP) \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{itemize}
+	\item \textbf{Verdadeiro Positivo (TP)}: O modelo previu positivo e acerto.
+	
+	\item \textbf{Falso Negativo (FP)}: O modelo previu positivo, mas errou (o real era negativo). Também chamado de \textbf{Erro Tipo I}.
+	
+	\item \textbf{Falso Negativo (FN)}: O modelo previu negativo, mas errou (o real era positivo). Também chamado de \textbf{Erro Tipo II}
+	
+	\item \textbf{Verdadeiro Negativo (TN)}: O modelo previu negativo e acerto.
+\end{itemize}
+
+Todas as métricas principais derivam desses quatro valores.
+
+\subsection{Acurácia (Accuracy)}
+
+É a métrica mais intuitiva: a proporção de previsões totais que o modelo acertou.
+
+\textbf{Fórmual}:
+
+$Accuracy = \frac{TP + TN}{TP + TN + FP + FN}$
+
+\textbf{Ponto Negativo}: Pode ser enganosa em comjuntos de dados desbalanceados. Por exemplo, se 99\% dis dados são da clase 0, um modelo que sempre prevê 0 terá 99\% de acurácia, mas é inútil.
+
+\subsection{Precisão (Precision)}
+
+Dentre todas as previsões positivas que o modelo fez, quantas eram realmente positivas? Responde: "Quando o modelo diz que é positiva, qual a chance de estar certo?".
+
+\textbf{Fórmula}:
+
+$Precision = \frac{TP}{TP + FP}$
+
+É crucial quando o custo dos Falso Positivos (FP) é alto.
+
+\begin{itemize}
+	\item Exemplo (Spam): Classificar um e-mail importante como spam (FP) é muito ruim. Queremos alta precisão.
+\end{itemize}
+
+\subsection{Revocação (Recall ou Sensibilidade)}
+
+Dentre todos os casos realmente positivos, quantos o modelo conseguiu identificar? Responde: "O modelo está conseguindo encontrar todos os positivos existentes?".
+
+\textbf{Fórmula}:
+
+$Recall = \frac{TP}{TP + FN}$
+
+É crucial quando o custo dos Falso Negativos (FN) é alto.
+
+\begin{itemize}
+	\item Exemplo (Diagnóstico de Câncer): Deixar de identificar um paciente doente (FN) é um erro gravíssimo. Queremos alta Revocação.
+\end{itemize}
+
+\subsection{Pontuação F1 (F1-Score)}
+
+É a média harmônica entre a Precisão e Revocação. Ela busca um equilíbrio entre as duas métricas, sendo muito útil quando precisamos de um único número para avaliar o modelo, especialmente em cenários desbalanceados.
+
+\textbf{Fórmula}:
+
+$F_1 = 2 \times \frac{Precision \times Recall}{Precision + Recall}$
+
+Um F1-Score alto indica que o modelo tem boa Precisão e boa Revocação. Um F1-Score baixo sinaliza que uma das duas métricas está muito ruim.
+
+\subsection{Curva ROC e AUC (Área Sob a Curva)}
+
+Essa é uma métrica mais avançada e extremamente importante.
+
+\begin{itemize}
+	\item \textbf{ROC Curve}: Gráfico que mostra o desempenho de um modelo classificador em todos os limiares de classificação. Ele plota a Taxa de Verdadeiros Positivos (Recall) vs. a Taxa de Falsos Positivos ($FPR = \frac{FP}{FP + TN}$).
+	
+	\item  \textbf{AUC (Area Under the Curve)}: A área sob a curva ROC. Resume a curva em um único valor.
+\end{itemize}
+
+\textbf{Interpretações da AUC}:
+
+\begin{itemize}
+	\item \textbf{AUC = 1.0}: Classificador perfeito.
+	
+	\item  \textbf{AUC = 0.5)}: Classificador que não é melhor que um chute aleatório. Uma linha diagonal.
+	
+	\item \textbf{AUC entre 0.5 e 1.0}: Quanto maior o valor, melhor o modelo é em distinguir entre as classes positivas e negativa.
+\end{itemize}
+
+A AUC é excelente porque é insensível a desbalanceamento de classe e ao limiar de classificação escolhido.
+
+
+\section{Exemplo Prático}
+
+Vamos avaliar um modelo que detecta fraudes em cartão de crédito em um conjunto de dados altamente desbalanceado (99\% legítimas, 1\% fraudulentas).
+
+\textbf{Matriz de Confusão (Em uma amostra de 10.000 transações)}
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{lll}
+		\hline
+		\textbf{Real / Previsto} & \textbf{Não Fraude} &	\textbf{Fraude} \\
+		\hline
+		\textbf{Não Fraude} & 9.850 & 50 \\
+		\textbf{Fraude} & 20 & 80 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{itemize}
+	\item \textbf{TN = 9.850, FP = 50, FN = 20, TP = 80}
+\end{itemize}
+
+\textbf{Cálculo das Métricas}:
+
+\begin{itemize}
+	\item \textbf{Acurácia}: (9.850 + 80) / 10.000 = 99.3\% (Parece ótimo, mas é enganoso!).
+	
+	\item \textbf{Precisão}: 80 / (80 + 50) = 61.5\% (Dos alertas de fraude, apenas $\simeq$ 62\% eram verdadeiros. Muitos falos alarmes).
+	
+	\item \textbf{Revocação}: 80 / (80 + 20) = 80.0\% (O modelo capturou 80\% de todas as fraudes existentes).
+	
+	\item \textbf{F1-Score}: 2 * (0.615 * 0.80) / (0.615 + 0.80) = $\sim$ 0.695
+\end{itemize}
+
+\textbf{Análise}:
+
+A Acurácia esconde o problema. A Revocação é aceitável (encontramos a maiora das fraudes), mas a Precisão é baixa (muitos clientes legítimos estão sendo incomodados). O F1-Score de 0.695 mostra que há um trade-off a ser gerido. Talvez seja necessário ajustar o limiar do modelo para aumentar a Precisão, mesmo que sacrifique um pouco da Revocação, dependendo da estratégia de negócio.
+
+
+\section{Exemplo em Python}
+
+\begin{lstlisting}[language=Python]
+# Importando bibliotecas
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import (
+confusion_matrix, classification_report, accuracy_score,
+roc_curve, roc_auc_score
+)
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 1. Carregar dataset
+data = load_breast_cancer()
+X, y = data.data, data.target
+
+# 2. Dividir em treino e teste
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# 3. Treinar um classificador simples (Arvore de Decisao)
+clf = DecisionTreeClassifier(max_depth=4, random_state=42)
+clf.fit(X_train, y_train)
+
+# 4. Fazer previsoes
+y_pred = clf.predict(X_test)
+y_prob = clf.predict_proba(X_test)[:,1]  # Probabilidade para cálculo de AUC-ROC
+
+# 5. Matriz de Confusao
+cm = confusion_matrix(y_test, y_pred)
+
+plt.figure(figsize=(6,5))
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=data.target_names, yticklabels=data.target_names)
+plt.xlabel("Previsto")
+plt.ylabel("Real")
+plt.title("Matriz de Confusao")
+plt.show()
+
+# 6. Metricas principais
+print("Acuracia:", accuracy_score(y_test, y_pred))
+print("\nRelatorio de Classificacao:")
+print(classification_report(y_test, y_pred, target_names=data.target_names))
+
+# 7. Curva ROC e AUC
+fpr, tpr, thresholds = roc_curve(y_test, y_prob)
+auc = roc_auc_score(y_test, y_prob)
+
+plt.figure(figsize=(6,5))
+plt.plot(fpr, tpr, label=f"AUC = {auc:.2f}")
+plt.plot([0,1], [0,1], linestyle="--", color="gray")
+plt.xlabel("Falso Positivo (FPR)")
+plt.ylabel("Verdadeiro Positivo (TPR)")
+plt.title("Curva ROC")
+plt.legend()
+plt.show()
+\end{lstlisting}
+
+\textbf{O que o código faz}:
+
+\begin{enumerate}
+	\item Carrega o datase de câncer de mama (classes: maligno vs benigno).
+	
+	\item Divide em treino (70\%) e teste (30\%).
+	
+	\item Treina a Árvore de Decisão.
+	
+	\item Faz previsões.
+	
+	\item Gera Matriz de Confusão com visualização.
+	
+	\item Calcula Acurácia, Precisão, Recall e F1-Score.
+	
+	\item Plta a Curva ROC e calcula a AUC.
+\end{enumerate}
+
+
+\section{Pontos Positivos (Por que é crucial?)}
+
+\begin{itemize}
+	\item \textbf{Fornece uma Visão Holística}: Vai muito além da acurácia, revelando os trade-offs reais do modelo (Precisão vs Revocação).
+	
+	\item \textbf{Permite Tomada de Decisão Informada}: A escolha da métrica ideal é guiada pelo problema de negócio (e.g. "prefiro falsos alarmes ou deixar fraude passare?").
+	
+	\item \textbf{Fundamenta para Comparação}: É a única maneira objetiva de dizer se o modelo A é melhor que o modelo B.
+	
+	\item \textbf{Identifica Vieses}: Métricas calculadas por classes (em problemas multiclasse) mostram se o modelo performa mal em um grupo específico.
+\end{itemize}
+
+
+\section{Pontos Negativos (Cuidados)}
+
+\begin{itemize}
+	\item \textbf{Métrica Inadequada}: Escolher a métrica errada pode lebar a decisões ruins. Focar apenas na acurácia é o erro mais comum.
+	
+	\item \textbf{Vazamento de Dados (Data Leakage)}: Se a métrica for calculada em dados que foram usados no treinamento ou que contêm informações do "futuro", ela será otimista e irremediavelmente enviesada. A avaliação deve ser sempre feita em conjunto de test holdout totalmente isolado ou com validação cruzada.
+	
+	\item \textbf{Não Captura Custos de Negócio}: Uma métrica como F1-Score é estatística. Ela não captura diretamente que um Falso Negativo pode custar \$1.000 e um Falso Positivo \$10. Em alguns casos, é necessário construir uma função de custo customizada.
+	
+	\item \textbf{Despesa Computacional}: Em Big Data, calcular métricas como AUC e validação cruzada em grandes volumes de dados pode ser computacionalmente intensivo.
+\end{itemize}
+
+
+\section{Conclusão}
+
+A Avaliação de Classificadores é a bússula que guia o desenvolvimento de modelos de ML. Sem ela, estamos navegando às cegas. Dominar conceitos como Matriz de Confusão, Precisão, Revocação, F1-Score e AUC é essencial para qualquer profissional da área, permitindo a construção de modelos não apenas precisos, mas robustos, justos e alinhados com os objetivos de negócio. Em Big Data, onde os stakes são altos, essa prática é não negociável.
