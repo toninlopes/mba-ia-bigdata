@@ -1,0 +1,279 @@
+\chapter[K-Nearest Neighbors - KNN]{K-Nearest Neighbors - KNN}
+
+O KNN é um algoritomo de aprendizado supervisionado usado para classificação e regressão. Ele é um algoritmo não paramétrico e baseado em instâncias (ou lazy learning).
+
+A ideia central por trás do KNN é extremamente intuitiva e segue um princípio fundamental: "Diga-me com quem andas e eu te direi quem és".
+
+\begin{itemize}
+	\item \textbf{Não paramétrico}: Significa que o algoritmo não faz nenhuma suposição sobre a distribuição subjacente dos dados. Ele é livre para aprender qualquer formato de função de decisão.
+	
+	\item \textbf{Baseado em instâncias / Laze Learning}: Significa que o algoritmo não aprende um modelo explícito durante a fase de treinamento. Em vez disso, ele simplesmente "memoriza" (armazena) todo o conjunto de dados de treinamento. Todo o cálculo pesado é adiado para a fase de previsão.
+\end{itemize}
+
+
+\section{Para que é utilizado?}
+
+O KNN é um algoritmo versátil aplicado em diversos contextos:
+
+\begin{enumerate}
+	\item \textbf{Reconhecimento de Padrões}:
+	
+	\begin{itemize}
+		\item \textbf{Classificação de Texto}: Categorizar documentos.
+		
+		\item \textbf{Reconhecimento de Imagem}: Reconhecimento de dígitos escritos à mão ou de gestos.
+		
+		\item \textbf{Sistemas de Recomendação}: Recomendar produtos ou conteúdos com base no que usuários similares gostaram (é a base dos filtros colaborativos). Exemplo: "Quem comprou este produto também comprou...".
+	\end{itemize}
+	
+	\item \textbf{Previsões na Medicina}:
+	
+	\begin{itemize}
+		\item Prever o risco de uma doença com base em pacientes com características similares (idade, simtomas, resultados de exames).
+	\end{itemize}
+	
+	\item \textbf{Problemas de Regressão}:
+
+	\begin{itemize}
+		\item Prever o valor de uma casa com base no preço de venda de propriedades similares no mesmo bairro.
+	\end{itemize}	
+\end{enumerate}
+
+
+\section{O Algoritmo: Como Funciona? (Conceitos e Passos)}
+
+O funcionamento do KNN pode ser resumido em três passos simples para um novo ponto de dados.
+
+\begin{enumerate}
+	\item \textbf{Calcular a Distância}: Calcular a distância entre o novo ponto (a ser classificado/previsto) e todos os outros pontos no conjunto de dados de treinamento armazenado.
+	
+	\item \textbf{Encontrar os K-Vizinhos}: Identificar os K pontos no conjunto de treinamento que estão mais próximos do novo ponto (os K vizinhos mais próximos).
+	
+	\item \textbf{Realizar a Votação (Classificação) ou Média (Regressão)}:
+	
+	\begin{itemize}
+		\item \textbf{Classificação}: A classe do novo ponto é determinada pela classe majoritária entre seus K vizinhos.
+		
+		\item \textbf{Regressão}: O valor do novo ponto é a média (ou a média ponderada) dos valores dos seus K vizinhos.
+	\end{itemize}
+\end{enumerate}
+
+
+\section{A Fórmula Chave: Medida de Distância}
+
+O coração do algoritmo KNN é a função de distância. Ela define o que significa "próximo" ou "similar".
+
+
+\subsection{Distância Euclidiana (a mais comum)}
+
+A distância em linha reta entre dois pontos no espaço euclidiano.
+
+\textbf{Fórmula 2-D}:
+
+$d(p, q) = \sqrt{(q_x - p_x)^2 + (q_y - p_y)^2}$
+
+\textbf{Fórmula n-Dimensional}:
+
+$d(p, q) = \sqrt{\sum_{i=1}^{n} (q_i - p_i)^2}$
+
+
+\subsection{Distância de Manhattan (Distância do Quarteirão)}
+
+A soma das diferenças absolutas das coordenadas. É menos sensível a outliers que a Euclidiana.
+
+\textbf{Fórmula}:
+
+$d(p, q) = \sum_{i=1}^{n} |q_i - p_i|$
+
+
+\subsection{Distância de Minkowski}
+
+Uma generalização das distâncias Euclidiana e Manhattan.
+
+\textbf{Fórmula}:
+
+$d(p, q) = \left( \sum_{i=1}^{n} |q_i - p_i|^p \right)^{1/p}$
+
+\begin{itemize}
+	\item Se $p=1$, é a Distância de Manhattan.
+	
+	\item Se $p=2$, é a Distância Euclidiana.
+\end{itemize}
+
+
+\subsection{Distância de Hamming}
+
+Usada para dadas categóricos. É simplesmente a proporção de características que diferem.
+
+Exemplo: Se $p = [1, 0, 1, 1] $ e $q = [1, 1, 1, 0]$, a distância de Hamming é 2 (as características nas posições 2 e 4 são diferentes).
+
+
+\section{Exemplo Prático: Classificação de um Novo Paciente}
+
+Suponha um dataset onde classificamos se um paciente tem uma condição cardíaca (Sim ou Não) com base em dois features: Idade e Nível de Colesterol.
+
+\textbf{Conjunto de Treinamento}:
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{cccc}
+		\hline
+		\textbf{Paciente} & \textbf{Idade} & \textbf{Colesterol} & \textbf{Condição Cardíaca} \\ \hline
+		A                 & 50             & 200                 & Não                        \\
+		B                 & 60             & 230                 & Sim                        \\
+		C                 & 55             & 190                 & Não                        \\
+		D                 & 65             & 250                 & Sim                        \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\textbf{Novo Paciente}: Idade = 58, Colesterol = 210. Ele tem a condição?
+
+\begin{enumerate}
+	\item \textbf{Calcular Distâncias (usando Euclidiana)}:
+	
+	\begin{itemize}
+		\item Distância até A: $\sqrt{(58-50)^2 + (210-200)^2} = \sqrt{64 + 100} = \sqrt{164} \approx 12.8$.
+		
+		\item Distância até B: $\sqrt{(58-60)^2 + (210-230)^2} = \sqrt{4 + 400} = \sqrt{404} \approx 20.1$.
+		
+		\item Distância até C: $\sqrt{(58-55)^2 + (210-190)^2} = \sqrt{9 + 400} = \sqrt{409} \approx 20.2$.
+		
+		\item Distância até D: $\sqrt{(58-65)^2 + (210-250)^2} = \sqrt{49 + 1600} = \sqrt{1649} \approx 40.6$.
+	\end{itemize}
+	
+	\item \textbf{Encontrar os K vizinhos mais próximos (Vamos escolher K=3)}:
+	
+	\begin{itemize}
+		\item 1º vizinho mais próximo: A (dist=12.8).
+		
+		\item 2º vizinho mais próximo: B (dist=20.1).
+		
+		\item 3º vizinho mais próximo: C (dist=20.2).
+	\end{itemize}
+	
+	\item \textbf{Votação}:
+	
+	\begin{itemize}
+		\item Os 3 vizinhos são: [A: "Não", B: "Sim", C: "Não"].
+		
+		\item A classe majoritária é "Não" (2 votos contra 1).
+	\end{itemize}
+\end{enumerate}
+
+\textbf{Previsão}: O novo paciente "Não" tem a condição cardíaca.
+
+\section{Exemplo em Python}
+
+\begin{lstlisting}[language=Python]
+# Importando bibliotecas
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+import numpy as np
+
+# 1. Criar dataset sintetico (2D para visualizacao)
+X, y = make_classification(
+n_samples=200,     # 200 pontos
+n_features=2,      # 2 dimensoes (x,y)
+n_classes=2,       # binario
+n_clusters_per_class=1,
+random_state=42
+)
+
+# 2. Dividir em treino e teste
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# 3. Treinar modelos com diferentes valores de K
+ks = [1, 5, 15]
+plt.figure(figsize=(15,4))
+
+for i, k in enumerate(ks):
+clf = KNeighborsClassifier(n_neighbors=k)
+clf.fit(X_train, y_train)
+
+# 4. Avaliacao
+y_pred = clf.predict(X_test)
+print(f"\n=== Resultados para K={k} ===")
+print(confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))
+
+# 5. Plot da fronteira de decisao
+h = .02  # passo da malha
+x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
+np.arange(y_min, y_max, h))
+
+Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
+
+plt.subplot(1, len(ks), i+1)
+plt.contourf(xx, yy, Z, alpha=0.3)
+plt.scatter(X_train[:, 0], X_train[:, 1], c=y_train, marker="o", label="treino")
+plt.scatter(X_test[:, 0], X_test[:, 1], c=y_test, marker="x", label="teste")
+plt.title(f"K = {k}")
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+\end{lstlisting}
+
+\textbf{O que este código faz}:
+
+\begin{enumerate}
+	\item Gera um dataset sintético 2D para visualização.
+	
+	\item Separa em treino (70\%) e teste (30\%).
+	
+	\item Treina o KNN com K=2, 5 e 15.
+	
+	\item Mostra os relatórios de classificação.
+	
+	\item Plota as fronteiras de decisão para ver como o K muda o comportamento.
+\end{enumerate}
+
+
+\section{Pontos Positivos (Vantagens)}
+
+\begin{itemize}
+	\item \textbf{Simplicidade e Intuição}: Extremamente fácil de entender e implementar. É um excelente algoritmo para criar uma baseline.
+	
+	\item \textbf{Não Há Fase de Treinamento}: Como é um lazy learner, o "treinamento" é instantâneo (apenas amrmazenar os dados). Isso é vantajoso se o conjunto de dados mudar frequentemente, ou seja, novos dados podem ser adicionados sem necessidade de retreinar um modelo complexo.
+	
+	\item \textbf{Adaptativo}: O algoritmo se adapta naturamente à medida que novos dados de treinamento são coletado.
+	
+	\item \textbf{Versátil}: Funciona para classificação e regressão.
+\end{itemize}
+
+
+\section{Pontos Negativos (Desvantagens) - Críticos no Contexto de Big Data}
+
+\begin{itemize}
+	\item \textbf{Computacionalmente, Extremamente Ineficiente na Previsão}: Esta é a principal desvantagem. Para prever um único ponto, o algoritmo precisa calcular a distância para todos os pontos no conjunto de treinamento. A complexidade para uma única previsão é $O(n*d)$, onde $n$ é o número de amostras e $d$ o número de features. Para grande volumes de dados (Big Data), isso se torna proibitivamente lento e inviável para aplicações em tempo real.
+	
+	\item \textbf{Sensibilidade à Escala das Features}: Se uma feature tem uma escala muito maior que outr (ex: salário vs idade), ele dominará completamente o cálculo da distância. É crucial normalizar ou padronizar os dados antes de usar o KNN.
+	
+	\item \textbf{Maldição da Dimensionalidade}: O desempenho do KNN degrada severamente à medida que o número de features ($d$) aumenta. em espaços de muito alta dimensionalidade, o conceito de "proximidade" perde o significado, pois todos os pontos tendem a estar equidistantes uns dos outros.
+	
+	\item \textbf{Sensibilidade à Escoilha de $K$ e da Métrica de Distância}: A escolha di hiperparâmetro $K$ é crucial.
+	
+	\begin{itemize}
+		\item \textbf{K muito pequeno (ex: K=1)}: Modelo muito complexo, sujeito a overfitting e ruído. A fronteira de decisão é muito irregular.
+		
+		\item \textbf{K muit grade (ex: K=100)}: Modelo muito simples, sujeito a underfitting. A fronteira de decisão é muito suave e pode ignorar padrões importantes.
+	\end{itemize}
+	
+	\item \textbf{Requer Armazenamento do Conjunto de Dados Inteiro}: Em sistemas com restrições de memória, armazenar gigabytes ou terabytes de dados de treinamento apenas para fazer previsões pode ser impossível.
+\end{itemize}
+
+
+\section{Conclusão}
+
+O KNN é um algoritmo conceitualmente simples e poderoso para problemas de pequena escala e baixa dimensionalidade. Sua intuitividad o torna uma ferramenta pedagógica valiosa e uma boa primeira tentativa para problemas simples.
+
+No entanto, no contexto de Big Data e Aprendizado de Máquina aplicado, suas desvantagens - especialmente seu custo computacional proibitivo na fase de previsão - o tornam uma escolha pouco prática. Ele é raramente usado em produção para lidar com milhões ou bilhões de amostras.
+
+Algoritmos como Árvores de Decisão, Random Forest, XGBoost e até mesmo SVM (que constroem um modelo explícito durante o treinamento) são drasticamente mais eficientes para fazer previsões, tornando-os as ferramentas preferidas para o mundo real. O KNN serve como um lembrete importante de que a simplicidade conceitual nem sempre se traduz em eficiência computacional.
