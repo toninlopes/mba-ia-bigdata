@@ -1,7 +1,0 @@
-\begin{MintedVerbatim}[commandchars=\\\{\}]
-	
-\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{sklearn}\PYG{n+nn}{.}\PYG{n+nn}{model\PYGZus{}selection}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{train\PYGZus{}test\PYGZus{}split}
-\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{sklearn}\PYG{n+nn}{.}\PYG{n+nn}{feature\PYGZus{}extraction}\PYG{n+nn}{.}\PYG{n+nn}{text}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{CountVectorizer}
-\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{sklearn}\PYG{n+nn}{.}\PYG{n+nn}{naive\PYGZus{}bayes}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{MultinomialNB}
-\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{sklearn}\PYG{n+nn}{.}\PYG{n+nn}{metrics}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{accuracy\PYGZus{}score}\PYG{p}{,} \PYG{n}{classification\PYGZus{}report}
-\end{MintedVerbatim}
