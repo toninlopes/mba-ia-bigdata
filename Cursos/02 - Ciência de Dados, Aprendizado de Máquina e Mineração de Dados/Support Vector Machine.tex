@@ -1,0 +1,212 @@
+\chapter{Support Vector Machine (SVM)}
+
+O SVM é um algoritmo de aprendizado supervisionado utilizado principalmente para problemas de classificação, mas que também pode ser adaptado para regressão (SVR - Suport Vector Regression).
+
+A ideia central é intuitiva: encontrar o hiperplano ideal no espaço de características que melhor separe as classes de dados. Mas qual é o "melhor" hiperplano? Não é qualquer um que separe as clases; é aquele que maximiza a margem entre as clases.
+
+\begin{itemize}
+	\item \textbf{Hiperpplano}: Em um espaço n-dimensional, um hiperplano é uma superfície plana com dimensão n-1 que divide o espaço ao meio. Para 2D, é uma linha; para 3D, é um plano.
+	
+	\item \textbf{Margem}: É a distância entre o hiperplano e os pontos de dados mais próximos de cada classe. Esses pontos mais próximos são chamados de Vetores de Suporte (daí o nome do algoritmo).
+	
+	\item \textbf{Vetores de Suporte}: São os pontos de dados que "definem" a margem. Eles são os únicos pontos que realmente influenciam a posição e a orientação do hiperplano. Se você remover todos os outros pontos de treinamento e treinar novamente, o hiperplano será o mesmo.
+\end{itemize}
+
+
+\section{Para que é utilizado?}
+
+O SVM é um algoritmo versátil aplicado em diversos domínios, especialmente onde a relação entre as classes não é linear:
+
+\begin{enumerate}
+	\item \textbf{Classificação de Texto e Hypertexto}: Filtragem de spam, categorização de documentos.
+	
+	\item \textbf{Reconhecimento de Imagem}: Reconhecimento facial, classificação de objetos.
+	
+	\item \textbf{Bioinformática}: Classificação de proteínas, análise de sequências genéticas.
+	
+	\item \textbf{Reconhecimento de Padrões}: Handwriting recognition (reconhecimento de escrita à mão).
+	
+	\item \textbf{Visão Computacional}: Detecção de pedestrians, classificação de cenas.
+\end{enumerate}
+
+
+\section{Conceitos e Fórmulas Chave}
+
+\subsection{SVM Linear (Caso Separável)}
+
+O objetivo é econtrar os pesos $w$ e o viés $b$ do hiperplano decisão, cuja equação é $w^T x + b = 0$.
+
+A função de decisão para um novo ponto $x$ é: $f(x) = sign(w^T x + b)$.
+
+O problema de otimização é formulado para moximizar a margem. A distância de um ponto ao hiperplano é dada por $\frac{|w^T x_i + b|}{|w|}$. Queremos maximizar a margem $M$, que é a distância para os vetores de suporte.
+
+Isso leva ao seguinte problema de otimização (para classes separáveis):
+
+\begin{itemize}
+	\item \textbf{Minimizar}: $\frac{1}{2} |w|^2$
+
+	\item \textbf{Sujeito a}: $y_i (w^T x_i + b) \geq 1$, para todo ponto de treinamento $i$, onde $y_i$ é o rótulo da classe (+1 ou -1).
+\end{itemize}
+
+Minimizar $|w|$ é equivalente a maximizar a margem $M = \frac{2}{|w|}$.
+
+
+\subsection{Kernel Trick (O Truque do Kernel)}
+
+A verdade potência do SVM surge quando os dados não são linearmente separáveis no espaço original de features. O kernel trick é a solução genial para este problema.
+
+A ideia é mapear os dados originais para um espaço de dimensão superior (ãs vezes até infinita), onde se tornam linearmente separáveis. O incrível é que esse mapeamento é feito implicitamente, sem precisar calcular as coordenadas dos dados nesse espaço de alta dimensão.
+
+Isso é feito através de uma Função Kernel $K(x_i, x_j)$ que calcula o produto escalar dos vetores no espaço transformado:
+
+$K(x_i, x_j) = \phi(x_i)^T \phi(x_j)$
+
+\textbf{Kernels Comuns}:
+
+\begin{itemize}
+	\item \textbf{Linear}: $K(x_i, x_j) = x_i^T x_j$.
+	
+	\item \textbf{Polinomial}: $K(x_i, x_j) = (x_i^T x_j + r)^d$.
+	
+	\item \textbf{RBF (Radial Basis Function) / Gaussiano}: $K(x_i, x_j) = \exp(-\gamma |x_i - x_j|^2)$ (O mais popular para problemas não-lineares).
+\end{itemize}
+
+
+\subsection{SVM com Margem Suave (Soft Margin)}
+
+Para lidar com dados que não são pereitamente separáveis (com ruído e outliers), introduz-se variáveis de folga (slack veriable) $\xi_i$. Isso permite que alguns pontos violem a margem.
+
+O problema de otimização se torna:
+
+\begin{itemize}
+	\item \textbf{Minimizar}: $\frac{1}{2} |w|^2 + C \sum_{i=1}^n \xi_i$
+	
+	\item \textbf{Sujeito a}: $y_i (w^T x_i + b) \geq 1 - \xi_i$ e $\xi_i \geq 0$
+\end{itemize}
+
+O parâmetro $C$ é hiperparâmetro de regularização crucial:
+
+\begin{itemize}
+	\item \textbf{C grande}: Penaliza muito os erros (margem mais estreita, risco de overfitting).
+	
+	\item \textbf{C pequeno}: Penaliza pouco os erros (margem mais larga, modelo mais simples, risco de underfitting).
+\end{itemize}
+
+
+\section{Exemplo Prático}
+
+Problema: Classificar maçãs e laranjas com base em peso e diâmetro. No gráfico, os pontos não são separáveis por uma linha reta.
+
+\begin{enumerate}
+	\item \textbf{Escolha do Kernel}: Usamos um kernel RBF, que pode criar fronteiras não-lineares complexas.
+	
+	\item \textbf{Treinamento}: O algoritmo encontra os vetores de suporte (as maçãs e laranjas mais ambíguas, próximas da fronteira imaginária) e, usando o kernel, constrói um hiperplano em um espaço de alta dimensão.
+		
+	\item \textbf{Previsão}: Uma nova fruta é plotada. O algoritmo calcula de qual lado do hiperplano complexo (que no espaço original parece uma curva) ela está e a classifica como maçã ou laranja.
+\end{enumerate}
+
+
+\section{Exemplo em Python}
+
+\begin{lstlisting}[language=Python]
+# Importando bibliotecas
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import classification_report
+
+# 1. Carregar dataset Iris (duas classes: Setosa e Versicolor)
+iris = datasets.load_iris()
+X = iris.data[iris.target != 2, :2]  # apenas 2 features para visualizar
+y = iris.target[iris.target != 2]
+
+# 2. Dividir treino e teste
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# 3. Treinar dois modelos SVM
+svm_linear = SVC(kernel="linear", C=1).fit(X_train, y_train)
+svm_rbf = SVC(kernel="rbf", gamma=0.7, C=1).fit(X_train, y_train)
+
+# 4. Funcao para plotar fronteira de decisao
+def plot_decision_boundary(model, X, y, title):
+x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+xx, yy = np.meshgrid(np.linspace(x_min, x_max, 500),
+np.linspace(y_min, y_max, 500))
+Z = model.predict(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
+
+plt.contourf(xx, yy, Z, alpha=0.3, cmap=plt.cm.coolwarm)
+plt.scatter(X[:, 0], X[:, 1], c=y, s=50, cmap=plt.cm.coolwarm, edgecolors="k")
+plt.title(title)
+plt.xlabel("Comprimento da Sepala")
+plt.ylabel("Largura da Sepala")
+plt.show()
+
+# 4. Plotando as fronteiras
+plot_decision_boundary(svm_linear, X, y, "SVM - Kernel Linear")
+plot_decision_boundary(svm_rbf, X, y, "SVM - Kernel RBF")
+
+# 5. Avaliando os modelos
+print("=== Kernel Linear ===")
+print(classification_report(y_test, svm_linear.predict(X_test)))
+
+print("=== Kernel RBF ===")
+print(classification_report(y_test, svm_rbf.predict(X_test)))
+
+\end{lstlisting}
+
+\textbf{O que acontece nesse código:}
+\begin{enumerate}
+	\item Carrega o dataset Iris, mas usa só duas classes *Setosa vs Versicolor) e duas features para facilitar a visualização.
+	
+	\item Divide em treino (70\%) e teste (30\%).
+	
+	\item Treina dois SVMs: um com Kernel Linear e outro com o RBF.
+	
+	\item Plota a fronteira de decição de cada modelo.
+	
+	\item Mostra métricas (Precisão, Recall, F1-Score) no conjunto de teste.
+\end{enumerate}
+
+
+\section{Pontos Positivos (Vantagens)}
+
+\begin{itemize}
+	\item \textbf{Eficaz em Espaços de Alta Dimensionalidade}: Funciona muito bem mesmo quando o número de features é maior que o número de amostras (ex: genômica, text mining).
+	
+	\item \textbf{Memória Eficiente}: Como apenas os vetores de suporte são armazenados, o modelo final é muito compacto.
+	
+	\item \textbf{Versátil}: Diferentes kernels pode ser usados para modelar uma ampla gama de problemas não-lineares. O kernel RBF é extremamente poderoso.
+	
+	\item \textbf{Bom Desempenho}: Muitas vezes atinge alta precisão, competindo com algoritmos como Rando Forest.
+	
+	\item \textbf{Teoria Matemática Sólica}: Baseado em teoria de otimização convexa, garantindo que a solução encontrada é a global (não fica preso em mínimos locais).
+\end{itemize}
+
+
+\section{Pontos Negativos (Desvantagens)}
+
+\begin{itemize}
+	\item \textbf{Escalabilidade}: O algoritmo de treinamento tradicional (SMO) tem complexidade de tempo entre $O(n^2)$ e $O(n^3)$, onde $n$ é o número de amostras. Isso o torna proibitivamente lento para conjuntos de dados muito grandes(Big Data). Não é adequado para datasets com milhões de amostras.
+	
+	\item \textbf{Interpretabilidade}: O modelo final, especialmente com kernels não-lineares, é uma "caixa preta". É difícil explicar por que uma determinada previsão foi feita.
+	
+	\item \textbf{Sensibilidade a Hiperparâmetros}: O desempenho depende criticamente da escolha do kernel e dos parâmetros (especialmente $C$ e $\gamma$ - gamma para o RBF). Requer uma busca grip/randomizada demorada.
+	
+	\item \textbf{Desempenho Ruim com Overlap Massivo}: Se as classes estão muito sobrepostas e não há uma estrutura clara, o SVM tende a performar mal.
+	
+	\item \textbf{Não Fornece Estimativas de Probabilidade Naturalmente}: A saída é uma decisão (classe) ou uma distância ao hiperplano. É necessário um passo adicinal caro (como Platt Scaling) para obter probabilidade calibradas.
+\end{itemize}
+
+
+\section{Conclusão}
+
+O SVM é um algoritmo elegante e poderoso, particularmente formidável em problemas de média escala (dezenas de milhares de amostras) e alta dimensionalidade, onde sua capacidade de encontrar fronteiras complexas brilha. Sua base teórica sólida o torna uma escolha atraente.
+
+No entanto, no contexto moderno de Big Data, sua falta de escalabilidade é uma limitação significativa. Enquanto algoritmos baseados em árvores (como Rando Forest e XGBoost) e redes neurais pode ser facilmente paralelizados e distribuídos em clusters, o SVM tradicional é menos adequado para essa tarefa. Frameworks como o Spark MLlib oferecem implementações distribuídas lineares do SVM, mas a versão kernelizada não-linear geralmente fica confinada a máquinas individuais com recursos substanciais.
+
+Ele permace, porém, uma ferramenta essencial no arsenal do cientista de dados, ideal para problemas específicos onde outros podem não ser os melhores.
+

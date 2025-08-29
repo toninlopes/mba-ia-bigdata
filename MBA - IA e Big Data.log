@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.8.25)  27 AUG 2025 20:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.8.25)  29 AUG 2025 16:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1749,7 +1749,11 @@ s/Árvore de Decisão.aux)
 (./Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dado
 s/Avaliação de Classificadores.aux)
 (./Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dado
-s/Random Forest.aux))
+s/Random Forest.aux)
+(./Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dado
+s/Support Vector Machine.aux)
+(./Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dado
+s/KNN.aux))
 \openout1 = `"MBA - IA e Big Data.aux"'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 214.
@@ -2422,81 +2426,15 @@ Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
  169.
 (pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
 [30]
-! Missing $ inserted.
-<inserted text> 
-                $
-l.199 ... para balanceament de classes (ex: class_
-                                                  weight no Scikit-learn).
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.200 	
-       
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing } inserted.
-<inserted text> 
-                }
-l.200 	
-       
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-! Extra }, or forgotten \endgroup.
-\par ...m \@noitemerr {\@@par }\fi \else {\@@par }
-                                                  \fi 
-l.200 	
-       
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-
-! LaTeX Error: There's no line here to end.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.208 	\\i
-          tem \textbf{Pouco Interpretável ("Black Box")}: Enquanto um únic...
-
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-! LaTeX Error: Something's wrong--perhaps a missing \item.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.210 	\item \textbf
-                    {Computacionalmente Intensivo e Lento para Prever}: Trei...
-
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
 
 File: USPSC-img/CapaICMC.jpg Graphic file (type jpg)
 <use USPSC-img/CapaICMC.jpg>
-Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 211.
+Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 212.
 (pdftex.def)             Requested size: 596.44875pt x 845.04933pt.
 File: USPSC-img/USPSC-PaginaEmBranco.jpg Graphic file (type jpg)
 <use USPSC-img/USPSC-PaginaEmBranco.jpg>
 Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
- 211.
+ 212.
 (pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
 [31])
 
@@ -2510,6 +2448,178 @@ Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
  267.
 (pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
 [32]
+\openout2 = `"Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineraç
+ão de Dados/Support Vector Machine.aux"'.
+
+
+(./Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dado
+s/Support Vector Machine.tex
+
+File: USPSC-img/CapaICMC.jpg Graphic file (type jpg)
+<use USPSC-img/CapaICMC.jpg>
+Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 39.
+(pdftex.def)             Requested size: 596.44875pt x 845.04933pt.
+File: USPSC-img/USPSC-PaginaEmBranco.jpg Graphic file (type jpg)
+<use USPSC-img/USPSC-PaginaEmBranco.jpg>
+Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
+ 39.
+(pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
+[33
+
+
+
+
+]
+
+File: USPSC-img/CapaICMC.jpg Graphic file (type jpg)
+<use USPSC-img/CapaICMC.jpg>
+Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 78.
+(pdftex.def)             Requested size: 596.44875pt x 845.04933pt.
+File: USPSC-img/USPSC-PaginaEmBranco.jpg Graphic file (type jpg)
+<use USPSC-img/USPSC-PaginaEmBranco.jpg>
+Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
+ 78.
+(pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
+[34] (/usr/local/texlive/2025/texmf-dist/tex/latex/base/latin1.def
+File: latin1.def 2024/02/08 v1.3d Input encoding file
+)
+
+File: USPSC-img/CapaICMC.jpg Graphic file (type jpg)
+<use USPSC-img/CapaICMC.jpg>
+Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 121.
+(pdftex.def)             Requested size: 596.44875pt x 845.04933pt.
+File: USPSC-img/USPSC-PaginaEmBranco.jpg Graphic file (type jpg)
+<use USPSC-img/USPSC-PaginaEmBranco.jpg>
+Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
+ 121.
+(pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
+[35]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+File: USPSC-img/CapaICMC.jpg Graphic file (type jpg)
+<use USPSC-img/CapaICMC.jpg>
+Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 161.
+(pdftex.def)             Requested size: 596.44875pt x 845.04933pt.
+File: USPSC-img/USPSC-PaginaEmBranco.jpg Graphic file (type jpg)
+<use USPSC-img/USPSC-PaginaEmBranco.jpg>
+Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
+ 161.
+(pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
+[36]
+
+File: USPSC-img/CapaICMC.jpg Graphic file (type jpg)
+<use USPSC-img/CapaICMC.jpg>
+Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 201.
+(pdftex.def)             Requested size: 596.44875pt x 845.04933pt.
+File: USPSC-img/USPSC-PaginaEmBranco.jpg Graphic file (type jpg)
+<use USPSC-img/USPSC-PaginaEmBranco.jpg>
+Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
+ 201.
+(pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
+[37])
+
+File: USPSC-img/CapaICMC.jpg Graphic file (type jpg)
+<use USPSC-img/CapaICMC.jpg>
+Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 269.
+(pdftex.def)             Requested size: 596.44875pt x 845.04933pt.
+File: USPSC-img/USPSC-PaginaEmBranco.jpg Graphic file (type jpg)
+<use USPSC-img/USPSC-PaginaEmBranco.jpg>
+Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
+ 269.
+(pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
+[38]
+\openout2 = `"Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineraç
+ão de Dados/KNN.aux"'.
+
+
+(./Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dado
+s/KNN.tex
+
+File: USPSC-img/CapaICMC.jpg Graphic file (type jpg)
+<use USPSC-img/CapaICMC.jpg>
+Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 48.
+(pdftex.def)             Requested size: 596.44875pt x 845.04933pt.
+File: USPSC-img/USPSC-PaginaEmBranco.jpg Graphic file (type jpg)
+<use USPSC-img/USPSC-PaginaEmBranco.jpg>
+Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
+ 48.
+(pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
+[39
+
+
+
+
+]
+
+File: USPSC-img/CapaICMC.jpg Graphic file (type jpg)
+<use USPSC-img/CapaICMC.jpg>
+Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 95.
+(pdftex.def)             Requested size: 596.44875pt x 845.04933pt.
+File: USPSC-img/USPSC-PaginaEmBranco.jpg Graphic file (type jpg)
+<use USPSC-img/USPSC-PaginaEmBranco.jpg>
+Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
+ 95.
+(pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
+[40]
+
+File: USPSC-img/CapaICMC.jpg Graphic file (type jpg)
+<use USPSC-img/CapaICMC.jpg>
+Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 158.
+(pdftex.def)             Requested size: 596.44875pt x 845.04933pt.
+File: USPSC-img/USPSC-PaginaEmBranco.jpg Graphic file (type jpg)
+<use USPSC-img/USPSC-PaginaEmBranco.jpg>
+Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
+ 158.
+(pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
+[41] (/usr/local/texlive/2025/texmf-dist/tex/latex/base/latin1.def
+File: latin1.def 2024/02/08 v1.3d Input encoding file
+)
+
+File: USPSC-img/CapaICMC.jpg Graphic file (type jpg)
+<use USPSC-img/CapaICMC.jpg>
+Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 201.
+(pdftex.def)             Requested size: 596.44875pt x 845.04933pt.
+File: USPSC-img/USPSC-PaginaEmBranco.jpg Graphic file (type jpg)
+<use USPSC-img/USPSC-PaginaEmBranco.jpg>
+Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
+ 201.
+(pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
+[42]
+
+File: USPSC-img/CapaICMC.jpg Graphic file (type jpg)
+<use USPSC-img/CapaICMC.jpg>
+Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 245.
+(pdftex.def)             Requested size: 596.44875pt x 845.04933pt.
+File: USPSC-img/USPSC-PaginaEmBranco.jpg Graphic file (type jpg)
+<use USPSC-img/USPSC-PaginaEmBranco.jpg>
+Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
+ 245.
+(pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
+[43]
+
+File: USPSC-img/CapaICMC.jpg Graphic file (type jpg)
+<use USPSC-img/CapaICMC.jpg>
+Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 277.
+(pdftex.def)             Requested size: 596.44875pt x 845.04933pt.
+File: USPSC-img/USPSC-PaginaEmBranco.jpg Graphic file (type jpg)
+<use USPSC-img/USPSC-PaginaEmBranco.jpg>
+Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
+ 277.
+(pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
+[44])
+
+File: USPSC-img/CapaICMC.jpg Graphic file (type jpg)
+<use USPSC-img/CapaICMC.jpg>
+Package pdftex.def Info: USPSC-img/CapaICMC.jpg  used on input line 271.
+(pdftex.def)             Requested size: 596.44875pt x 845.04933pt.
+File: USPSC-img/USPSC-PaginaEmBranco.jpg Graphic file (type jpg)
+<use USPSC-img/USPSC-PaginaEmBranco.jpg>
+Package pdftex.def Info: USPSC-img/USPSC-PaginaEmBranco.jpg  used on input line
+ 271.
+(pdftex.def)             Requested size: 597.4799pt x 845.04517pt.
+[45]
 \tf@toc=\write7
 \openout7 = `"MBA - IA e Big Data.toc"'.
 
@@ -2523,7 +2633,11 @@ s/Árvore de Decisão.aux)
 (./Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dado
 s/Avaliação de Classificadores.aux)
 (./Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dado
-s/Random Forest.aux))
+s/Random Forest.aux)
+(./Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dado
+s/Support Vector Machine.aux)
+(./Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dado
+s/KNN.aux))
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2020/03/25>
@@ -2532,16 +2646,13 @@ L3 programming layer <2020/03/25>
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
  ) 
 Here is how much of TeX's memory you used:
- 46042 strings out of 473190
- 969464 string characters out of 5715800
- 1844882 words of memory out of 5000000
- 67981 multiletter control sequences out of 15000+600000
- 623707 words of font info for 246 fonts, out of 8000000 for 9000
+ 46359 strings out of 473190
+ 977834 string characters out of 5715800
+ 1904596 words of memory out of 5000000
+ 68094 multiletter control sequences out of 15000+600000
+ 624643 words of font info for 260 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  99i,13n,107p,1018b,3254s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2025/texmf-dist/fonts/type1/public/kerkis/Kerkis-Bold.pfb
@@ -2558,10 +2669,10 @@ usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/
 texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/202
 5/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2025/
 texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb>
-Output written on "MBA - IA e Big Data.pdf" (32 pages, 674036 bytes).
+Output written on "MBA - IA e Big Data.pdf" (45 pages, 717052 bytes).
 PDF statistics:
- 759 PDF objects out of 1000 (max. 8388607)
- 686 compressed objects within 7 object streams
- 311 named destinations out of 1000 (max. 500000)
- 41351 words of extra memory for PDF output out of 42996 (max. 10000000)
+ 1104 PDF objects out of 1200 (max. 8388607)
+ 1014 compressed objects within 11 object streams
+ 476 named destinations out of 1000 (max. 500000)
+ 41543 words of extra memory for PDF output out of 42996 (max. 10000000)
 
