@@ -1,0 +1,198 @@
+\chapter[Regressão Linear]{Regressão Linear}
+
+A Regressão Linear é um algoritmo de aprendizado supervisionado usado para modelar a relação entre uma variável dependente (alvo) e uma ou mais variáveis independentes (features/características). O objetivo é encontrar uma função linear (uma linha reta ou um hiperplano) que melhor capture essa relação, permitindo fazer previsões.
+
+Existem dois tipos principais:
+
+\begin{enumerate}
+	\item \textbf{Regressão Linear Simples}: Envolve apenas uma variável independente para prever uma variável dependente:
+	
+	\begin{itemize}
+		\item Fórmula: $y = \beta_0 + \beta_1x$.
+		
+		\item Visualização: Uma linha reta em um gráfico 2D.
+	\end{itemize}
+	
+	\item \textbf{Regressão Linear Múltipla}: Envolve duas ou mais variáveis independentes para prever uma variável dependente.
+	
+		\begin{itemize}
+		\item Fórmula: $y = \beta_0 + \beta_1x_1 + \beta_2x_2 + ... + \beta_nx_n$.
+		
+		\item Visualização: Um hiperplano em um espaço multidimensional.
+	\end{itemize}
+\end{enumerate}
+
+
+\section{Para Que é Utilizado?}
+
+A Regressão Linear é usada em qualquer cenário onde se quer quantificar a relação entre variáveis ou prever numérico continuo.
+
+\begin{enumerate}
+	\item \textbf{Previsão de Demanda}: Prever as vendas de um produto com base em preço, gastos com marketing, etc.
+	
+	\item \textbf{Economia}: Modelar a relação entre a taxa de juros e o investimento em um país.
+	
+	\item \textbf{Ciências Sociais}: Entender como fatores como educação e experiência impactam o salário de uma pessoa.
+	
+	\item \textbf{Bioinformática}: Prever o peso de uma pessoa com base em sua altura.
+	
+	\item \textbf{Séries Temporais}: (Com ressalvas) Fazer previsões baseadas em tendências lineares.
+\end{enumerate}
+
+
+\section{Conceito Central: Como a Linha é Encontrada?}
+
+O objetivo do algoritmo é encontrar os coeficientes ($\beta_0, \beta_1, ..., \beta_n$) que definem a linha/hiperplano que melhor se ajusta aos dados de treinamento.
+
+Mas o que significa "melhor se ajustar"? Significa que queremos minimizar a diferença entre os valores reais ($y_i$) e os valores previstos ($\hat{y}_i$) pelo nosso modelo. Essa diferença é chamada de erro ou resíduo.
+
+A Regressão Linear encontra os melhores coeficentes minimizando a Soma dos Erros Quadráticos (Least Squares).
+
+
+\subsection{A Fórmula Chave: Função de Custo}
+
+A função que queremos minimizar é a Soma dos Erros Quadráticos (SSE - Sum of Squared Errors) ou mean Squared Error (MSE).
+
+\textbf{Resíduo/Erro para um ponto}: $e_i = y_i - \hat{y}i$
+
+\textbf{Soma dos Erros Quadráticos (SSE)}: $SSE = \sum{i=1}^{n} (y_i - \hat{y}i)^2$
+
+\textbf{Mean Squared Error (MSE)}: $MSE = \frac{1}{n} \sum{i=1}^{n} (y_i - \hat{y}_i)^2$
+
+O algoritmo ajusta os valores de $\beta$ para encontrar o múnimo desta função. Para a Regressão Linear Simples, existem fórmulas fechadas (fórmulas de cálculo) para encontrar os valores ótimos de $\beta_0$ (intercepto) e $\beta_1$ (coeficiente angular):
+
+\begin{itemize}
+	\item $\beta_1 = \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^{n} (x_i - \bar{x})^2}$
+	
+	\item $\beta_0 = \bar{y} - \beta_1\bar{x}$
+\end{itemize}
+
+Onde $\bar{x}$ e $\bar{y}$ são as médias das variáveis.
+
+Para a Regressão Linear Múltipla, o cálculo é mais complexo e geralmente é feito usando álgebra linear: $\beta = (X^T X)^{-1} X^T y$ (onde $X$ é a matriz de features e $y$ é o vetor de valores alvo).
+
+
+\section{Exemplo Prático: Prever o Preço de Casas}
+
+Suponha que queremos prever o preço de uma cas ($y$) com base e seu tamanho em m² ($x$).
+
+\textbf{Conjunto de Dados de Treinamento}:
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{cc}
+		\hline
+		\textbf{Tamanh (m²)} & \textbf{Preço R\$} \\
+		\hline
+		50 & 300.000 \\
+		70 &  380.000 \\
+		60 &  340.000 \\
+		80 &  400.000 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{enumerate}
+	\item \textbf{Treinamento}: O algoritmo de Regressão Linear calcula os valores de $\beta_0$ e $\beta_1$ que minimizam a soma dos erros quadrados. Digamos que o resultado seja:
+	
+	$\beta_0 = 150.000$ (O preço base quando o tamanho é zero)
+	
+	$\beta_1 = 3.000$ (Cada m² adicional acrescenta R\$ 3.000 ao preço)
+	
+	\begin{itemize}
+		\item Porntanto, a equação do modelo é: $Preço = 150.000 + 3.000 * Tamanho$
+	\end{itemize}
+	
+	\item \textbf{Previsão}: Agora, queremos prever o preço de uma nova casa de 90 m².
+	
+	$Preço Previsto = 150.000 + 3.000 * 90$
+	
+	$Preço Previsto = 150.000 + 270.000 = R\$420.000$
+\end{enumerate}
+
+
+\section{Exemplo em Python}
+
+\begin{lstlisting}[language=Python]
+# Importando bibliotecas
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# 1. Criar dados artificiais (anos de experiencia vs salario)
+X = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).reshape(-1, 1)  # feature (anos de experiencia)
+y = np.array([2500, 3000, 3500, 4000, 4200, 5000, 5200, 5800, 6000, 6500])  # target (salario)
+
+# 2. Criar e treinar o modelo
+modelo = LinearRegression()
+modelo.fit(X, y)
+
+# 3. Obter predicoes
+y_pred = modelo.predict(X)
+
+# 4. Coeficientes do modelo
+print(f"Intercepto (B0): {modelo.intercept_:.2f}")
+print(f"Coeficiente angular (B1): {modelo.coef_[0]:.2f}")
+
+# 5. Visualizar os pontos e a reta ajustada
+plt.scatter(X, y, color="blue", label="Dados reais")
+plt.plot(X, y_pred, color="red", linewidth=2, label="Reta de Regressão")
+plt.xlabel("Anos de Experiencia")
+plt.ylabel("Salario")
+plt.title("Regressao Linear - Exemplo")
+plt.legend()
+plt.show()
+\end{lstlisting}
+
+\textbf{O que esse código faz}:
+
+\begin{enumerate}
+	\item Cria um dataset simples (anos de experiência vs salário).
+	
+	\item Treina o modelo de Regressão Linear.
+	
+	\item Mostra o intercepto (B0) e o coeficiente angular (B1).
+	
+	\item Plota os pontos reais e a reta ajustada pelo model.
+\end{enumerate}
+
+
+\section{Pontos Positivos (Vantagens)}
+
+\begin{itemize}
+	\item \textbf{Extremamente Interpretável}: A saída do modelo é uma equação linear simples. É muito fácil entender o impacto de cada variável independente. Exemplo: "Para cada m² adicional, o preço aumenta, em média, R\$ 3,000".
+	
+	\item \textbf{Computacionalmente Eficiente}: Muito rápido para treinar e fazer previsões, mesmo com um grande número de features. A solução de mínimo quadrados ordinários (OLS) tem uma forma fechada.
+	
+	\item \textbf{Base Sólida}: Serve como um excelente ponto de partida (baseline) para problemas de regressão. Se um modelo não performar significativamente melhor que uma regressão linear, o modelo linear é provavelmente a escolha mais simples e robusta.
+	
+	\item \textbf{Bem Estabelecido}: É um algoritmo maduro, com fortes fundamentos estatísticos que permite inferência (testes de hipóteses sobre os coeficientes, intervalos de confiaça).
+\end{itemize}
+
+
+\section{Pontos Negativos (Desvantagens e Suposições)}
+
+A Regressão Linear faz fortes suposições sobre os dados. Violar essas suposições leva a resultados não confiáveis.
+
+\begin{itemize}
+	\item \textbf{Relação Linear}: Assume que a relação entre as variáveis dependentes e independentes é linear. Ele não consegue capturar relacionamentos não-lineares complexos (ex: crescimento exponencial).
+	
+	\item \textbf{Multicolinearidade}: O desempenho do modelo se degrada se as variáveis independentes estiverem altamente correlacionadas entre si. Isso torna a estimativa dos coeficientes instável e de difícil interpretação.
+	
+	\item \textbf{Variância Constante (Homocedasticidade)}: Assume que a variância dos erros (resíduos) é constante em todos os níveis das variáveis independentes. Se a vairância dos erros não for constante (heterocedasticidade), as estimativas são ineficientes.
+	
+	\item \textbf{Independência dos Resíduos}: Os resíduos não devem ser correlacionados entre si (ex: em dados de séries temporais, esse é um problema comum chamado de autocorrelação).
+	
+	\item \textbf{Distribuição Normal dos Resíduos}: Para que os testes de hipóteses e intervalos de confiança sejam válidos, os resíduos devem ser aproximadamente normalmente distribuídos.
+	
+	\item \textbf{Sensibilidade a Outliers}: Como a função de custo usa quadrado dos erros, outliers têm um poso desproporcionamente alto na determinação da linha de regressão, puxando-a em sua direção.
+\end{itemize}
+
+
+\section{Conclusão}
+
+A Regressão Linear é uma ferramenta fundamental e indispensável. Sua simplicidade, interpretabilidade e eficiência a tornam a primeira opção para explorar relações entre variávies e estabelecer uma baseline sólida para problemas de regressão.
+
+No entanto, é crucial lembrar que ela é um modelo "ingênuo" no sentido de que faz suposições fortes sobre o mundo. No contexto de Big Data e ML, onde os relacionamentos são frequentemente não-lineares e os dados complexos, a Regressão Linear raramente será o modelo final e mais preciso.
+
+Ela é frequentemente superada por algoritmos mais flexíveis como Árvore de Decisão, Random Forest e Redes Neurais. Ainda assim, entender a Regressão Linear é o primeiro passo para compreender modelos de regressão mais complexos e é uma ferramenta valiosíssima no kit de qualquer cientista de dados.

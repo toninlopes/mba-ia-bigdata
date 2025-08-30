@@ -2,3 +2,7 @@
 *.log
 *.idx
 _minted/*
+.DS_Store
+MBA - IA e Big Data.pdf
+*.gz
+*.toc
