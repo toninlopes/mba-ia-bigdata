@@ -5,5 +5,4 @@ _minted/*
 MBA - IA e Big Data.pdf
 *.gz
 *.toc
-*.DS_Store
-Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dados/.DS_Store
+*/.DS_Store

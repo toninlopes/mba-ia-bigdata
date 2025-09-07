@@ -1,0 +1,217 @@
+\chapter{Agrupamento Hierárquico}
+
+
+O Agrupamento Hierárquico é uma técnica que busca construir uma estrutura de clusters em forma de árvore. O principal resultado visual e conceitual deste método é o dendrograma, um diagrama em árvore que ilustra a organização hierárquica dos cluesters.
+
+Existem duas abordagens principais:
+
+\begin{enumerate}
+
+	\item \textbf{Algomerativa (Bottom-up ou de baixo para cima)}: Esta é a abordagem mais comum.
+	\begin{itemize}
+		\item \textbf{Início}: Cada ponto de dado começa como seu próprio cluster individual.
+		\item \textbf{Processo}: Em cada passo, os dois clusters mais próximos (ou mais similares) são fundidos (merge).
+		\item \textbf{Fim}: O processo se repete até que reste apenas um único cluster contendo todos os pontos de dados.
+	\end{itemize}
+	
+	\item \textbf{Divisa (Top-down ou de cima para baixo)}:
+	\begin{itemize}
+		\item \textbf{Início}: Todos os pontos de dados começam em um único e gigantesco cluster.
+		\item \textbf{Processo}: Em cada passo, um cluster é dividido (split) nos dois sub-clusters que são mais diferentes entre si.
+		\item \textbf{Fim}: O processo se repete até que cada ponto de dado esteja em sue próprio cluster. É computacionalmente mais complexo e menos utilizado.
+	\end{itemize}
+	
+\end{enumerate}
+
+
+\textbf{O Dendrograma}
+
+O dendrograma é a chave para enterder o Agrupamento Hierárquico. Ele mostra a sequência de fusões (ou divisões) e a distância em que cada uma ocorreu. A altura de cada "U" no dendrograma representa a distância entre os dois clusters que foram unidos. Ao "cortar" o dendrograma em uma determinada altura, você defini um número específico de clusters.
+
+
+\section{Para Que é Utilizado?}
+
+O Agrupamento Hierárquico é particularmente útil quando a relação hierárquica entre os dados é relevante para o problema.
+
+\begin{itemize}
+	\item \textbf{Biologia e Genética}: É massivamente utilizado para construir árvores filogenéticas (taxonomias de espécies) e para agrupar genes com padrões de expressão semelhantes.
+	
+	\item \textbf{Segmentação de Mercado}: Para entender não apenas os segmentos de clientes finais, mas também como eles se relacionam em subgrupos (ex: "clientes de alto valor" pode se dividir em "clientes leasi" e "novos clientes promissores").
+	
+	\item \textbf{Organização de Documentos}: Agrupar documentos de text em uma estrutura hierárquica de tópicos e sub-tópicos.
+	
+	\item \textbf{Análise de Redes Sociais}: Identificar comunidades e estrutura hierárquica dentro delas.
+\end{itemize}
+
+
+\section{Fórmulas (Critérios de Ligação - Linkage)}
+
+A questão fundamental na abordagem aglomerativa é: como medimos a "distância" entre dois clusters (que pode ter múltimos pontos) para decidir quais fundir? A resposta está nos critérios de ligação (linkage criteria).
+
+Sejam $C_i$ e $C_j$ dois clusters:
+
+\begin{itemize}
+	\item \textbf{Single Linkage (Ligação Mínima)}: A distância entre os clusters é a distância entre o par de pontos mais próximos (um de cada cluster).
+	
+	\begin{center}
+			$d(C_i, C_j) = \frac{min}{x \in C_i, y \in C_j} d(x, y)$
+	\end{center}
+	
+	\textit{Pode criar clusters longos e finos (efeito channing). Sensível a outliers.}
+	
+	\item \textbf{Complete Linkage (Ligação Máxima)}: A distância é definida pelo para de pontos mais distante.
+	
+	\begin{center}
+			$d(C_i, C_j) = \frac{max}{x \in C_i, y \in C_j} d(x, y)$
+	\end{center}
+	
+	\textit{Tendência a criar clusters compactos e de tamanho similar. Menos sensível a ruído.}
+	
+	\item \textbf{Average Linkage (Ligação Média)}: A distância média de todas as distâncias entre todos os pares de pontos (um de cada cluster).
+	
+	\begin{center}
+			$d(C_i, C_j) = \frac{1}{|C_i||C_j|} \sum_{x \in C_i, y \in C_j}d(x, y)$
+	\end{center}
+	
+	\textit{Um bom meio-termos entre a Single e Complete linkage}.
+	
+	\item \textbf{Ward's Linkage}: Um dos métodos mais populares. Ele funde os dois clusters que levam ao menor aumento na variância total intra-cluster. O objectivo é encontrar os clusters mais compactos e esféricos possíveis.
+	
+	\textit{Tendência a criar clusters de tamanho similar e muito compactos.}
+\end{itemize}
+
+A distância entre pontos individuais (a base de tudo) é normalmente a Distância Euclidiana, mas outras como Manhattan ou Minkowski também podem ser usadas.
+
+\section{Exemplos}
+
+\subsection{Exemplo Descritivo: Agrupando Cidades}
+
+Imagine que temos 5 cidades (A, B, C, D, E) e suas distâncias.
+
+\begin{enumerate}
+	\item \textbf{Passo 1}: Cada cidade é um cluster: {A}, {B}, {C}, {D}, {E}.
+	
+	\item \textbf{Passo 2}: Calculamos a matriz de distância e descobrimos que A e C são as mais próximas. Fundimos elas, Nosos clusters agora são: {A, C}, {B}, {D}, {E}.
+	
+	\item \textbf{Passo 3}: Recalcumaos as distâncias entre os novos clusters (usando um critério de ligação, ex: avarage linkage). Agora, descobrimos que D e E são os mais próximos. Fundimos. Clusters: {A, C}, {B}, {D, E}.
+	
+	\item \textbf{Passo 4}: Repetimos os processo. Talvez {B} seja mais próximo do cluster {A, C}. Fundimos. Clusters: {A, C, B}, {D, E}.
+	
+	\item \textbf{Passo 5}: Finalmente, fundimos os dois últimos clusters. Cluster final: {A, C, B, D, E}. Observe a Figura~\ref{fig:dendrograma}.
+\end{enumerate}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.8\linewidth]{"Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dados/images/Dendrograma.png"}
+	\caption{Dendrograma do Agrupamento de Cidades}
+	\label{fig:dendrograma}
+\end{figure}
+
+
+\subsection{Exemplo em Python}
+
+Vamos usar a biblioteca SciPy para criar o dendrograma e Scikit-learn para obter os clusters finais.
+
+\begin{lstlisting}[language=python]
+
+# --- Passo 0: Importar as bibliotecas necessárias ---
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage
+
+# --- Passo 1: Criar Dados Sinteticos para as Cidades ---
+# Vamos criar coordenadas (x, y) que forcem a sequencia de fusao desejada:
+# 1. A e C sao muito proximas.
+# 2. D e E sao as proximas mais proximas.
+# 3. B e mais proximo do grupo {A,C} do que de {D,E}.
+# 4. Os dois grandes grupos {A,C,B} e {D,E} sao distantes.
+data = {
+	'Cidade': ['A', 'B', 'C', 'D', 'E'],
+	'coord_x': [2.0, 4.0, 2.5, 9.0, 9.5],
+	'coord_y': [2.0, 5.0, 2.5, 8.0, 8.8]
+}
+df = pd.DataFrame(data)
+
+# Extrair apenas as coordenadas para o algoritmo de clustering
+X = df[['coord_x', 'coord_y']].values
+labels = df['Cidade'].values
+
+print("--- Coordenadas das Cidades ---")
+print(df)
+print("\n")
+
+
+# --- Passo 2: Calcular o Agrupamento Hierarquico ---
+# Usaremos o metodo de 'ward', que tende a encontrar clusters esfericos
+# e e muito eficaz. Ele minimiza a variancia dentro dos clusters que sao fundidos.
+linked = linkage(X, method='ward')
+
+
+# --- Passo 3: Visualizar os Resultados ---
+# Criar uma figura com dois subplots: um para o scatter e outro para o dendrograma
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 7))
+fig.suptitle('Exemplo de Agrupamento Hierarquico com Cidades Sinteticas', fontsize=16)
+
+# Subplot 1: Scatter plot com a localizacao das cidades
+ax1.scatter(df['coord_x'], df['coord_y'], s=100)
+ax1.set_title('Localização das Cidades')
+ax1.set_xlabel('Coordenada X')
+ax1.set_ylabel('Coordenada Y')
+ax1.grid(True)
+# Adicionar rotulos para cada cidade
+for i, txt in enumerate(labels):
+ax1.annotate(txt, (df['coord_x'][i], df['coord_y'][i]), xytext=(5,5), textcoords='offset points', fontsize=12)
+
+# Subplot 2: Dendrograma
+ax2.set_title('Dendrograma Resultante')
+ax2.set_xlabel('Cidades')
+ax2.set_ylabel('Distancia (Ward)')
+dendrogram(
+linked,
+orientation='top',
+labels=labels,
+distance_sort='descending',
+show_leaf_counts=True
+)
+ax2.grid(axis='y', linestyle='--')
+
+plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+plt.show()
+
+\end{lstlisting}
+
+
+\section{Pontos Positivos e Negativos}
+
+\subsection{Pontos Positivos}
+
+\begin{itemize}
+	\item \textbf{Não Requer o Número de Clusters (K) e Priori}: Esta é uma grande vantagem sobre o K-Means. O dendrograma permite que o analista explore diferentes números de clusters e escolha o que faz mais sentido para o problema.
+	
+	\item \textbf{Visualização Intuitiva}: O dendrograma é uma ferramenta poderosa para visualizar a estrutura e as relações de similaridade nos dados.
+	
+	\item \textbf{Captura a Hierarquia}: O resultado não é uma partição "plana", mas uma estrutura hierárquica que pode ter um significado real no domímio do problema (ex: taxonimia biológica).
+	
+	\item \textbf{Flexibilidade}: Pode funcionar com qualquer métrica de distância e critério de ligação.
+\end{itemize}
+
+
+\subsection{Pontos Negativos}
+
+\begin{itemize}
+	\item \textbf{Alto Custo Computacional e de Memória}: A complexidade de tempo é tipicamente $O (n^3)$ e a de memória $O (n^2)$ (para armazenar a matriz de distância). Isso torna o algortimo inviável para datasets grandes (Big Data).
+	
+	\item \textbf{Decisões Irreversíveis}: Uma vez que uma fusão (ou divisão) é feita, ela não pode ser desfeita. Uma fusão inicial ruim pode impactar toda a estrutura da árvore.
+	
+	\item \textbf{Sensibilidade aos Parâmetros}: O resultado pode mudar drasticamente dependendo da mátrica de distância e do critério de ligação escolhidos.
+	
+	\item \textbf{Dificuldade de Interpretação em Larga Escala}: Para datasets com milhares de pontos, o dendrograma se torna uma imagem densa e impossível de interpretar visualmente.
+\end{itemize}
+
+
+\section{Conclusão}
+
+O Agrupamento Hierárquico é uma ferramenta poderosa para exploração e análise de dados em pequena e média escala. Sua capacidade de revelar estruturas hierárquicas naturais e a não necessidade de definir K previamente o tornam inestimável para análise inicial de dados.
+
+No entanto, no mundo do Big Data, sua ineficiência computacional o confina a subconjuntos de dados ou a casos de uso específicos onde a hierarquia é essencial. Para conjuntos de dados muito grandes, algoritmos como K-Means (com inicialização inteligente como K-Means++) ou DBSCAN (ótimo para dados com ruído e formatos arbitrários) são geralmente escolhas mais práticas e escaláveis. O agrupamento hierárquico é a lente de aumento perfeita para uma análise detalhada, mas não é o trator para arar grandes campos de dados.
