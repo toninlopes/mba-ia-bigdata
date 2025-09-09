@@ -1,0 +1,214 @@
+\chapter{Agrupamento Particional}
+
+O Agrupamento Particionado é um método de aprendizado não supervisionado que divide um conjunto de dados em um número pré-definido, $k$, de grupos mutuamente exclusivos, chamados de clusters. O objetivo é organizar os dados de modo que:
+
+\begin{itemize}
+	\item \textbf{Dentro de um cluster (Coesão)}: os objetos sejam o mais similares possível.
+	
+	\item \textbf{Entre clusters (Separação)}:  os objetos de clusters diferentes sejam o mais dissimilares possível.
+\end{itemize}
+
+A palavra "particionado" vem do fato de que cada ponto de dados pertence a exatamente um cluster (partição rígida).
+
+
+\section{Para Que é Utilizado?}
+
+O K-Means é extremamente versátil e aplicado em diversas áreas, graças a sua eficiência e simplicidade.
+
+\begin{itemize}
+	\item \textbf{Segmentação de Clientes}: Agrupar clientes com base em seu comportamento de compra, dados demográficos ou histórico de navegação para criar campanhas de marketing direcionadas.
+	
+	\item \textbf{Organização de Documentos}: Agrupar notícias ou artigos por tópicos similares.
+	
+	\item \textbf{Compressão de Imagens}: Reduzir o número de cores em uma umagem agrupando cores similares e substituindo-as pela cor do centroide do cluster.
+	
+	\item \textbf{Detecção de Anomalias}: Pontos de dados que ficam muito distantes de qualquer centroide após o agrupamento podem ser considerados anomalias ou outliers.
+	
+	\item \textbf{Análise de Dados Genômicos}: Agrupar genes com padrões de expressão semelhantes.
+\end{itemize}
+
+\section{O Algoritmo K-Means}
+
+O K-Means é o algoritmo mais famoso de agrupamento particionado. Sua ideia é simples: encontrar $k$ centróides (o "centro" de cada cluster) e atribuir cada ponto ao centróide mais próximo, minimizando a variância dentro dos clusters.
+
+\textbf{Fórmula}
+
+O algoritmo busca minimizar a Soma dos Erros Quadráticos (SSE - Sum of Squared Errors), também conhecida como inércia dentro do cluster.
+
+\begin{center}
+	$E = \sum_{i=1}^{k}\sum_{x \in C_i}^{} ||x, \mu_i||^2$
+\end{center}
+
+\begin{itemize}
+	\item $k$: Número de clusters.
+	
+	\item $C_i$: Conjunto de pontos no cluster $i$.
+	
+	\item $\mu_i$: Centroid do cluster $i$.
+	
+	\item $||x, \mu_i||^2$: Distância Euclidiana ao quadrado entre o ponto $x$ e o seu centroide.
+\end{itemize}
+
+\textbf{Passos do Algoritmo (Explicado com a Figura Acima)}
+
+\begin{enumerate}
+	\item \textbf{Inicialização}: Escolha aleatória de $k$ centróides iniciais (\ref{fig:k-means-inicializacao}).
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.7\linewidth]{"Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dados/images/K-Means-Inicializacao"}
+		\caption{Inicialização}
+		\label{fig:k-means-inicializacao}
+	\end{figure}
+	
+	\item \textbf{Atribuição de Pontos}: Cada ponto é atribuído ao centróide mais próximo, formando $k$ clusters temporários (\ref{fig:k-means-atribuicao}).
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.7\linewidth]{"Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dados/images/K-Means-Atribuicao"}
+		\caption{Atribuição}
+		\label{fig:k-means-atribuicao}
+	\end{figure}
+	
+	\item  \textbf{Atualização dos Centroides}: O centróide de cada cluster é recalculado como a média de todos os pontos naquele cluster (\ref{fig:k-means-atualizacao}).
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.7\linewidth]{"Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dados/images/K-Means-Atualizacao"}
+		\caption{Atualização}
+		\label{fig:k-means-atualizacao}
+	\end{figure}
+	
+	\item \textbf{Iteração}: Os passos 2 e 3 são repetidos até que não haja mais mudanças na atribuição dos pontos ou um número máximo de iterações seja atingido (convergência para o Resultado Final).
+\end{enumerate}
+
+
+\section{Exemplos}
+
+\subsection{Exemplo Descritivo: Segmentação de Clientes de E-commerce}
+
+Imagine um e-commerce que quer segmentar seus clientes com base em duas variáveis: "Frequência de Visitas" e "Valor Gasto".
+
+\begin{enumerate}
+	\item \textbf{Escolha do k}: A equipe de marketing decide que 3 segmentos (ex: "ocasionais", "fiéis" e "super fãs") é um bom ponto de partida.
+
+	\item \textbf{Inicialização}: O algoritmo K-Means escolhe 3 clientes aleatórios como os centroides iniciais.
+	
+	\item \textbf{Execução}:
+	
+	\begin{itemize}
+			\item Na Primeira iteração, cada cliente é atribuído ao centróide mais próximo.
+			
+			\item Nas próximas iterações, os clientes são realocados conforme os centróides se movem.
+			
+			\item O processo converge quando os centróides se estabilizam e os clusters estão bem definidos.
+	\end{itemize}
+		
+	\item \textbf{Resultado}:
+	
+	\begin{itemize}
+		\item \textbf{Cluster 1 (Fiéis)}: Alta frequência, alto valor gasto.
+		
+		\item \textbf{Cluster 2 (Ocasionais)}: Média frequência, médio valor gasto.
+		
+		\item \textbf{Cluster 3 (Em Risco)}: Baixa frequência, baixo valor gasto (ou que não compram há tempos).
+	\end{itemize}
+\end{enumerate}
+
+A empresa pode agora criar campanhas de marketing específicas para cada grupo.
+
+\subsection{Exemplo Prático em Python}
+
+Vamos usar scikit-learn para aplicar o K-Means em dados sintéticos com 4 clusters bem definidos.
+
+\begin{lstlisting}[language=Python]
+# Importando bibliotecas necessarias
+from sklearn.cluster import KMeans
+from sklearn.datasets import make_blobs
+import matplotlib.pyplot as plt
+import numpy as np
+
+# 1. Criar um conjunto de dados sintetico para demonstracao
+X, y_true = make_blobs(n_samples=300, centers=4, cluster_std=0.60, random_state=0)
+
+# 2. Visualizar os dados originais
+plt.scatter(X[:, 0], X[:, 1], s=50)
+plt.title("Dados Originais")
+plt.show()
+
+# 3. Instanciar e executar o algoritmo K-Means com k=4
+kmeans = KMeans(n_clusters=4, n_init=10, random_state=0)
+kmeans.fit(X)
+y_kmeans = kmeans.predict(X)
+
+# 4. Visualizar os resultados do clustering
+# Pontos coloridos por cluster
+plt.scatter(X[:, 0], X[:, 1], c=y_kmeans, s=50, cmap='viridis')
+# Plotar os centroides finais
+centers = kmeans.cluster_centers_
+plt.scatter(centers[:, 0], centers[:, 1], c='red', s=200, alpha=0.75, marker='X')
+plt.title("Resultado do Clustering K-Means")
+plt.show()
+
+# 5. Mostrar as coordenadas dos centroides e a inertia (SSE)
+print("Coordenadas dos Centroides:")
+print(centers)
+print(f"\nInércia (SSE): {kmeans.inertia_:.2f}")
+\end{lstlisting}
+
+\textbf{Saída Experada}:
+
+\begin{itemize}
+	\item Um primeiro gráfico com pontos azuis espalhados (\ref{fig:k-means-grafico-1}).
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.7\linewidth]{"Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dados/images/K-Means-Grafico-1.png"}
+		\caption{Atualização}
+		\label{fig:k-means-grafico-1}
+	\end{figure}
+	
+	\item segundo gráfico com os pontos coloridos em 4 grupos diferentes e um "X" vermelho marcando o centro de cada grupo (\ref{fig:k-means-grafico-2}).
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.7\linewidth]{"Cursos/02 - Ciência de Dados, Aprendizado de Máquina e Mineração de Dados/images/K-Means-Grafico-2.png"}
+		\caption{Atualização}
+		\label{fig:k-means-grafico-2}
+	\end{figure}
+	
+	\item As coordenadas dos centróides e o valor da SSE serão impressos no console.
+\end{itemize}
+
+\section{Pontos Positivos e Negativos}
+
+\subsection{Pontos Positivos}
+
+\begin{itemize}
+	\item \textbf{Simplicidade e Interpretabilidade}: O algoritmo é fácil de entender e implementar, e os resultados (clusters definidos por centroides) são fáceis de interpretar.
+	
+	\item \textbf{Eficiência Computacional}: O K-Means é relativamente rápido e escala bem para grandes conjunto de dados, o que torna desejável para Mineração de Dados.
+	
+	\item \textbf{Versatilidade}: Adapta-se bem a uma grande variedade de problemas e domínios.
+	
+	\item \textbf{Convergência Rápida}: Geralmente converge em poucas iterações.
+\end{itemize}
+
+\subsection{Pontos Negativos}
+
+\begin{itemize}
+	\item  \textbf{Necessidade de Definir $k$}: É preciso saber o número de cluster de antemão, o que nem sempre é óbvio.
+	
+	\item  \textbf{Sensibilidade a Inicialização}: A inicialização aleatória dos centróides pode levar a resultados diferentes (clusters sub-ótimos) a cada execução. A solução comum é rodar o algoritmo várias vezes com diferentes inicializações e escolher o melhor resultado.
+		
+	\item  \textbf{Sensibilidade a Outliers}: Como os centroides são baseados na média, eles são fortemente influenciados por outliers.
+			
+	\item  \textbf{Assume Clusters Esféricos}: O K-Means funciona melhor quando os clusters são de formato globular (esférico), de tamanhos e densidades similares. Ele tem dificuldade em encontrar clusters com formatos irregulares ou alongados.
+\end{itemize}
+
+
+\section{Conclusão}
+
+O K-Means é um algoritmo fundamental no toolkit de qualquer cientista de dados. Sua simplicidade e eficiência o tornam uma excelente primeira escolha para tarefas de clustering, especialmente com grandes volumes de dados (Bid Data), e uma base sólida para comparação com algoritmos mais complexos.
+
+No entanto, é crucial estar ciente de suas limitações. Para problemas com clusters de formato não-globular, algoritmos baseados em densidade como o DBSCAN ou baseados em hieraquia como Agrupamento Hierárquico são geralmente escolhas mais adequadas.
