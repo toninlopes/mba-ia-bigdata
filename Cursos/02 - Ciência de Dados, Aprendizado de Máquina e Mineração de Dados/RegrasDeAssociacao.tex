@@ -1,0 +1,192 @@
+\chapter{Regras de Associação}
+
+Regras de Associação são um método de aprendizado não supervisionado utilizado para descobrir relações, padrões e associações entre itens em grandes conjuntos de dados. A saída são regras do tipo "SE... ENTÃO..." (IF-THEN).
+
+A representação clássica de uma regra é:
+
+\begin{itemize}
+	\item {Leite, Ovos} → {Café} (\textit{Clientes que compram Leite e Ovos tendem a também comprar Café.})
+	
+	\item Antecedente (Left-Hand Side - LHS): {Leite, Ovos} (a condição)
+	
+	\item Consequente (Right-Hand Side - RHS): {Café} (o resultado previsto)
+\end{itemize}
+
+
+\section{Para Que São Utilizadas?}
+
+A aplicação mais famosa é a Análise de Cesta de Compras (Market Basket Analysis) em varejo, mas seu uso vai muito além:
+
+\begin{enumerate}
+	\item \textbf{Varejo}: Recomendações de produtos ("quem comprou X também comprou Y"), layout de lojas, promoções cruzadas.
+	
+	\item \textbf{Saúde}: Descobrir relações entre sintomas e doenças, ou entre medicamentos e efeitos colaterais.
+	
+	\item \textbf{Web Mining}: Personalização de sites (páginas frequentemente acessadas juntas), recomendação de conteúdo.
+	
+	\item \textbf{Detecção de Fraude}: Identificar sequências de eventos ou transações que frequentemente levam a atividades fraudulentas.
+	
+\end{enumerate}
+
+
+\section{Algoritmo Apriori}
+
+O Apriori é o algoritmo mais clássico e famoso para minerar regras de associação. Ele é baseado no Princípio Apriori (ou "downward closure property"):
+
+\begin{quote}
+	\textit{Se um itemset é frequente, então todos os seus subconjuntos também devem ser frequentes.}
+	
+	\textit{Por consequência, se um itemset é infrequente, todos os seus supersets também serão infrequentes.}
+\end{quote}
+
+Este princípio permite podar drasticamente o espaço de busca de combinações possíveis.
+
+\subsection{Funcionamento do Apriori (em 2 Passos)}
+
+\begin{enumerate}
+	\item Geração de Itemsets Frequentes:
+	
+	\begin{itemize}
+		\item 	Começa encontrando todos os itens individuais (1-itemsets) com suporte acima de um mínimo ($min\_support$).
+		
+		\item Usa esses 1-itemsets para gerar candidatos a 2-itemsets. Verifica o suporte de cada candidato e descarta os infrequentes.
+		
+		\item Repete o processo, usando os (k-1)-itemsets frequentes para gerar k-itemsets candidatos, até que não possam ser gerados mais itemsets frequentes.
+	\end{itemize}
+	
+	\item Geração das Regras:
+	
+	\begin{itemize}
+			\item Para cada itemset frequente $Z$, gera todas as regras possíveis da forma $X \to Y$, onde $X \cup Y$ e $X \cap Y = \theta$.
+		
+		\item Calcula a confiança para cada regra candidata.
+		
+		\item Mantém apenas as regras com confiança acima de um limiar mínimo (min\_confidence).
+	\end{itemize}
+\end{enumerate}
+
+\subsection{Exemplo Descritivo}
+
+Transações:
+
+\begin{enumerate}
+	\item \{Leite, Pão, Manteiga\}
+	
+	\item \{Leite, Pão, Ovos\}
+	
+	\item \{Leite, Café\}
+	
+	\item \{Pão, Café, Manteiga\}
+	
+	\item \{Café, Ovos\}
+\end{enumerate}
+
+Objetivo: Encontrar regras com min\_support = 0.4 (2/5 transações) e min\_confidence = 0.6.
+
+\begin{enumerate}
+	\item Itemsets Frequentes (Passo 1):
+	
+	\begin{itemize}
+		\item 	1-itemsets: \{Leite\}(3), \{Pão\}(3), \{Café\}(3), \{Manteiga\}(2), \{Ovos\}(2). Todos têm suporte >=2.*
+		
+		\item 2-itemsets Candidatos: São combinados os 1-itemsets. São verificados:
+		
+		\begin{itemize}
+			\item \{Leite, Pão\}: Suporte=2 (OK)
+			
+			\item \{Leite, Café\}: Suporte=1 (Descarta)
+			
+			\item \{Leite, Manteiga\}: Suporte=1 (Descarta)
+			
+			\item ... (e assim por diante)
+		\end{itemize}
+		
+		
+		\item Itemsets Frequentes Finais: \{Leite\}, \{Pão\}, \{Café\}, \{Manteiga\}, \{Ovos\}, \{Leite, Pão\}.
+	\end{itemize}
+	
+	\item Geração de Regras (Passo 2 - para \{Leite, Pão\}):
+	
+	\begin{itemize}
+		\item Regras candidatas: \{Leite\} → \{Pão\} e \{Pão\} → \{Leite\}.
+		
+		\item Calcular Confiança:
+		
+		\begin{itemize}
+			\item $Conf(Leite \to Pão) = \frac{Suporte(\left\{ Leite, Pão \right\})}{Suporte(\left\{ Leite \right\})} = \frac{2}{3} = 0.66$ (> 0.6, REGRA VÁLIDA).
+			
+			\item $Conf(Pão \to Leite) = \frac{Suporte(\left\{ Leite, Pão \right\})}{Suporte(\left\{ Pão \right\})} = \frac{2}{3} = 0.66$ (> 0.6, REGRA VÁLIDA).
+		\end{itemize}
+	\end{itemize}
+\end{enumerate}
+
+\subsection{Exemplo em Python}
+
+\begin{lstlisting}[language=python]
+import pandas as pd
+from mlxtend.preprocessing import TransactionEncoder
+from mlxtend.frequent_patterns import apriori, association_rules
+
+# Dados de exemplo (transacoes)
+transacoes = [['Leite', 'Pao', 'Manteiga'],
+['Leite', 'Pao', 'Ovos'],
+['Leite', 'Cafe'],
+['Pao', 'Cafe', 'Manteiga'],
+['Cafe', 'Ovos']]
+
+# Transformar os dados em uma matriz booleana
+te = TransactionEncoder()
+te_ary = te.fit(transacoes).transform(transacoes)
+df = pd.DataFrame(te_ary, columns=te.columns_)
+print("DataFrame de Entrada (One-Hot Encoding):")
+print(df)
+
+# Passo 1: Encontrar itemsets frequentes com min_support=0.4
+frequent_itemsets = apriori(df, min_support=0.4, use_colnames=True)
+print("\nItemsets Frequentes:")
+print(frequent_itemsets)
+
+# Passo 2: Gerar regras com min_confidence=0.6
+regras = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.6)
+print("\nRegras de Associacao Geradas:")
+print(regras[['antecedents', 'consequents', 'support', 'confidence', 'lift', 'conviction']])
+
+# (Opcional) Filtrar por lift > 1 para regras significativas
+regras_significativas = regras[regras['lift'] > 1]
+print("\nRegras Significativas (Lift > 1):")
+print(regras_significativas[['antecedents', 'consequents', 'support', 'confidence', 'lift']])
+\end{lstlisting}
+
+
+\section{Pontos Positivos e Negativos}
+
+\subsection{Pontos Positivos}
+
+\begin{itemize}
+	\item \textbf{Interpretabilidade}: As regras são intuitivas e fáceis de explicar, mesmo para não-especialistas.
+	
+	\item \textbf{Descoberta de Insights Inesperados}: Pode revelar relações não óbvias e oportunidades de negócio.
+	
+	\item \textbf{Algoritmo Bem Definido}: O Apriori é simples de entender e implementar.
+	
+	\item \textbf{Aplicável em Diversos Domínios}: Não está restrito ao varejo.
+\end{itemize}
+
+
+\subsection{Pontos Negativos}
+
+\begin{itemize}
+	\item \textbf{Computacionalmente Intensivo}: O Apriori pode ser lento para muitos itens e suporte muito baixo, devido ao grande espaço de combinações.
+	
+	\item \textbf{Gera Muitas Regras}: Pode produzir um número enorme de regras, muitas delas redundantes ou triviais.
+	
+	\item \textbf{Dependência Crítica de Limiares (min\_support, min\_confidence)}: A escolha errada pode levar a muitas regras sem sentido ou a nenhuma regra.
+	
+	\item \textbf{Problema com Dados Ráspidos}: Itens muito frequentes podem dominar as regras e gerar associações óbvias (ex: \{pão\} → \{água\}).
+\end{itemize}
+
+\section{Conclusão}
+
+As Regras de Associação e o algoritmo Apriori são ferramentas poderosas para a descoberta de conhecimento em grandes conjuntos de dados transacionais (Big Data). Elas transformam dados brutos em insights acionáveis, como estratégias de marketing e recomendação.
+
+No entanto, seu sucesso depende de uma análise crítica dos resultados. Não basta gerar regras; é preciso interpretá-las usando as métricas de Lift e Convicção para filtrar as associações verdadeiramente interessantes e não óbvias, evitando assim as armadilhas da simples Confiança. No contexto moderno, algoritmos mais eficientes como FP-Growth (que não gera candidatos) são often preferidos, mas o princípio Apriori continua sendo a base teórica fundamental.
