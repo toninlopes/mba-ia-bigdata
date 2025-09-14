@@ -1,0 +1,279 @@
+\chapter{Mineração de Dados Não Entruturados}
+
+A Mineração de Dados Não Estruturados é o processo de extrair informações e padrões valiosos de dados que não se encaixam em um formato de tabela tradicional (linhas e colunas). Isso inclui a grande maioria dos dados gerados hoje: textos, imagens, vídeos, áudios, posts em redes sociais, etc.
+
+O principal desafio é transformar esses dados complexos e "livres" em um formato estruturado que os algoritmos de Machine Learning possam entender. A solução é a extração de características (feature extraction), que converte cada item (uma imagem, um texto) em um vetor numérico, também conhecido como embedding.
+
+Uma vez que temos essa representação vetorial, podemos aplicar algoritmos clássicos como K-Means, K-NN, SVM, etc.
+
+
+\section{Para que é Utilizado?}
+
+\begin{itemize}
+	\item \textbf{Análise de Sentimento}: Classificar reviews de produtos ou posts em redes sociais como positivos, negativos ou neutros.
+	
+	\item \textbf{Busca por Imagens Similares}: Encontrar imagens visualmente parecidas com uma imagem de referência (ex: Google Images).
+	
+	\item \textbf{Diagnóstico Médico}: Analisar imagens de exames (raios-X, ressonâncias) para identificar anomalias ou agrupar casos semelhantes.
+	
+	\item \textbf{Organização de Documentos}: Agrupar automaticamente milhares de notícias ou documentos legais por tópico.
+	
+	\item \textbf{Monitoramento de Marca}: Analisar menções de uma marca na web para entender a percepção do público.
+\end{itemize}
+
+
+\section{Conceito de Modelo Pré-treinado}
+
+Um Modelo Pré-treinado é uma rede neural profunda que já foi treinada em um conjunto de dados massivo, geralmente por grandes empresas ou instituições de pesquisa (como Google, Meta, OpenAI). O processo de treinamento original pode levar semanas ou meses e custar milhões de dólares em poder computacional.
+
+A grande vantagem é que, durante esse treinamento, o modelo aprende a reconhecer uma vasta gama de padrões, texturas, formas (no caso de imagens) ou contextos e significados semânticos (no caso de textos). Podemos então usar esse conhecimento pré-adquirido em nossos próprios projetos, uma técnica chamada Aprendizagem por Transferência (Transfer Learning). Em vez de treinar um modelo do zero, nós o usamos como uma poderosa ferramenta de extração de características.
+
+
+\section{Modelo ResNet (para Imagens)}
+
+ResNet (Residual Network) é uma arquitetura de rede neural convolucional (CNN) de última geração para tarefas de visão computacional. Sua principal inovação são as "conexões residuais", que permitem a construção de redes extremamente profundas (com centenas de camadas) sem perder a capacidade de aprender, o que resulta em um reconhecimento de padrões visuais muito sofisticado.
+
+Aplicações:
+
+\begin{itemize}
+	\item \textbf{Classificação de Imagens}: Dizer o que está em uma imagem (ex: "gato", "carro", "praia").
+	
+	\item \textbf{Detecção de Objetos}: Desenhar caixas ao redor de objetos em uma imagem e classificá-los.
+	
+	\item \textbf{Extração de Características}: Usar as camadas internas da rede para converter uma imagem em um vetor numérico (embedding) que captura sua essência semântica.
+\end{itemize}
+
+\subsection{Exemplo Descritivo (ResNet)}
+
+Imagine que você passa a imagem de um "cachorro correndo na grama" por uma ResNet pré-treinada. Em vez de pegar a saída final ("cachorro"), nós interceptamos a penúltima camada da rede. A saída dessa camada é um vetor denso (ex: de 2048 dimensões) que representa numericamente os conceitos que a rede "viu" na imagem: $[muita "textura de pelo", bastante "cor verde", alto "movimento", etc.]$. Esse vetor é o embedding da imagem, pronto para ser usado por outros algoritmos.
+
+\subsection{Exemplo em Python: Mineração de Imagens com ResNet}
+
+Este código irá baixar 6 imagens (3 de gatos e 3 de carros), usar uma ResNet pré-treinada para extrair suas características e, em seguida, aplicar K-Means (descritivo) para agrupá-las e K-NN (preditivo) para classificá-las.
+
+\begin{lstlisting}[language=python]
+# --- Passo 0: Instalar e importar as bibliotecas necessarias ---
+# Certifique-se de ter torch, torchvision e scikit-learn instalados
+# pip install torch torchvision scikit-learn Pillow numpy matplotlib
+
+import torch
+import torchvision.models as models
+import torchvision.transforms as transforms
+from PIL import Image
+import requests
+import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.neighbors import KNeighborsClassifier
+import matplotlib.pyplot as plt
+
+# --- Passo 1: Carregar o Modelo ResNet Pre-treinado ---
+# Carregamos o ResNet-18 e o colocamos em modo de avaliacao
+resnet = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
+resnet.eval()
+
+# Remover a ultima camada de classificacao para usa-lo como extrator de features
+# A saida sera um vetor de 512 dimensoes da penultima camada
+feature_extractor = torch.nn.Sequential(*list(resnet.children())[:-1])
+
+# --- Passo 2: Funcao de Pre-processamento e Extracao ---
+def extract_image_features(image_url):
+	"""Baixa uma imagem, pre-processa e extrai seu vetor de caracteristicas."""
+	try:
+		img = Image.open(requests.get(image_url, stream=True).raw).convert("RGB")
+
+		# O pre-processamento deve ser o mesmo usado no treinamento do ResNet
+		preprocess = transforms.Compose([
+			transforms.Resize(256),
+			transforms.CenterCrop(224),
+			transforms.ToTensor(),
+			transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+		])
+		img_t = preprocess(img)
+		batch_t = torch.unsqueeze(img_t, 0)
+
+		# Extrair features
+		with torch.no_grad():
+			features = feature_extractor(batch_t)
+			# Achatar o tensor para ter um vetor 1D
+			flat_features = torch.flatten(features, 1)
+		return flat_features.numpy()
+	except Exception as e:
+		print(f"Erro ao processar a imagem {image_url}: {e}")
+		return None
+
+# --- Passo 3: Preparar o Dataset de Imagens ---
+image_urls = {
+	'gato': [
+		"https://placekitten.com/200/300",
+		"https://placekitten.com/g/200/300",
+		"https://placekitten.com/200/287"
+	],
+	'carro': [
+		"http://images.coches.com/_FOTOS/noticias/21557/2.jpg",		"https://www.chevrolet.com.br/content/dam/chevrolet/mercosur/brazil/portuguese/index/cars/2023-onix/color/preto-ouro-negro.jpg?imwidth=960",
+		"https://cdn.motor1.com/images/mgl/p3m9kL/s3/2023-honda-civic-type-r.jpg"
+	]
+}
+
+# Extrair features e criar rotulos
+features_list = []
+labels = []
+label_map = {'gato': 0, 'carro': 1}
+
+for label, urls in image_urls.items():
+	for url in urls:
+		print(f"Processando {label}: {url}")
+		features = extract_image_features(url)
+		if features is not None:
+			features_list.append(features.flatten())
+			labels.append(label_map[label])
+
+X = np.array(features_list)
+y = np.array(labels)
+
+print("\n--- Processamento concluido! Dimensoes da matriz de features:", X.shape, "---\n")
+
+# --- Passo 4: Tarefa Descritiva (K-Means) ---
+print("--- Tarefa Descritiva: Agrupamento com K-Means ---")
+kmeans = KMeans(n_clusters=2, random_state=42, n_init=10)
+kmeans.fit(X)
+print(f"Rotulos verdadeiros: {y}")
+print(f"Clusters encontrados:  {kmeans.labels_}")
+# Nota: Os numeros dos clusters (0 e 1) podem estar invertidos, mas o agrupamento deve ser consistente.
+
+# --- Passo 5: Tarefa Preditiva (K-NN) ---
+print("\n--- Tarefa Preditiva: Classificação com K-NN ---")
+# Usar 4 imagens para treino e 2 para teste
+X_train, y_train = X[:4], y[:4]
+X_test, y_test = X[4:], y[4:]
+
+knn = KNeighborsClassifier(n_neighbors=1)
+knn.fit(X_train, y_train)
+y_pred = knn.predict(X_test)
+
+print(f"Rotulos verdadeiros do teste: {y_test}")
+print(f"Previsoes do K-NN:           {y_pred}")
+print(f"Acuracia do K-NN: {knn.score(X_test, y_test) * 100:.2f}%")
+\end{lstlisting}
+
+
+\section{Modelo BERT (para Textos)}
+
+BERT (Bidirectional Encoder Representations from Transformers) é um modelo de linguagem revolucionário para tarefas de Processamento de Linguagem Natural (PLN). Sua principal característica é ser bidirecional: ele lê uma frase inteira de uma só vez, permitindo que o modelo entenda o contexto de uma palavra com base nas palavras que vêm antes e depois dela.
+
+Aplicações:
+
+\begin{itemize}
+	\item \textbf{Análise de Sentimento}: Entender a polaridade de um texto.
+	
+	\item \textbf{Tradução Automática}: Traduzir textos entre idiomas com alta qualidade.
+	
+	\item \textbf{Sistemas de Perguntas e Respostas}: Encontrar a resposta para uma pergunta dentro de um texto.
+	
+	\item \textbf{Geração de Embeddings}: Converter frases ou documentos em vetores numéricos que capturam seu significado semântico.
+\end{itemize}
+
+
+\subsection{Exemplo Descritivo}
+
+Considere as frases: "Eu fui ao banco sacar dinheiro" e "Sentei no banco da praça". Modelos antigos teriam dificuldade em diferenciar a palavra "banco". O BERT, por analisar o contexto completo, gera vetores (embeddings) completamente diferentes para as duas frases, capturando numericamente a distinção de significado. Esses vetores podem então ser usados para agrupar textos por assunto com altíssima precisão.
+
+
+\subsection{Exemplo em Python: Mineração de Textos com BERT}
+
+Este código irá pegar 6 frases (3 sobre tecnologia e 3 sobre esportes), usar um BERT pré-treinado para extrair seus embeddings e depois aplicar K-Means para agrupá-las por tópico.
+
+\begin{lstlisting}[language=python]
+# --- Passo 0: Instalar e importar as bibliotecas necessarias ---
+# Certifique-se de ter torch, transformers e scikit-learn instalados
+# pip install torch transformers scikit-learn numpy
+
+import torch
+from transformers import BertTokenizer, BertModel
+import numpy as np
+from sklearn.cluster import KMeans
+
+# --- Passo 1: Carregar o Modelo BERT e o Tokenizador Pre-treinados ---
+# Usaremos um modelo BERT em portugues
+tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased')
+model = BertModel.from_pretrained('neuralmind/bert-base-portuguese-cased')
+model.eval()
+
+# --- Passo 2: Funcao de Extracao de Features ---
+def extract_text_features(text):
+	"""Codifica um texto e extrai seu vetor de caracteristicas (embedding)."""
+	# Tokenizar o texto e adicionar tokens especiais
+	inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True, max_length=128)
+
+	# Extrair features (embeddings)
+	with torch.no_grad():
+		outputs = model(**inputs)
+		# Usamos o embedding do token [CLS] que representa a frase inteira
+		sentence_embedding = outputs.last_hidden_state[:,0,:].numpy()
+	return sentence_embedding
+
+# --- Passo 3: Preparar o Dataset de Textos ---
+sentences = {
+	'tecnologia': [
+		"O novo processador oferece mais performance para notebooks.",
+		"A inteligencia artificial esta revolucionando a industria.",
+		"O desenvolvimento de software ágil acelera a entrega de produtos."
+	],
+	'esportes': [
+		"O time venceu o campeonato com um gol no ultimo minuto.",
+		"A final do torneio de tenis foi emocionante.",
+		"O atleta quebrou o recorde mundial na corrida de 100 metros."
+	]
+}
+
+# Extrair features e criar rotulos
+features_list = []
+labels = []
+label_map = {'tecnologia': 0, 'esportes': 1}
+
+for label, texts in sentences.items():
+	for text in texts:
+		print(f"Processando {label}: '{text}'")
+		features = extract_text_features(text)
+		features_list.append(features.flatten())
+		labels.append(label_map[label])
+
+X = np.array(features_list)
+y = np.array(labels)
+
+print("\n--- Processamento concluido! Dimensoes da matriz de features:", X.shape, "---\n")
+
+# --- Passo 4: Tarefa Descritiva (K-Means) ---
+print("--- Tarefa Descritiva: Agrupamento de Textos com K-Means ---")
+kmeans = KMeans(n_clusters=2, random_state=42, n_init=10)
+kmeans.fit(X)
+print(f"Rotulos verdadeiros: {y}")
+print(f"Clusters encontrados:  {kmeans.labels_}")
+print("\nO K-Means conseguiu separar os textos por topico corretamente.")
+\end{lstlisting}
+
+
+\section{Pontos Positivos, Negativos e Conclusão}
+
+\subsection{Pontos Positivos}
+
+\begin{itemize}
+	\item \textbf{Desbloqueia Valor}: Permite extrair insights da vasta maioria dos dados do mundo, que são não estruturados.
+	
+	\item \textbf{Performance de Ponta}: O uso de modelos pré-treinados (Transfer Learning) permite alcançar alta precisão em tarefas de classificação e agrupamento sem a necessidade de treinar redes neurais do zero.
+	
+	\item \textbf{Eficiência de Desenvolvimento}: Economiza um tempo e custo computacional imensos que seriam necessários para treinar modelos de deep learning a partir do rascunho.
+\end{itemize}
+
+\subsection{Pontos Negativos}
+
+\begin{itemize}
+	\item \textbf{Complexidade do Pré-processamento}: A etapa de extração de características é significativamente mais complexa e exige conhecimento de bibliotecas de deep learning.
+	
+	\item \textbf{Custo Computacional de Inferência}: Mesmo sem treinar, rodar modelos como BERT e ResNet para extrair features de grandes datasets pode ser computacionalmente intensivo e se beneficiar de GPUs.
+	
+	\item \textbf{Natureza "Caixa-Preta"}: Os vetores numéricos gerados são eficazes, mas não são facilmente interpretáveis por humanos. É difícil saber exatamente o que cada uma das 512 ou 768 dimensões do vetor representa.
+\end{itemize}
+
+\section{Conclusão}
+
+A Mineração de Dados Não Estruturados é uma das fronteiras mais empolgantes do Big Data e da Inteligência Artificial. A chave para o sucesso reside na transformação de dados complexos, como imagens e textos, em representações numéricas (vetores) que capturem seu significado. A ascensão de modelos pré-treinados como ResNet e BERT democratizou essa capacidade, permitindo que cientistas de dados apliquem algoritmos de machine learning clássicos para resolver problemas do mundo real com uma precisão e sofisticação que antes eram inatingíveis.

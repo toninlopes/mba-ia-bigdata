@@ -6,3 +6,4 @@ MBA - IA e Big Data.pdf
 *.gz
 *.toc
 ^.*\.DS_Store$
+.DS_Store

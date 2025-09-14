@@ -1,0 +1,85 @@
+\chapter{Introdução ao Gerenciamento de Dados em Larga Escala e Big Data}
+
+\section{Mineração de Dados e a Descoberta de Conhecimento}
+
+A base para trabalhar com grandes volumes de dados é entender o processo pelo qual extraímos valor deles. Os termos Mineração de Dados e Descoberta de Conhecimento em Bases de Dados (KDD) são centrais nesse contexto.
+
+
+\section{Conceito de Descoberta de Conhecimento em Base de Dados (KDD)}
+
+O KDD é o processo macro e abrangente. KDD é o "processo não trivial de identificar padrões válidos, inéditos, potencialmente úteis e, em essência, compreensíveis nos dados".
+
+Pense no KDD como uma expedição completa em busca de tesouros. Ele envolve todas as etapas, desde o planejamento e a preparação até a análise final dos achados.
+
+O Processo KDD é um ciclo iterativo composto pelas seguintes fases:
+
+\begin{enumerate}
+	\item \textbf{Coleta de Dados}: Obtenção e armazenamento dos dados brutos.
+	
+	\item \textbf{Preparação e Limpeza de Dados}: A fase mais demorada, onde os dados são organizados, formatados e corrigidos para garantir sua qualidade.
+	
+	\item \textbf{Incorporação de Conhecimento Prévio}: Utilização do conhecimento de especialistas do domínio para guiar a análise.
+	
+	\item \textbf{Mineração de Dados (Data Mining)}: A etapa central onde os algoritmos são aplicados para extrair os padrões.
+	
+	\item \textbf{Interpretação dos Resultados}: Análise e avaliação dos padrões encontrados para transformá-los em conhecimento útil.
+	
+	\item \textbf{Conhecimento}: O resultado final, que pode ser usado para tomar decisões de negócio.
+\end{enumerate}
+
+
+\section{Conceito de Mineração de Dados (Data Mining)}
+
+A Mineração de Dados é a etapa de extração de padrões dentro do processo KDD. É o "motor" analítico, a fase em que aplicamos algoritmos de aprendizado de máquina, estatística e inteligência artificial para vasculhar os dados e encontrar os "tesouros" (padrões).
+
+
+\section{Ciência e Engenharia de Dados}
+
+A popularização do KDD levou à formalização de duas áreas profissionais distintas:
+
+\begin{itemize}
+	\item \textbf{Ciência de Dados}: Focada na criação e treinamento de modelos preditivos, interpretação dos resultados e comunicação com as áreas de negócio. O cientista de dados é quem decide qual algoritmo usar e como interpretar seus resultados para gerar valor.
+	
+	\item \textbf{Engenharia de Dados}: Responsável por construir e manter a infraestrutura que permite aos cientistas de dados trabalhar. O engenheiro de dados cuida da coleta, armazenamento, limpeza e transformação dos dados, garantindo que os "pipelines" de dados sejam eficientes e confiáveis.
+\end{itemize}
+
+
+\section{Armazenamento de Dados em Larga Escala}
+
+Para realizar KDD, precisamos primeiro armazenar os dados de forma eficaz. Dois conceitos são fundamentais: Data Warehouse e Data Lake.
+
+
+\subsection{Conceito de Data Warehouse}
+
+Um Data Warehouse é um grande repositório de dados estruturados e estáveis. Ele consolida e organiza dados de diversas fontes transacionais (como sistemas de vendas ou de RH) de uma empresa, registrando a história da evolução desses dados. É otimizado para consultas e análises, sendo a principal ferramenta para tarefas de Business Intelligence (BI), que se baseiam em regras e relatórios pré-definidos.
+
+\subsection{Conceito de Data Lake}
+
+Um Data Lake é um repositório que armazena dados em seu formato bruto e não estruturado. Diferente do Data Warehouse, não há um planejamento rígido de como os dados serão usados. Ele pode conter logs de servidores, dados de sensores, imagens, textos, além de dados estruturados. Essa flexibilidade o torna ideal para a exploração de conhecimento e Mineração de Dados, onde o objetivo é descobrir padrões ainda desconhecidos.
+
+
+\section{Conceito de Big Data e os 3 Vs}
+
+O termo Big Data não se refere apenas a "muitos dados". Ele descreve cenários que apresentam desafios em pelo menos três dimensões principais, conhecidas como os "3 Vs":
+
+\begin{enumerate}
+	\item \textbf{Volume}: A quantidade massiva de dados sendo gerada e armazenada (terabytes, petabytes, etc.).
+	
+	\item \textbf{Velocidade}: A alta taxa com que os dados são recebidos e precisam ser processados, muitas vezes em tempo real (streaming de dados, transações financeiras).
+	
+	\item \textbf{Variedade}: A grande diversidade de formatos de dados, desde tabelas estruturadas até textos, imagens, vídeos e dados de sensores não estruturados.
+\end{enumerate}
+
+Os dados se tornam "Big Data" quando qualquer um desses "Vs" excede a capacidade do sistema de processá-los em um tempo aceitável.
+
+\subsection{Outros "Vs": Veracidade e Valor}
+
+Além dos 3 Vs técnicos, existem outros dois Vs que são mais ligados ao negócio:
+
+\begin{itemize}
+	\item \textbf{Veracidade}: Refere-se à confiabilidade e à qualidade dos dados. Eles são precisos e refletem a realidade?
+	
+	\item \textbf{Valor}: Indica o quão úteis os dados são para gerar insights e benefícios para a organização.
+\end{itemize}
+
+Esses dois "Vs" são fundamentais para garantir que o resultado do processo de KDD seja, de fato, relevante e confiável para a tomada de decisões.
