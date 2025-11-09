@@ -1,0 +1,329 @@
+\chapter{Distribuições de Probabilidade (Discretas)}
+
+Distribuições discretas são os "modelos" que usamos para descrever \textbf{Variáveis Aleatórias Discretas}, ou seja, qualquer coisa que possamos \textbf{contar} (e que tenha incerteza).
+
+\textbf{Exemplo:} Ao conveter "renda > 50k" para uma variável aleatória $X = 1$ e "renda <= 50k" para $X = 0$, a pergunta de interesse se torna matemática: qual é a probabilidade de $p = P(X = 1)$?
+
+A estatística busca entender e modelar esse parâmetro $p$ e o que o influencia.
+
+Sendo assim, é introduzida a famosa citação de Gerge Box: \textbf{"Todos os modelos estão errados, mas alguns são úteis"}. Isso significa que as distribuições de probabilidade são idealizações , mas são ferramentas incrivelmente úteis para aproximar a realidade.
+
+
+\section{Definições Fundamentais}
+
+Antes de detalhar os modelos, vamos explorar um pouco os conceitos centrais que descrevem uma variável aleatória discreta, como, por exemplo, \textbf{Função de Probabilidade (PMF)}, \textbf{Função de Distribuição Acumulada (CDF)}, \textbf{Esperança (Valor Esperado)} e \textbf{Variância}.
+
+Vamos utilizar o seguinte exemplo: Imagine um dado justo de 4 faces (um tetraedro), com as faces numeradas de 1 a 4. A nossa Variável Aleatória X é o resultado de um único lançamento deste dado.\\
+
+\textit{1. Função Massa de Probabilidade (PMF)}
+
+A PMF é o nosso "mapa" de probabilidades. Ela nos diz, para cada valor exato que X pode assumir, qual é a probabilidade de ele ocorrer.
+
+\begin{itemize}
+	\item \textbf{Definição Formal:} $f(x)=P(X=x)$.
+	
+	\item \textbf{Aplicação no D4:}
+	\subitem Os valores possíveis (x) são {1, 2, 3, 4}.
+	\subitem Como o dado é "justo", cada face tem a mesma chance de ocorrer (1 em 4).
+	\subitem $f(1)=P(X=1)=1/4=0.25$
+	\subitem $f(2)=P(X=2)=1/4=0.25$
+	\subitem $f(3)=P(X=3)=1/4=0.25$
+	\subitem $f(4)=P(X=4)=1/4=0.25$
+	\subitem $f(5)=P(X=5)=0$ (é impossível tirar 5)
+\end{itemize}
+
+A PMF é um gráfico de barras que mostra 0.25 para x=1, 0.25 para x=2, etc. A soma de todas as barras deve ser 1.\\
+
+\textit{2. Função de Distribuição Acumulada (CDF)}
+
+A CDF responde a uma pergunta diferente: qual é a probabilidade de $X$ ser menor ou igual a um certo valor $x$? Ela \textbf{acumula} as probabilidades da PMF.
+
+\begin{itemize}
+	\item \textbf{Definição Formal:} $F(x)=P(X \le x)$.
+	\item \textbf{Aplicação no D4:}
+	\subitem $F(1)=P(X \le 1)=f(1)=0.25$
+	\subitem $F(2)=P(X \le 2)=f(1)+f(2)=0.25+0.25=0.50$
+	\subitem $F(3)=P(X \le 3)=f(1)+f(2)+f(3)=0.75$
+	\subitem $F(4)=P(X \le 4)=f(1)+f(2)+f(3)+f(4)=1.00$
+\end{itemize}
+
+O ponto-chave é que a CDF é uma "função escada". Por exemplo, $P(X \le 2.5)$ é a mesma coisa que $P(X \le 2)$, então $F(2.5)=0.50$. Ela só "sobe" nos valores inteiros.\\
+
+\textit{3. Esperança (Valor Esperado) $E(X)$ ou $\mu$.}
+
+A Esperança é a \textbf{média teórica} da variável aleatória. É o "centro da gravidade" da PMF. Se você lançasse o dado milhares de vezes e tirasse a média dos resultados, ela se aproximaria da Esperança.
+
+\begin{itemize}
+	\item \textbf{Definição Formal:} $E(X) = \sum_{}^{}x * f(x)$.
+	\item \textbf{Aplicação no D4}:
+	\subitem $E(X)=(1 * f(1)) + (2 * f(2)) + (3 * f(3)) + (4 * f(4))$
+	\subitem $E(X)=(1 * 0.25) + (2 * 0.25) + (3 * 0.25) + (4 * 0.25)$
+	\subitem $E(X)=0.25 + 0.50 + 0.75 + 1.00 = 2.5$
+\end{itemize}
+
+\textbf{Nota:} O valor esperado (2.5) não é um valor que $X$ pode realmente assumir! Isso é perfeitamente normal. Ele representa o centro teórico da distribuição.\\
+
+\textit{4. Variância $V(X)$ ou $\sigma^{2}$ }
+
+A Variância mede a dispersão ou variabilidade dos resultados em torno da média ($\mu$). Uma variância baixa significa que os resultados estão quase sempre perto da média; uma variância alta significa que eles estão espalhados.
+
+\begin{itemize}
+	\item \textbf{Definição Formal:} $V(X) = E[(X - \mu)^2]$. É o valor esperado do "desvio quadrático da média".
+	\item \textbf{Aplicação no D4}: Sabemos que $\mu = 2.5$.
+	\begin{enumerate}
+		\item Calcule os desvios ao quadrado $(x - \mu)^2$:
+		\subitem Para $x=1$: $(1 - 2.5)^2 = (-1.5)^2 = 2.25$
+		\subitem Para $x=2$: $(2 - 2.5)^2 = (-0.5)^2 = 0.25$
+		\subitem Para $x=3$: $(3 - 2.5)^2 = (0.5)^2 = 0.25$
+		\subitem Para $x=4$: $(4 - 2.5)^2 = (1.5)^2 = 2.25$
+		
+		\item \textbf{Calcule a média (Esperança) desses desvios ao quadrado (ponderada pela PMF):}
+		\subitem $V(X)=(2.25 * f(1)) + (0.25 * f(2)) + (0.25 * f(3)) + (2.25 * f(4))$
+		\subitem $V(X)=(2.25 * 0.25) + (0.25 * 0.25) + (0.25 * 0.25) + (2.25 * 0.25)$
+		\subitem $V(X)=0.5625 + 0.0625 + 0.0625 + 0.5625 = 1.25$
+	\end{enumerate}
+\end{itemize}
+
+O Desvio Padrão ($\sigma$) é apenas a raiz quadrada da variância ($\sigma = \sqrt{1.25} \approx 1.118$), o que nos dá uma medida de dispersão na mesma unidade que $X$.
+
+
+\section{Três Modelos Discretos Essenciais}
+
+As três distribuições discretas mais comuns e suas propriedades:
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{ l p{5cm} l p{2cm} l p{2cm} l p{2cm} l } 
+		\hline
+		\textbf{Modelo} & \textbf{O que modela?} & \textbf{Valores de $x$} & \textbf{Esperança $E(X)$} & \textbf{Variância $V(X)$} \\
+		\hline % Outra linha horizontal
+		Bernoulli & Um único experimento com dois resultados (sucesso/fracasso). & $x=0,1$ & $p$ & $p(1-p)$ \\
+		\\
+		Binomial & O número de sucessos em n experimentos Bernoulli independentes. & $x=0,1,...,n$ & $np$ & $np(1-p)$ \\
+		\\
+		Poisson & O número de eventos ocorrendo em um intervalo fixo de tempo ou espaço. & $x=0,1,2,...$ & $\lambda$  & $\lambda$  \\ 
+		\hline % Última linha horizontal
+	\end{tabular}
+\end{table}
+
+
+\subsection{Distribuição de Bernoulli}
+
+É o bloco de construção mais simples. Modela um \textbf{único experimento} que só pode resultar em "sucesso" ($X=1$) ou "fracasso" ($X=0$).
+
+\textbf{O que modela:} Um único experimento com exatamente dois resultados possíveis, que rotulamos como "sucesso" ($X=1$) ou "fracasso" ($X=0$).
+
+\textbf{Exemplos:}
+\begin{itemize}
+	\item Transmissão de um bit com ou sem erro.
+	\item Uma peça ser defeituosa ou não.
+	\item Um indivíduo ganhar mais ou menos de \$50 mil por ano.
+	\item Classificação de e-mail como spam.
+\end{itemize}
+
+\textbf{Parâmetro:}
+\begin{itemize}
+	\item A probabilidade de sucesso $p = P(X=1)$.
+	\item Ou seja, $p = P(Trasmissão de um bit com sucesso)$, $p = P(Peça sem defeito)$, etc.
+\end{itemize}
+
+\textbf{Característica Chave:}
+\begin{itemize}
+	\item \textbf{PMF:} $f(x) = p^x (1-p)^{1-x}$ para $\in \{ 0,1 \}$
+	\item \textbf{Esperança:} $E(X): p$.
+	\item \textbf{Variância:} $V(X): p(1-p)$.
+\end{itemize}
+
+
+\subsection{Distribuição Binomial}
+
+Modela o \textbf{número total de sucessos ($Y$)} em \textbf{$n$ repetições independentes} de um experimento Bernoulli. Em outras palavras, é simplesmente a soma de vários experimentos Bernoulli independentes.
+
+\textbf{O que modela:} O número total de sucessos ($X$) que ocorrem em $n$ repetições fixas e independentes de um experimento Bernoulli 3.
+
+\textbf{Exemplo:}
+
+\begin{itemize}
+	\item \textbf{Arremessos Livres no Basquete}. Um jogador vai arremessar $n=10$ lances livres (um número fixo de tentativas). A probabilidade $p$ de ele acertar qualquer arremesso é constante (ex: $p=0.7$ ou 70\%), e cada arremesso é independente do outro.
+	\subitem $X$: O número total de arremessos que ele acertou (pode ser 0, 1, 2, ..., 10).
+	\subitem Queremos saber: Qual a $P(X=8)$? (A chance de ele acertar exatamente 8 dos 10).
+\end{itemize}
+
+\textbf{Parâmetros:}
+\begin{itemize}
+	\item $n$: O número total de tentativas (ex: 10 arremessos).
+	\item $p$: A probabilidade de sucesso em uma tentativa (ex: 0.7).
+\end{itemize}
+
+\textbf{Características Chaves:}
+\begin{itemize}
+	\item \textbf{PMF:} $f(x) = C_x^n p^x (1-p)^{n-x}$ (onde $C_x^n$ é o "número de combinações").
+	\item \textbf{Esperança:} $E(X)$: $np$.
+	\item \textbf{Variância:} $V(X)$: $np(1-p)$.
+\end{itemize}
+
+
+\subsection{Distribuição de Poisson}
+
+Modela o número de ocorrências de um evento em um \textbf{intervalo fixo} (de tempo, espaço, etc.).
+
+\textbf{O que modela:} O número de eventos ($X$) que ocorrem em um intervalo fixo de tempo ou espaço, dada uma taxa média constante.
+
+\textbf{Exemplo:}
+\begin{itemize}
+	\item \textbf{Chamadas em um Call Center}. Um call center de suporte recebe, em média, $\lambda = 5$ chamadas a cada 15 minutos (esse é o nosso "intervalo fixo").
+	\subitem $X$: O número de chamadas que chegam nos próximos 15 minutos (pode ser 0, 1, 2, 3, ...).
+	\subitem Queremos saber: Qual a $P(X=0)$? (A chance de não receber nenhuma chamada nesse intervalo).
+\end{itemize}
+
+\textbf{Parâmetro:} $\lambda$ (Lambda), a taxa média de eventos por intervalo (ex: 5).
+
+\textbf{Características Chave:}
+\begin{itemize}
+	\item \textbf{PMF:} $f(x) = \frac{e^{-\lambda} * \lambda^x}{x!}$ (onde $e$ é a constante de Euler).
+	\item \textbf{Esperança:} $E(X)$: $\lambda$.
+	\item \textbf{Variância:} $V(X): \lambda$ (uma propriedade única: a média é igual à variância).
+\end{itemize}
+
+\subsection{Relação Entre os Modelos}
+
+É crucial entender como os models Bernoulli, Binomial e Poisson se conectam:
+
+\begin{enumerate}
+	\item \textbf{Bernoulli → Binomial:} A Binomial é a soma de $n$ Bernoulli independentes. (O número de lances livres acertados é a soma de 10 experimentos Bernoulli de "acertou/errou").
+	\item \textbf{Binomial → Poisson:} A Poisson é um caso limite da Binomial. Se você tem um $n$ (número de tentativas) muito grande e um $p$ (probabilidade de sucesso) muito pequeno, a Binomial se torna difícil de calcular e pode ser perfeitamente aproximada pela Poisson.
+\end{enumerate}
+
+
+\chapter{Distribuições de Probabilidade (Contínuas)}
+
+Distribuições contínuas são os "modelos" que usamos para descrever \textbf{Variáveis Aleatórias Contínuas}. Enquanto as distribuições discretas lidavam com \textbf{contagens} (0, 1, 2, 3...), as contínuas lidam com \textbf{medições} (como 1.75m, 42.8ms, 10.5kg). São variáveis que podem assumir um número infinito de valores dentro de um intervalo.
+
+Para variáveis contínuas, não usamos mais a Função Massa de Probabilidade (PMF), porque a probabilidade de um resultado \textbf{exato} é zero. (Ex: A chance de você ter \textbf{exatamente} 1.7500000... metros de altura é zero).
+
+Em vez disso, usamos a \textbf{Função Densidade de Probabilidade (PDF)}, $f(x)$.
+
+Aqui estão as regras fundamentais que a definem:
+
+\begin{enumerate}
+	\item \textbf{Probabilidade Zero em um Ponto:} A probabilidade de $X$ ser \textbf{exatamente igual} a qualquer valor é 0.
+	\item \textbf{Probabilidade é uma Área:} O que nos interessa é a probabilidade de $X$ cair \textbf{dentro de um intervalo} (ex: entre 1.70m e 1.80m).
+	\item \textbf{Cálculo (Integral):} Essa probabilidade é a \textbf{área sob a curva (calculada por uma integral)} da PDF dentro daquele intervalo.
+	\subitem $P(a \le X \le b) = \int_{a}^{b} f(x)dx$
+	
+	\item \textbf{Área Total é 1:} A área total sob a curva inteira da PDF (de $-\infty$ a $+\infty$) deve ser 1 (ou 100\%).
+\end{enumerate}
+
+Elas são usadas para modelar qualquer fenômeno onde o resultado é uma medição.
+
+\textit{Exemplo 1: Controle de Qualidade (Peso do Produto)}
+\begin{itemize}
+	\item \textbf{Experimento:} Uma máquina em uma fábrica enche pacotes de café com 500g.
+	\item \textbf{v.a. Contínua $W$:} O \textbf{peso exato} de um pacote (ex: 501.2g, 498.9g, 500.123...g).
+	\item \textbf{Utilização:} A engenharia de produção não pergunta "qual a chance de um pacote ter \textbf{exatamente} 500.00g?", mas sim:
+	\subitem "Qual é a probabilidade do peso $W$ estar dentro do nosso limite de tolerância?" ( $P(498 \le W \le 502)$? )
+	\subitem A PDF nos permite calcular essa "área" de pacotes aceitáveis.\\
+\end{itemize}
+
+\textit{Exemplo 2: Análise Web (Tempo de Engajamento)}
+\begin{itemize}
+	\item \textbf{Experimento:} Um usuário visita a página principal de um site de e-commerce.
+	\item \textbf{v.a. Contínua $T$:} O \textbf{tempo} (em segundos) que o usuário passa na página antes de sair.
+	\item \textbf{Utilização:} O time de UX (User Experience) usa um modelo contínuo para responder:
+	\subitem "Qual a probabilidade de um usuário passar \textbf{mais de 30 segundos} na página?" ( $P(T > 30)$? )
+	\subitem "Qual a probabilidade de o usuário sair \textbf{nos primeiros 5 segundos}?" ( $P(T < 5)$? )\\
+\end{itemize}
+
+\textit{Exemplo 3: Score de Risco (Machine Learning)}
+\begin{itemize}
+	\item \textbf{Experimento:} Um modelo de ML (como uma Regressão Logística) analisa o pedido de um empréstimo.
+	\item \textbf{v.a. Contínua $S$:} O "score de risco" que o modelo gera, um número entre 0.0 e 1.0 (ex: 0.8714).
+	\item \textbf{Utilização:} O banco usa a distribuição dos scores para definir suas políticas:
+	\subitem "Se definirmos a nota de corte em 0.9, qual a *proporção* (probabilidade) de candidatos que serão automaticamente rejeitados?" ( $P(S > 0.9)$? )
+\end{itemize}
+
+
+Em todos esses casos, a PDF nos dá a "forma" dos dados (a curva) e a integral nos dá a probabilidade (a área).
+
+
+\section{Três Modelos Contínuos Essenciais}
+
+O mundo real é dominado por medições, não apenas contagens. Enquanto os modelos discretos (Binomial, Poisson) lidam com "quantos" (ex: 5 cliques), os modelos contínuos lidam com "quanto" (ex: 5.34 segundos).
+
+A importância dos modelos contínuos é que eles nos dão um "vocabulário" matemático para descrever e quantificar a incerteza em fenômenos como tempo, distância, peso, temperatura, dinheiro, scores de risco. Eles resolvem a necessidade de responder perguntas práticas sobre essas medições, como:
+
+\begin{itemize}
+	\item Probabilidade de exceder um limite: "Qual a chance do tempo de resposta do meu servidor ser maior que 2 segundos?
+	\item Probabilidade de falha: "Qual a chance desse componente falhar antes de 1.000 horas de uso?
+	\item Probabilidade de estar em um intervalo: "Qual a proporção de clientes que gastam entre R\$50 e R\$100?
+\end{itemize}
+
+\subsection{Distribuição Exponencial}
+
+A Distribuição Exponencial está intrinsecamente ligada à Poisson. Se a Poisson modela quantos eventos ocorrem em um intervalo, a Exponencial modela o tempo (ou espaço) entre esses eventos.
+
+\begin{itemize}
+	\item \textbf{O que modela:} O tempo de espera até a próxima ocorrência de um evento.
+	\item \textbf{Parâmetro-chave:} $\lambda$ (lambda), a taxa média de ocorrência (a mesma da Poisson).
+	\item \textbf{Fórmulas-chave:}
+	\subitem \textbf{PDF (Função Densidade):} $f(x) = \lambda e^{-\lambda x}$ (para $x \ge 0$).
+	\subitem \textbf{Esperança (Média):} $E(X) = 1/\lambda$.
+	\subitem \textbf{Variância:} $V(X) = 1/\lambda^2$.
+\end{itemize}
+
+
+\textbf{Exemplo (Intervalo entre Chegadas):}
+
+\begin{itemize}
+	\item Em vez de contar quantos clientes chegam a uma loja por hora (Poisson), a Exponencial modela o tempo em minutos entre a chegada de um cliente e o próximo.
+	\item Uma loja recebe, em média, $\lambda = 10$ clientes por hora.
+	\item $X$ é o tempo (em horas) até a chegada do próximo cliente.
+	\item A média de tempo entre as chegadas é $E(X) = 1/\lambda = 1/10$ de hora (ou 6 minutos).
+	\item Se quisermos saber a probabilidade de o próximo cliente demorar mais de 15 minutos (0.25 horas), calculamos a integral (área) da PDF $f(x) = 10e^{-10x}$ de 0.25 até o infinito.
+\end{itemize}
+
+
+\subsection{Distribuição Normal (Gaussiana)}
+
+É a distribuição mais comum, modelando fenômenos que se agrupam em torno de uma média, resultantes da soma de muitos fatores aleatórios.
+
+\begin{itemize}
+	\item \textbf{O que modela:} Qualquer fenômeno que seja o resultado da soma de muitos pequenos fatores aleatórios. Ela é a base do Teorema do Limite Central. É definida por sua média (centro) e desvio padrão (largura).
+	\item \textbf{Parâmetros:} $\mu$ (mu), a média (centro da curva), e $\sigma^2$ (sigma ao quadrado), a variância (que define a "largura" da curva)
+	\item \textbf{Fórmulas-Chave}:
+	\subitem \textbf{PDF (Função Densidade):} $f(x) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$
+	\subitem \textbf{Esperança (Média)}: $E(X) = \mu$
+	\subitem \textbf{Variância:} $V(X) = \sigma^2$
+\end{itemize}
+
+\textbf{Exemplo (Erros de Medição GPS):}
+
+\begin{itemize}
+	\item Quando seu GPS informa sua localização, essa medição não é perfeita. Ela tem um pequeno erro aleatório causado por flutuações atmosféricas, tempo de sinal do satélite, etc. A distribuição desses erros (ex: "erro em metros a leste/oeste") segue uma curva Normal, com $\mu=0$ (o erro médio é zero).
+	\item O erro deve ser centrado em 0, então $\mu = 0$.
+	\item O fabricante informa que o desvio padrão é $\sigma = 3$ metros.
+	\item Usando a PDF, podemos calcular a probabilidade do erro estar entre -3m e +3m (1 desvio padrão), que é de aproximadamente 68\%.
+\end{itemize}
+
+
+\subsection{Distribuição Uniforme}
+
+É o modelo mais simples de probabilidade contínua.
+
+\begin{itemize}
+	\item \textbf{O que modela:} Uma situação onde todos os resultados dentro de um intervalo $[a, b]$ são igualmente prováveis. Sua PDF é literalmente um retângulo.
+	\item \textbf{Parâmetros:} $a$ (o valor mínimo) e $b$ (o valor máximo).
+	\item \textbf{Fórmulas-Chave:}
+	\subitem \textbf{PDF (Função Densidade):} $f(x) = \frac{1}{b-a}$ (para $x$ entre $a$ e $b$).
+	\subitem \textbf{Esperança (Média):} $E(X) = \frac{a+b}{2}$.
+	\subitem \textbf{Variância:} $V(X) = \frac{(b-a)^2}{12}$
+\end{itemize}
+
+\textbf{Exemplos (Análise de Risco de Custo):}
+
+\begin{itemize}
+	\item Você estima que um projeto custará entre R\$10.000 e R\$15.000, e não tem ideia de qual valor é mais provável.
+	\item Temos $a = 10000$ e $b = 15000$.
+	\item A média (valor esperado) do custo é $E(X) = \frac{10000 + 15000}{2} = R\$ 12.500$.
+	\item A PDF é uma linha reta horizontal em $f(x) = \frac{1}{15000 - 10000} = \frac{1}{5000}$. Se quiséssemos saber a chance do custo ser menor que R\$11.000, calcularíamos a área desse retângulo de $a=10000$ até $b=11000$.
+\end{itemize}

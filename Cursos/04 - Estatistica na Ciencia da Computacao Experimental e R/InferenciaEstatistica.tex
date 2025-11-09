@@ -1,0 +1,148 @@
+\chapter{Inferência Estatística}
+
+É importante definirmos alguns conceitos antes de descrevermos o que é Inferência Estatística.
+
+
+\textbf{População vs. Amostra}
+
+A inferência estatística existe porque vivemos em um cenário de dualidade \textbf{População} e \textbf{Amostra}.
+
+\begin{itemize}
+	\item \textbf{População:} É o \textbf{universo completo} de todos os itens de interesse. É o "todo" que queremos estudar (ex: todos os usuários da sua plataforma, todas as músicas no Spotify).
+	\item \textbf{Amostra:} É um \textbf{subconjunto} selecionado da população. É a parte que realmente temos acesso e podemos analisar.
+\end{itemize}
+
+
+\textbf{Atores Principais: Parâmetro vs. Estimador.}
+
+\begin{itemize}
+	\item \textbf{Parâmetro (da População)}:
+		\subitem \textbf{O que é:} Uma medida numérica que descreve uma característica da \textbf{População}.
+		\subitem \textbf{Exemplos:} A média real de idade de todos os usuários ($\mu$), a proporção real de todas as músicas que são do gênero rock ($p$).
+		\subitem \textbf{Característica-chave:} É um valor \textbf{fixo}, mas \textbf{desconhecido}. É a "verdade" que estamos tentando descobrir.
+		
+	\item \textbf{Estimador (ou Estatística) (da Amostra)}:
+		\subitem \textbf{O que é:} Uma função da \textbf{Amostra} usada para estimar um parâmetro.
+		\subitem \textbf{Exemplos:} A média de idade dos 1.000 usuários que amostramos ($\overline{X}$), a proporção de músicas de rock nas 500 músicas que analisamos ($\hat{p}$).
+		\subitem \textbf{Característica-chave:} É uma \textbf{Variável Aleatória}. O seu valor muda dependendo de qual amostra selecionamos.
+		
+	\item \textbf{Estimativa:}
+		\subitem \textbf{O que é:} O \textbf{valor numérico específico} que o estimador assume para a noss* amostra em particular.
+		\subitem \textbf{Exemplo:} Se a média de idade na nossa amostra foi 32.5 anos, então a estimativ* $\overline{x} = 32.5$.
+\end{itemize}
+
+
+Com os atores definidos, a inferência é o \textbf{processo} de usar as informações da amostra (as \textbf{estimativas}) para tirar conclusões sobre a população (os \textbf{parâmetros}). Como sabemos que o \textbf{estimador} ($\overline{X}$) é uma variável aleatória, podemos estudar a sua \textbf{distribuição de probabilidade} (chamada de \textbf{distribuição amostral}). É essa distribuição que nos permite "dar o salto" da amostra para a população com um nível de confiança conhecido.
+
+Esse processo se divide em dois ramos principais:
+
+\begin{enumerate}
+	\item \textbf{Estimação:} Tentar \textbf{estimar} o valor do parâmetro (ex: "Qual é a média $\mu$?").
+	\item \textbf{Teste de Hipóteses:} Tentar \textbf{decidir} sobre uma afirmação a respeito do parâmetro (ex: "A média $\mu$ é maior que 30?").
+\end{enumerate}
+
+
+\section{Problemas de Inferência Estatística}
+
+A inferência estatística é o processo de usar dados de uma \textbf{amostra} para tirar conclusões sobre uma \textbf{população} inteira. E como vimos anteriormente, esse processo se divide em dois ramos principais:
+
+\begin{enumerate}
+	\item \textbf{Estimação:} Tenta responder à pergunta: "\textbf{Qual é o valor} do parâmetro da população?".
+		\subitem \textbf{Aplicação:} Usamos quando queremos \textbf{quantificar} uma característica desconhecida.
+		\subitem \textbf{Exemplo:} Qual é a \textbf{proporção ($p$)} real de clientes que irão cancelar a assinatura no próximo mês?
+	
+	\item \textbf{Teste de Hipóteses:} Tenta responder à pergunta: "\textbf{Uma afirmação} sobre o parâmetro é plausível?".
+		\subitem \textbf{Aplicação:} Usamos quando queremos \textbf{tomar uma decisão} ou validar uma mudança.
+		\subitem \textbf{Exemplo:} O novo layout do nosso site (B) fez a taxa de cliques média ($\mu_B$) ser maior que a taxa do layout antigo ($\mu_A$)?.
+\end{enumerate}
+
+
+\subsection{Estimativa Pontual}
+
+A Estimação Pontual é o método de estimação mais simples. Ela usa um \textbf{único valor} (um "ponto") calculado a partir da amostra como o nosso \textbf{"melhor palpite"} para o parâmetro desconhecido da população.
+
+Na prática, aplicamos uma função (o \textbf{estimador}) aos nossos dados amostrais para obter um número (a \textbf{estimativa}). 
+
+\textbf{Exemplo:} Taxa de Cliques (Click-Through Rate - CTR).
+
+\begin{itemize}
+	\item \textbf{O Cenário:} Você é um cientista de dados em uma empresa de e-commerce. Você quer saber a verdadeira taxa de cliques (CTR) de um novo botão "Compre Agora".
+	\item \textbf{O Parâmetro (Desconhecido):} $p$. Esta é a proporção real, na população (todos os usuários futuros), de pessoas que clicarão no botão. É um valor fixo que não conhecemos.
+	\item \textbf{A Amostra:} Você realiza um Teste A/B, mostrando o botão para $n=5.000$ usuários (sua amostra).
+	\item \textbf{Os Dados Amostrais:} Desses 5.000 usuários, 350 clicaram no botão.
+	\item \textbf{O Estimador (A Fórmula):} A fórmula que você usa para estimar $p$ é o estimador da proporção amostral, $\hat{p} = \frac{X}{n}$ (onde $X$ é o número de cliques e $n$ é o total da amostra).
+	\item \textbf{A Estimativa Pontual (O "Melhor Palpite"):} O valor numérico que o seu estimador encontrou:
+		\subitem $$  \hat{p}_{obs} = \frac{350}{5.000} = 0.07$$
+\end{itemize}
+
+Sua estimativa pontual para a verdadeira taxa de cliques $p$ é $7\%$.
+
+
+\subsection{Propriedade dos Estimadores}
+
+Como poderíamos, teoricamente, usar diferentes estatísticas para estimar o mesmo parâmetro (ex: usar a média da amostra, a mediana da amostra, etc.), precisamos de critérios para saber qual é o "melhor" estimador. Esses critérios são as 
+\textbf{Propriedades dos Estimadores}.
+
+Uma das prinicpais propriedade é a \textbf{Não-Viesada (unbiased)}. Um estimador é "não-viesado" se, na média de todas as amostras possíveis, ele acerta exatamente o parâmetro verdadeiro. Formalmente, seu valor esperado é igual ao parâmetro.
+
+\textbf{Exemplo:}
+\begin{itemize}
+	\item \textbf{A Pergunta:} O estimador $\hat{p} = X/n$ (que acabamos de usar) é uma boa escolha? Ele é "não-viesado" para $p$?
+	
+	\item \textbf{A Prova}:
+		\subitem Queremos saber o valor de $E(\hat{p})$.
+		\subitem Substituímos a fórmula: $E(\hat{p}) = E\left(\frac{X}{n}\right)$.
+		\subitem Podemos tirar a constante $1/n$ da esperança: $E(\hat{p}) = \frac{1}{n} \cdot E(X)$.
+		\subitem $X$ é o \textbf{"número de cliques (sucessos) em $n$ tentativas"}. $X$ segue uma Distribuição Binomial($n, p$).
+		\subitem E, como vimos na tabela de distribuições, a Esperança (Média) de uma Binomial é $E(X) = np$.
+		\subitem Substituindo de volta: $E(\hat{p}) = \frac{1}{n} \cdot (np) = p$.
+		
+	\item \textbf{Conclusão:} Como $E(\hat{p})=p$, provamos que o estimador da proporção amostral $\hat(p)$ é um estimador não-viesado para a proporção da população $p$. Por isso, ele é o estimador "padrão" usado na prática.
+\end{itemize}
+
+
+\subsection{Estimativa Intervalar}
+
+Como vimos, a \textbf{Estimativa Pontual} nos dá um "melhor palpite" (ex: a média da amostra $\overline{x}$ é 32.5). No entanto, a probabilidade desse palpite ser \textbf{exatamente} igual ao valor verdadeiro da população ($\mu$) é praticamente zero. É um palpite preciso, mas quase certamente errado.
+
+Em vez de um único palpite, o Intervalo de Confiança (IC) nos fornece uma \textbf{faixa de valores plausíveis} para o parâmetro da população, calculada a partir da nossa amostra.
+
+A fórmula para a maioria dos ICs segue esta estrutura:
+
+\begin{center}
+	\textbf{$Estimativa Pontual \pm Margem de Erro$}
+\end{center}
+
+A \textbf{Margem de Erro} é um valor que calculamos e que depende de duas coisas:
+\begin{enumerate}
+	\item \textbf{O Nível de Confiança:} (Quão confiantes queremos ser? 90\%, 95\%, 99\%).
+	\item \textbf{A Variabilidade da Amostra:} (O quão "barulhentos" ou "espalhados" são nossos dados, medido pelo \textbf{erro padrão}).
+\end{enumerate}
+
+\textbf{O Ponto Crucial: O Nível de Confiança (ex: 95\%)}
+
+Este é o conceito mais importante. O que significa \textbf{"95\% de confiança"}?
+
+\begin{itemize}
+	\item \textbf{Interpretação Errada:} Não significa "há 95\% de chance de o parâmetro $\mu$ estar neste intervalo". O parâmetro $\mu$ é fixo, ele está ou não está no intervalo.
+	\item \textbf{Interpretação Correta:} A confiança está no \textbf{método}, não em um resultado específico. "95\% de confiança" significa: "Se repetíssemos nosso experimento 100 vezes (coletando 100 amostras diferentes) e calculássemos 100 intervalos de confiança, esperaríamos que \textbf{95 desses 100 intervalos} contivessem o verdadeiro parâmetro da população."
+\end{itemize}
+
+\textbf{Exemplos:}
+
+\begin{enumerate}
+	\item \textbf{Exemplo de Média (Tempo de Carregamento de um Site):}
+		\subitem \textbf{Pergunta:} Qual é o \textbf{verdadeiro} tempo médio ($\mu$) de carregamento do nosso site para \textbf{todos} os usuários?
+		\subitem \textbf{Amostra:} Coletamos uma amostra de $n=200$ tempos de carregamento.
+		\subitem \textbf{Estimativa Pontual:} A média da \textbf{nossa amostra} é $\overline{x} = 2.4$ segundos.
+		\subitem \textbf{Intervalo de Confiança:} Após os cálculos, encontramos um IC de 95\%: \textbf{[2.1 segundos, 2.7 segundos]}.
+		\subitem \textbf{Interpretação Prática:} Em vez de apenas dizer "nosso palpite é 2.4s", podemos agora afirmar com 95\% de confiança (no método) que a média \textbf{real} de carregamento do site para \textbf{todos} os usuários está em algum lugar entre 2.1 e 2.7 segundos. Isso nos dá uma noção da nossa \textbf{precisão}.
+		
+		
+	\item \textbf{Exemplo de Proporção (Taxa de Conversão de Anúncio):}
+		\subitem \textbf{Pergunta:} Qual é a \textbf{verdadeira} taxa de conversão ($p$) de um novo anúncio de marketing?
+		\subitem \textbf{Amostra:} Mostramos o anúncio para $n=1.000$ pessoas.
+		\subitem \textbf{Estimativa Pontual:} 40 pessoas converteram, então $\hat{p} = 40/1000 = 4.0\%$.
+		\subitem \textbf{Intervalo de Confiança:} Calculamos um IC de 95\%: \textbf{[2.8\%, 5.2\%]}.
+		\subitem \textbf{Interpretação Prática:} O nosso \textbf{melhor palpite} é 4\%. No entanto, a inferência estatística nos diz que, com 95\% de confiança no método, a taxa de conversão \textbf{real} de toda a população de usuários pode ser tão baixa quanto 2.8\% ou tão alta quanto 5.2\%. Esta margem de erro é crucial para decidir se o anúncio é lucrativo ou não.
+\end{enumerate}
