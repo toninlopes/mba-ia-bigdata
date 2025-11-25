@@ -1,0 +1,534 @@
+\chapter{Regressão Logística}
+
+A \textbf{Regressão Logística} é um \textbf{modelo estatístico e de Machine Learning de classificação supervisionada}.
+
+Apesar do nome "regressão", seu objetivo principal não é prever um valor contínuo (como preço ou temperatura), mas sim prever a \textbf{probabilidade} de um evento pertencer a uma determinada classe ou categoria.
+
+\begin{itemize}
+	\item \textbf{Output:} O modelo gera um valor de probabilidade $P$, que está sempre entre 0 e 1 ($0 \leq P \leq 1$).
+	\item \textbf{Função Chave:} A Regressão Logística usa a \textbf{Função Sigmoide} (ou função logística) para mapear o resultado de uma combinação linear de preditores (que pode variar de $-\infty$ a $+\infty$) para essa faixa de probabilidade. 
+\end{itemize}
+
+
+\noindent \textbf{Problema da Variável Dependente Binária ($Y$ Binária)}
+
+A Regressão Logística é projetada especificamente para lidar com problemas onde a \textbf{variável dependente ($Y$) é binária}, ou seja, só pode assumir \textbf{dois valores} mutuamente exclusivos, representando a ocorrência ou não de um evento.
+
+\textbf{Natureza dos Dados:} $Y \in \{0, 1\}$.
+\begin{itemize}
+	\item \textbf{0:} Representa a ausência do evento (ex: não-spam, não-fraude, cliente não cancelou).
+	\item \textbf{1:} Representa a ocorrência do evento (ex: spam, fraude, cliente cancelou).
+\end{itemize}
+
+O modelo estima a probabilidade de $Y=1$ dado um conjunto de variáveis preditoras $X$.
+
+Após calcular essa probabilidade, é aplicado um \textbf{limite de corte} (\textit{threshold}, tipicamente 0,5) para converter a probabilidade em uma previsão de classe:
+\begin{itemize}
+	\item Se $P(Y=1|X) \geq 0,5 \Rightarrow$ Previsão é \textbf{1}.
+	\item Se $P(Y=1|X) < 0,5 \Rightarrow$ Previsão é \textbf{0}.
+\end{itemize}
+
+
+\noindent \textbf{Limitações da Regressão Linear para $Y$ Binária}
+
+A Regressão Linear Simples (ou Múltipla) \textbf{não é apropriada} para problemas de classificação binária e possui três limitações principais ao tentar modelar um $Y$ binário:
+
+\begin{enumerate}
+	\item Previsões fora do Intervalo $[0, 1]$
+	\begin{itemize}
+		\item  \textbf{Problema:} A Regressão Linear gera previsões ($\hat{Y}$) que podem ser \textbf{qualquer número real} (de $-\infty$ a $+\infty$).
+		\item \textbf{Consequência:} Se a variável $Y$ for binária (0 ou 1), uma previsão de $Y=-0,5$ ou $Y=1,5$ é \textbf{sem sentido} no contexto de probabilidade ou classificação. A Regressão Logística resolve isso, limitando a saída ao intervalo $[0, 1]$ através da função Sigmoide.
+	\end{itemize}
+
+	\item Heteroscedasticidade e Falha na Normalidade dos Erros
+	\begin{itemize}
+		\item \textbf{Problema:} Um pressuposto fundamental da Regressão Linear é a \textbf{Homoscedasticidade} (variância constante dos erros) e a \textbf{Normalidade dos Erros}.
+		\item \textbf{Consequência:} Quando $Y$ é binária, os resíduos (erros) só podem assumir dois valores distintos para cada ponto, o que viola severamente a Homoscedasticidade e a Normalidade. Isso invalida os testes de hipóteses e os intervalos de confiança da Regressão Linear.
+	\end{itemize}
+	
+	\item Relação Não Linear
+	\begin{itemize}
+		\item \textbf{Problema:} A relação entre os preditores e o evento binário de interesse é quase sempre \textbf{não linear}.
+		\item \textbf{Consequência:} Tentar encaixar uma linha reta a dados binários que se agrupam em 0 e 1 resulta em um ajuste ruim e na violação do pressuposto de \textbf{Linearidade}. A Regressão Logística, ao usar a função Logit/Sigmoide, modela a \textbf{relação não linear em $Y$} de forma eficaz.
+	\end{itemize}
+
+
+\end{enumerate}
+
+\section{Regressão Logística como um Modelo Linear Generalizado (GLM)}
+
+Um \textbf{Modelo Linear Generalizado (GLM)} é uma estrutura flexível que permite modelar uma variável resposta que não é distribuída normalmente, relacionando-a com os preditores através de uma função linear.
+
+Um GLM é composto por três componentes principais:
+\begin{enumerate}
+	\item \textbf{Componente Aleatória:} Define a \textbf{Distribuição de Probabilidade} da variável resposta ($Y$).
+	\item \textbf{Componente Sistemática:} É a combinação linear dos preditores ($\eta = \beta_0 + \beta_1 X_1 + \dots$).
+	\item \textbf{Função de Ligação (\textit{Link Function}):} Liga a média da distribuição ($\mu$) à combinação linear ($\eta$).
+\end{enumerate}
+
+No caso da Regressão Logística, esses componentes são definidos como:
+
+\begin{enumerate}
+	\item Componente Aleatória: Distribuição Normal (Incorreta)
+	
+	\textbf{Atenção:} Embora a Regressão Linear use a Distribuição Normal, a \textbf{Regressão Logística} não usa a Distribuição Normal para a variável $Y$ (binária).
+	
+	\begin{itemize}
+		\item \textbf{A Distribuição Correta:} Para a Regressão Logística, a variável dependente ($Y$) binária (0 ou 1) deve seguir a \textbf{Distribuição de Bernoulli}.
+		\item A Distribuição de Bernoulli é a distribuição de probabilidade de uma única tentativa que tem apenas dois resultados possíveis (sucesso com probabilidade $p$, ou falha com probabilidade $1-p$).
+	\end{itemize}
+
+
+	\item Função de Ligação: Função Logit (\textit{Link Function})
+
+	A \textbf{Função de Ligação} é o que transforma o modelo linear em um modelo de classificação. Na Regressão Logística, a função de ligação é a \textbf{Função Logit}.
+
+	A função Logit relaciona a probabilidade de sucesso ($p$) com a combinação linear dos preditores ($\eta$).
+
+	\begin{itemize}
+		\item \textbf{O que é Logit?} É o logaritmo das chances (ou \textit{odds}):
+		
+		$$\text{Logit}(p) = \ln\left(\frac{p}{1-p}\right)$$
+		
+		\item \textbf{Como Funciona no GLM:} A Função Logit é usada para modelar a relação entre o modelo linear e a probabilidade:
+		
+		$$\eta = \text{Logit}(p) = \beta_0 + \beta_1 X_1 + \dots + \beta_k X_k$$
+		
+		$$\ln\left(\frac{P(Y=1|X)}{1 - P(Y=1|X)}\right) = \beta_0 + \beta_1 X_1 + \dots + \beta_k X_k$$
+	\end{itemize}
+
+	Essa transformação permite que a \textbf{Regressão Logística} use a estrutura matemática da Regressão Linear, ao mesmo tempo que garante que as probabilidades finais sejam restritas entre 0 e 1, resolvendo assim as limitações da Regressão Linear para dados binários.
+	
+
+	\item A Função Sigmoide (O Inverso do Logit)
+	
+	Para obter a probabilidade de volta ($P(Y=1|X)$) a partir do Logit, precisamos da função inversa, que é a \textbf{Função Sigmoide} (ou função logística):
+	
+	$$P(Y=1|X) = \frac{1}{1 + e^{-\eta}} = \frac{1}{1 + e^{-(\beta_0 + \beta_1 X_1 + \dots)}}$$
+	
+	Esta função "espreme" os valores de $\eta$ (que podem ser qualquer número real) para o intervalo $[0, 1]$, permitindo a interpretação como probabilidade. 	
+\end{enumerate}
+
+
+
+\section{Interpretação dos Coeficientes com Odds Ratio}
+
+
+\subsection{Por que a Interpretação Direta Falha?}
+
+Na Regressão Linear, o coeficiente $\beta_1$ é simples: um aumento de 1 unidade em $X_1$ leva a uma mudança de $\beta_1$ em $Y$.
+
+Na Regressão Logística, a fórmula é:
+
+$$\ln\left(\frac{P}{1-P}\right) = \beta_0 + \beta_1 X_1 + \dots$$
+
+O coeficiente $\beta_1$ representa a mudança no \textbf{Logaritmo das Chances ($\ln(\frac{P}{1-P})$)} para um aumento de 1 unidade em $X_1$. Isso é matematicamente correto, mas \textbf{não é intuitivo} para quem não é estatístico.
+
+Para retornar a uma escala interpretável, utilizamos as \textbf{Chances (Odds)} e a \textbf{Razão de Chances (Odds Ratio)}.
+
+
+\subsection{O Conceito de Chances (Odds)}
+
+As \textbf{Chances (Odds)} são a razão entre a probabilidade de um evento ocorrer ($P$) e a probabilidade de ele não ocorrer ($1-P$).
+
+$$\text{Odds} = \frac{P(\text{Evento Ocorrer})}{P(\text{Evento Não Ocorrer})} = \frac{P}{1-P}$$
+
+\begin{itemize}
+	\item \textbf{Exemplo:} Se a probabilidade de um cliente cancelar ($P$) é 0,8 (80\%), então a probabilidade de não cancelar é 0,2 (20\%).
+	
+	$$\text{Odds} = \frac{0,8}{0,2} = 4$$
+		
+\end{itemize}
+
+ \textbf{Interpretação:} A chance de cancelamento é 4 para 1, ou seja, é \textbf{quatro vezes mais provável} que o cliente cancele do que não cancele.
+
+
+\subsection{A Razão de Chances (Odds Ratio - OR)}
+
+A Razão de Chances é a métrica central de interpretação da Regressão Logística. Ela mede o \textbf{fator multiplicativo} pelo qual as chances de o evento ocorrer mudam, para cada aumento de uma unidade no preditor $X$.
+
+\textbf{Onde a OR Vem:} Se o Log-Odds é a combinação linear:
+
+$$\ln(\text{Odds}) = \beta_0 + \beta_1 X_1$$
+
+Ao isolar as Chances (Odds), utilizamos a função inversa do logaritmo natural, que é a \textbf{exponenciação} ($e^{\dots}$):
+
+$$\text{Odds} = e^{\beta_0 + \beta_1 X_1}$$
+
+A Razão de Chances (OR) para um aumento de 1 unidade em $X_1$ é calculada como o quociente das Odds no ponto $X_1+1$ e no ponto $X_1$:
+
+$$\text{OR} = \frac{\text{Odds}(X_1+1)}{\text{Odds}(X_1)} = e^{\beta_1}$$
+
+Portanto, a Razão de Chances é simplesmente o \textbf{coeficiente do preditor ($\beta_1$) exponenciado}.
+
+
+\subsection{Interpretação Prática da Odds Ratio ($e^{\beta}$)}
+
+O valor da $OR$ nos dá a \textbf{interpretação direta e intuitiva} do impacto do preditor:
+
+\begin{table}[h]
+	\begin{tabular}{p{0.32\textwidth} p{0.6\textwidth}}
+		Se $OR = e^{\beta_1}$ for... & Interpretação \\
+		\hline
+		\\
+		\textbf{Maior que 1,0 ($OR > 1$)} & O preditor $X_1$ está \textbf{aumentando} as chances de o evento ocorrer. \\
+		\\
+		\textbf{Igual a 1,0 ($OR = 1$)} & O preditor $X_1$ \textbf{não tem efeito} sobre as chances do evento (neutralidade). \\
+		\\
+		\textbf{Menor que 1,0 ($OR < 1$)} & O preditor $X_1$ está \textbf{diminuindo} as chances de o evento ocorrer. \\
+		\\
+	\end{tabular}   
+\end{table}
+
+
+\subsection{Exemplo: Previsão de Fraude}
+
+\textbf{Cenário:} Modelo para prever a probabilidade de uma transação ser \textbf{Fraude} ($Y=1$), com base no valor da transação ($X_1$) e se a transação é internacional ($X_2$).
+
+\textbf{Resultados do Modelo (Hipotético):}
+
+\begin{table}[h]
+	\begin{tabular}{p{0.30\textwidth} p{0.20\textwidth} p{0.30\textwidth}}
+		Coeficiente & $\beta$ & $OR = e^{\beta}$ \\
+		\hline
+		\\
+		$\beta_1$ (Valor da Transação) & $+0,20$ & $\mathbf{e^{0,20} \approx 1,22}$ \\
+		\\
+		$\beta_2$ (Internacional: 1=Sim) & $-0,50$ & $\mathbf{e^{-0,50} \approx 0,61}$ \\
+		\\
+	\end{tabular}   
+\end{table}
+
+
+\textbf{Conclusões de Interpretação:}
+\begin{enumerate}
+	\item \textbf{Valor da Transação ($OR = 1,22$):}
+	\begin{itemize}
+		\item Para \textbf{cada aumento de 1 unidade no valor da transação}, a chance de a transação ser classificada como \textbf{fraude aumenta em 22\%} ($1,22 - 1,00 = 0,22$).
+		\item Ou seja, a chance de fraude é 1,22 vezes maior.
+	\end{itemize}
+
+	\item  \textbf{Transação Internacional ($OR = 0,61$):}
+	\begin{itemize}
+		\item O fato de a transação ser internacional (comparado a ser doméstica) \textbf{reduz} a chance de ser fraude.
+		\item A chance de fraude é \textbf{61\%} da chance de uma transação doméstica, ou, de forma mais intuitiva, a chance é \textbf{reduzida em 39\%} ($1,00 - 0,61 = 0,39$).
+	\end{itemize}
+	
+\end{enumerate}
+
+
+A Razão de Chances ($OR$) é, portanto, a maneira mais clara de comunicar os resultados de um modelo de Regressão Logística.
+
+
+\section{Máxima Verossimilhança (Maximum Likelihood Estimation - MLE)}
+
+A \textbf{Máxima Verossimilhança} é um método estatístico usado para estimar os parâmetros ($\beta$'s) de um modelo. O princípio é simples: \textbf{encontrar os valores dos coeficientes ($\beta$) que maximizam a probabilidade (verossimilhança) de observar os dados reais que já temos}.
+
+Diferente da Regressão Linear (que usa OLS para minimizar o erro quadrado), a Regressão Logística usa MLE porque seu objetivo é modelar a \textbf{probabilidade} de resultados binários (Bernoulli). A soma dos quadrados não é uma métrica de erro apropriada para probabilidades.
+
+\subsection{A Função de Verossimilhança}
+
+Para um conjunto de dados, a \textbf{Verossimilhança ($L$)} é a probabilidade de o nosso modelo (com um dado conjunto de $\beta$'s) ter gerado as observações $Y_i$ reais.
+
+Assumindo que as observações são independentes, a função de verossimilhança é o \textbf{produto das probabilidades} de cada observação.
+
+$$\text{Verossimilhança } (L) = \prod_{i=1}^{n} P(Y_i | X_i, \beta)$$
+
+\begin{itemize}
+	\item Se $Y_i = 1$ (o evento ocorreu), a contribuição é a probabilidade de sucesso: $P_i$.
+	\item Se $Y_i = 0$ (o evento não ocorreu), a contribuição é a probabilidade de falha: $1 - P_i$.
+\end{itemize}
+
+A Regressão Logística busca maximizar essa função $L$.
+
+
+
+\section{Métricas de Avaliação de Classificação}
+
+As métricas de Acurácia, Sensibilidade, Especialidade, Precisão e F1-Score são calculadas a partir dos quatro resultados básicos de uma previsão binária, conforme apresentados na \textbf{Matriz de Confusão}:
+
+\begin{itemize}
+	\item \textbf{Verdadeiros Positivos (VP / TP):} O modelo previu corretamente a classe positiva (1).
+	\item \textbf{Verdadeiros Negativos (VN / TN):} O modelo previu corretamente a classe negativa (0).
+	\item \textbf{Falsos Positivos (FP):} O modelo previu a classe positiva (1), mas o valor real era negativo (0). \textbf{Erro Tipo I}.
+	\item \textbf{Falsos Negativos (FN):} O modelo previu a classe negativa (0), mas o valor real era positivo (1). \textbf{Erro Tipo II}.
+\end{itemize}
+
+
+\subsection{Acurácia (Accuracy)}
+
+A Acurácia mede a \textbf{proporção de todas as previsões que foram corretas} (tanto positivas quanto negativas) em relação ao total de observações.
+
+\begin{itemize}
+	\item \textbf{Conceito:} É a métrica mais intuitiva, representando a correção geral do modelo.
+	\item \textbf{Fórmula:}
+	
+	$$\text{Acurácia} = \frac{VP + VN}{VP + VN + FP + FN}$$
+	
+	\item \textbf{Aplicabilidade:} É uma boa métrica quando as classes estão \textbf{balanceadas}. Se as classes estiverem desbalanceadas (ex: 95\% de não-fraude e 5\% de fraude), a alta acurácia pode ser enganosa.
+\end{itemize}
+
+
+\subsection{Sensibilidade (Sensitivity ou Recall)}
+
+A Sensibilidade, também conhecida como \textbf{Revocação} ou \textbf{Taxa de Verdadeiros Positivos (TVP)}, mede a capacidade do modelo de \textbf{encontrar todas as instâncias positivas} (os $Y=1$ verdadeiros).
+
+\begin{itemize}
+	\item \textbf{Conceito:} De todos os casos que \textbf{deveriam} ter sido classificados como Positivos (VP + FN), quantos foram classificados corretamente (VP)?
+	\item \textbf{Fórmula:}
+	
+	$$\text{Sensibilidade (Recall)} = \frac{VP}{VP + FN}$$
+	
+	\item \textbf{Aplicabilidade:} Crucial em cenários onde um \textbf{Falso Negativo (FN) é muito custoso}.
+	\begin{itemize}
+		\item Exemplo: Diagnóstico de doenças graves. É vital não perder um caso positivo (FN).
+	\end{itemize}
+	
+\end{itemize}
+
+
+\subsection{Especificidade (Specificity)}
+
+A Especificidade, também conhecida como \textbf{Taxa de Verdadeiros Negativos (TVN)}, mede a capacidade do modelo de \textbf{corretamente excluir instâncias negativas}.
+
+\begin{itemize}
+	\item \textbf{Conceito:} De todos os casos que \textbf{deveriam} ter sido classificados como Negativos (VN + FP), quantos foram classificados corretamente (VN)?
+	\item \textbf{Fórmula:}
+	
+	$$\text{Especificidade} = \frac{VN}{VN + FP}$$
+	
+	\item \textbf{Aplicabilidade:} Crucial em cenários onde um \textbf{Falso Positivo (FP) é muito custoso}.
+	\begin{itemize}
+		\item Exemplo: Sistema de alarme nuclear ou aprovação de crédito de alto valor. Não se pode dar um "sim" errado (FP).
+	\end{itemize}
+	
+\end{itemize}
+
+
+\subsection{Precisão (Precision)}
+
+A Precisão, também chamada de \textbf{Valor Preditivo Positivo (VPP)}, mede a qualidade das previsões positivas feitas pelo modelo.
+
+\begin{itemize}
+	\item \textbf{Conceito:} Das instâncias que o modelo \textbf{previu} como Positivas (VP + FP), quantas eram \textbf{realmente} Positivas (VP)?
+	\item \textbf{Fórmula:}
+	
+	$$\text{Precisão} = \frac{VP}{VP + FP}$$
+	
+	\item \textbf{Aplicabilidade:} Crucial em cenários onde um \textbf{Falso Positivo (FP) é inaceitável}.
+	\begin{itemize}
+		\item Exemplo: Recomendação de produtos. Se o modelo prevê que um usuário vai gostar (VP+FP), queremos que a taxa de acerto (VP) seja alta.
+	\end{itemize}
+	
+\end{itemize}
+
+
+\subsection{F1-Score}
+
+O F1-Score é a \textbf{média harmônica} (uma média especial que penaliza grandes discrepâncias) entre \textbf{Precisão} e \textbf{Sensibilidade (Recall)}.
+
+\begin{itemize}
+	\item \textbf{Conceito:} O F1-Score tenta equilibrar a necessidade de ter poucas previsões positivas erradas (Alta Precisão) com a necessidade de não perder muitos casos positivos (Alta Sensibilidade).
+	\item \textbf{Fórmula:}
+	
+	$$\text{F1-Score} = 2 \cdot \frac{\text{Precisão} \cdot \text{Sensibilidade}}{\text{Precisão} + \text{Sensibilidade}}$$
+	
+	\item \textbf{Aplicabilidade:} É a métrica mais recomendada quando há um \textbf{desbalanceamento de classes} significativo ou quando você precisa de um equilíbrio entre o custo de Falsos Positivos (FP) e Falsos Negativos (FN).
+\end{itemize}
+
+
+\subsection{Exemplo Rápido (Desbalanceamento)}
+
+Imagine um modelo de fraude (100 transações, 95 não-fraudes (0) e 5 fraudes (1)).
+
+\begin{table}[h]
+	\begin{tabular}{p{0.30\textwidth} p{0.25\textwidth} p{0.20\textwidth} p{0.15\textwidth}}
+		Cenário & Matriz (TP, TN, FP, FN) & Acurácia & F1-Score \\
+		\hline
+		\\
+		\textbf{Modelo Inútil (Sempre 0)} & TP=0, TN=95, FP=0, FN=5 & 95/100 = \textbf{95\%} & 0 (Recall=0) \\
+		\\
+		 \textbf{Modelo Bom (TP=4)} & TP=4, TN=90, FP=5, FN=1 & 94/100 = 94\% & 0,85 \\
+		\\
+	\end{tabular}   
+\end{table}
+
+Neste exemplo, a Acurácia de 95\% do \textbf{Modelo Inútil} é enganosa. O \textbf{F1-Score} (0) revela que o modelo é inútil para o propósito de detectar fraudes (classe de interesse).
+
+
+\subsection{Curva ROC (Receiver Operating Characteristic)}
+
+A \textbf{Curva ROC} é um gráfico de probabilidade que ilustra o desempenho de um modelo de classificação em todos os possíveis \textbf{limites de corte (thresholds)}.
+
+Em vez de fixar o limite em 0,5, a Curva ROC mostra como o desempenho do modelo muda se você variar esse limite de 0 a 1.
+
+O gráfico é plotado em dois eixos:
+
+\begin{enumerate}
+	\item \textbf{Eixo Y (Vertical):} \textbf{Sensibilidade} (Recall ou Taxa de Verdadeiros Positivos - TVP).
+	
+	$$\text{TVP} = \frac{VP}{VP + FN}$$
+	
+	\item \textbf{Eixo X (Horizontal):} \textbf{(1 - Especificidade)} ou Taxa de Falsos Positivos (TFP).
+	
+	$$\text{TFP} = \frac{FP}{VN + FP}$$
+\end{enumerate}
+
+
+\textbf{Interpretação da Curva:}
+\begin{itemize}
+	\item Quanto mais a curva se aproxima do canto superior esquerdo do gráfico, \textbf{melhor} é o modelo (alta Sensibilidade e baixa TFP).
+	\item Uma linha diagonal de 45 graus representa um classificador aleatório ou inútil.
+\end{itemize}
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/CurvaROC.jpeg"}
+	\label{fig:curvaroc}
+\end{figure}
+
+
+
+\subsection{AUC (Area Under the Curve)}
+
+O \textbf{AUC} é uma métrica resumida derivada da Curva ROC. É simplesmente a \textbf{área total sob a Curva ROC}.
+
+\begin{itemize}
+	\item \textbf{Conceito:} O AUC quantifica a capacidade do modelo de **distinguir entre as classes positiva e negativa**. O AUC mede a probabilidade de o modelo classificar uma instância positiva escolhida aleatoriamente como positiva, com uma pontuação mais alta, do que uma instância negativa escolhida aleatoriamente.
+	
+	\item \textbf{Interpretação da AUC:}
+	\begin{itemize}
+		\item \textbf{AUC = 1,0:} Classificador Perfeito (distinção perfeita entre classes).
+		\item \textbf{AUC = 0,5:} Classificador Aleatório (não melhor que um chute).
+		\item \textbf{AUC < 0,5:} O modelo está fazendo pior do que o aleatório, o que indica que as probabilidades estão invertidas.
+	\end{itemize}
+
+	\item \textbf{Vantagem Principal:} O AUC tem duas grandes vantagens sobre métricas como a Acurácia:
+	\begin{enumerate}
+		\item \textbf{Insensível ao Desbalanceamento:} Não é afetado pelo desbalanceamento de classes, pois avalia a performance em todos os limiares.
+		\item \textbf{Métrica Agregada:} Resume o desempenho do modelo em todos os limiares de corte possíveis, permitindo que você escolha o melhor ponto de corte para um problema específico.	
+	\end{enumerate}
+
+\end{itemize}
+
+
+
+\subsection{Exemplo Prático de Uso}
+
+\textbf{Cenário:} Você treina dois modelos de Regressão Logística (Modelo A e Modelo B) para detectar fraude. O limite de corte ideal depende do seu custo:
+
+\begin{enumerate}
+	\item \textbf{Se Falsos Negativos (Fraude não detectada) são caros:} Você escolheria um limite de corte baixo para maximizar a Sensibilidade.
+	\item \textbf{Se Falsos Positivos (Bloquear transação legítima) são caros:} Você escolheria um limite de corte alto para maximizar a Especificidade/Precisão.
+\end{enumerate}
+
+
+\noindent\textbf{Decisão Baseada em AUC:}
+\begin{itemize}
+	\item \textbf{Modelo A:} AUC = 0,92.
+	\item \textbf{Modelo B:} AUC = 0,75.
+\end{itemize}
+
+Conclusão: O \textbf{Modelo A} é estatisticamente \textbf{melhor} em discriminar entre fraudes e não-fraudes do que o Modelo B, independentemente do limite de corte que você venha a escolher.
+
+\noindent\textbf{Decisão Baseada em ROC:}
+
+Ao inspecionar a Curva ROC do Modelo A, você pode identificar o ponto na curva que oferece a melhor combinação de alta Sensibilidade (Eixo Y) e baixa TFP (Eixo X) para atender aos requisitos de custo do seu negócio. 
+
+
+
+\section{Resumo}
+
+\subsection{O que é?}
+
+A regressão logística modela a \textbf{probabilidade} de ocorrência de um evento binário (0/1).
+É um caso de \textbf{Modelo Linear Generalizado} com:
+
+\begin{itemize}
+	\item Distribuição \textbf{binomial}
+	\item Função de ligação \textbf{logito}:
+\end{itemize}
+
+$$
+\text{logit}(p) = \log\left(\frac{p}{1-p}\right)
+$$
+
+\subsection{Interpretação dos Coeficientes}
+
+Cada coeficiente ($\beta_j$):
+
+\begin{itemize}
+	\item Representa a mudança no \textbf{log-odds} de sucesso por unidade em ($X_j$).
+	\item Ao aplicar exponencial:
+	$$
+	e^{\beta_j} = \text{Odds Ratio (OR)}
+	$$
+	\item OR > 1 → aumenta a chance
+	\item OR < 1 → reduz a chance
+\end{itemize}
+
+
+\textbf{Diferenças de probabilidades não são lineares}, mas OR é.
+
+\subsection{Estimação}
+
+Parâmetros são obtidos por \textbf{Máxima Verossimilhança} (numérica).
+Propriedades do EMV permitem:
+
+\begin{itemize}
+	\item Estimar erros-padrão
+	\item Fazer testes de hipóteses (Wald, LR)
+	\item Construir ICs para OR
+\end{itemize}
+
+Modelo pode ser expandido gradualmente com novos preditores.
+
+\subsection{Predição}
+
+Após estimar o modelo:
+$$
+\hat{p} = \frac{1}{1 + e^{-(\hat{\beta}_0 + \sum \hat{\beta}_j X_j)}}
+$$
+Usado para prever a probabilidade de um novo indivíduo ter (Y = 1).
+
+\subsection{Classificação}
+
+Escolhe-se um \textbf{critério de corte} (ex.: 0.5).
+Obtém-se a \textbf{matriz de confusão}: VP, FP, FN, VN.
+
+Métricas principais:
+
+\begin{itemize}
+	\item Acurácia
+	\item Sensibilidade (Recall)
+	\item Especificidade
+	\item Precisão
+	\item F1-score
+\end{itemize}
+
+\textbf{Curva ROC} mostra desempenho para todos os cortes.
+\textbf{AUC} mede a capacidade discriminativa do modelo.
+
+\subsection{Diagnóstico e Qualidade do Ajuste}
+
+\begin{itemize}
+	\item \textbf{Resíduos} (Pearson, studentizado, desvio): identificam problemas.
+	\item \textbf{Hosmer–Lemeshow}: testa se o modelo ajusta bem os dados.
+	\item \textbf{Envelope plots}: avaliam visualmente discrepâncias.
+\end{itemize}
+
+
+\subsection{Resumo Final}
+
+A regressão logística combina teoria estatística, interpretação epidemiológica, predição e avaliação de modelos, sendo uma ferramenta essencial em ciência de dados, saúde, negócios e machine learning.
+
+
+\subsection{Mapa Mental}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/MapaMentalRegressaoLogistica.png"}
+	\caption{Mapa Mental Regressão Logística}
+	\label{fig:mapamentalregressaologistica}
+\end{figure}

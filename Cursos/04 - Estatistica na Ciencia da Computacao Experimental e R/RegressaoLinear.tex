@@ -1,0 +1,448 @@
+\chapter{Regressão Linear}
+
+A \textbf{Regressão Linear} é uma técnica estatística e um modelo de Machine Learning de aprendizado supervisionado usado para encontrar a \textbf{melhor linha de ajuste} (ou hiperplano) que descreve a relação linear entre uma \textbf{variável dependente (resposta)} contínua e uma ou mais \textbf{variáveis independentes (preditoras)}.
+
+Em sua forma mais simples, a Regressão Linear Simples, o modelo se baseia na equação de uma reta:
+
+$$Y = \beta_0 + \beta_1 X + \epsilon$$
+
+Onde:
+\begin{itemize}
+	\item $Y$: Variável dependente que queremos prever.
+	\item $X$: Variável independente usada para a previsão.
+	\item $\beta_0$: O \textbf{intercepto} (onde a linha cruza o eixo $Y$).
+	\item $\beta_1$: O \textbf{coeficiente de inclinação} (slope), que mede o impacto de uma unidade de mudança em $X$ sobre $Y$.
+	\item $\epsilon$: O \textbf{erro} (o resíduo), que representa a diferença entre o valor real de $Y$ e o valor predito.
+\end{itemize}
+
+O objetivo do modelo é encontrar os coeficientes ótimos ($\beta_0$ e $\beta_1$) que \textbf{minimizam a soma dos quadrados dos erros (Residual Sum of Squares - RSS)}. 
+
+A Regressão Linear serve a dois propósitos principais na análise de dados e Machine Learning: \textbf{Previsão} e \textbf{Inferência}.
+
+\begin{itemize}
+	\item \textbf{Previsão (Prediction):} Estimar o valor de uma variável dependente ($Y$) com base em um conjunto de valores de variáveis independentes ($X$).
+	\subitem \textbf{Exemplo:} Prever o preço de uma casa com base em seu tamanho e número de quartos.
+	
+	\item \textbf{Inferência (Inference):} Entender a \textbf{natureza, direção e força} da relação entre as variáveis. Permite determinar se uma variável preditora tem um efeito estatisticamente significativo sobre a variável resposta.
+	\subitem \textbf{Exemplo:} Determinar se o investimento em marketing ($\beta_1$) tem um impacto positivo significativo nas vendas ($Y$).
+\end{itemize}
+
+
+Embora o termo "Regressão Linear" geralmente se refira ao OLS (Mínimos Quadrados Ordinários), ele é a base para uma família de modelos que introduzem diferentes técnicas de regularização ou lidam com diferentes números de preditores.  A tabela \ref{tab:lista_modelos_regressao} lista os principais modelos.
+
+\begin{table}[h]
+	\begin{tabular}{p{0.22\textwidth} p{0.35\textwidth} p{0.35\textwidth}}
+		\textbf{Modelo de Regressão} & \textbf{Aplicabilidade Principal} & \textbf{Foco/Característica Chave} \\
+		\hline
+		\\
+		Regressão Linear Simples & Prever $Y$ usando apenas uma única variável $X$. & Determinar a relação linear mais básica. \\
+		\\
+		Regressão Linear Múltipla (OLS) & Prever $Y$ usando duas ou mais variáveis $X$. & Encontrar os coeficientes que minimizam o Erro Quadrático Total (RSS). \\
+		\\
+		Regressão Polinomial & Modelar relações não lineares entre $X$ e $Y$. & Transforma $X$ em $X, X^2, X^3$, etc., mas o modelo permanece linear nos coeficientes ($\beta$'s). \\
+		\\
+		Regressão Ridge & Prevenir o Overfitting em modelos com muitas variáveis correlacionadas. & Adiciona uma penalidade $L2$ aos coeficientes, encolhendo-os, mas não zerando-os. \\
+		\\
+		Regressão Lasso & Seleção de Variáveis e prevenção de Overfitting. & Adiciona uma penalidade $L1$ aos coeficientes, forçando os menos importantes a serem exatamente zero. \\
+		\\
+		Regressão Elastic Net & Combina as penalidades $L1$ (Lasso) e $L2$ (Ridge). & Útil quando há muitas variáveis e correlações complexas, oferecendo o melhor dos dois mundos.\\
+	\end{tabular}   
+	\caption{Lista de Modelos de Regressão.}
+	\label{tab:lista_modelos_regressao}
+\end{table}
+
+
+\subsection{Regressão Linear Simples}
+
+A \textbf{Regressão Linear Simples} é um modelo estatístico que busca estabelecer uma relação linear entre \textbf{duas variáveis contínuas}:
+
+\begin{enumerate}
+	\item Uma \textbf{variável dependente} (ou resposta), denotada por $Y$.
+	\item Uma \textbf{variável independente} (ou preditora), denotada por $X$.
+\end{enumerate}
+
+O principal objetivo é encontrar a \textbf{melhor linha reta de ajuste} que minimize a distância vertical entre cada ponto de dados e a linha. Essa distância é chamada de \textbf{resíduo} ou \textbf{erro}. O método mais comum para encontrar essa linha é chamado de \textbf{Mínimos Quadrados Ordinários (OLS)}.
+
+
+\subsubsection{Quando Utilizar esse Modelo?}
+
+Utilizamos a Regressão Linear Simples quando:
+
+\begin{itemize}
+	\item \textbf{Relação Linear:} Você acredita que a variável $Y$ pode ser explicada por uma \textbf{relação linear direta} com apenas uma variável $X$. Ou seja, à medida que $X$ aumenta, $Y$ tende a aumentar (relação positiva) ou diminuir (relação negativa) de forma constante.
+	
+	\item \textbf{Variáveis Contínuas:} Ambas as variáveis ($X$ e $Y$) são \textbf{quantitativas} e \textbf{contínuas} (Ex: preço, tempo, salário, pontuação, etc.).
+	
+	\item \textbf{Inferência e Previsão:} Você precisa não apenas prever $Y$ a partir de $X$, mas também entender a \textbf{força e a direção} exata do impacto de $X$ sobre $Y$.
+\end{itemize}
+
+
+\subsubsection{Fórmula}
+
+O modelo de Regressão Linear Simples é representado pela equação da linha reta:
+
+$$\hat{Y} = \beta_0 + \beta_1 X$$
+
+Onde:
+\begin{itemize}
+	\item $\hat{Y}$: O \textbf{valor predito} da variável dependente.
+	\item $X$: O valor da variável independente.
+	\item $\beta_0$: O \textbf{coeficiente de intercepto} (intercepto), que é o valor esperado de $\hat{Y}$ quando $X$ é igual a zero.
+	\item $\beta_1$: O \textbf{coeficiente de inclinação} (slope), que representa a \textbf{mudança média esperada em $\hat{Y}$ para cada aumento de uma unidade em $X$}.
+\end{itemize}
+
+Os coeficientes ($\beta_0$ e $\beta_1$) são calculados de modo a minimizar o Erro Quadrático Total ($RSS$). A fórmula de $\beta_1$ utilizando covariância e variância é:
+
+$$\beta_1 = \frac{\text{Cov}(X, Y)}{\text{Var}(X)}$$
+
+
+\subsubsection{Exemplo}
+
+\textbf{Cenário:} Uma empresa de e-commerce deseja entender a relação entre o \textbf{Investimento em Anúncios} ($X$) e o \textbf{Número de Vendas} ($Y$) em 10 semanas.
+
+\begin{table}[h]
+	\begin{tabular}{p{0.22\textwidth} p{0.35\textwidth} p{0.35\textwidth}}
+		\textbf{Semana} & \textbf{Investimento em Anúncios ($X$, em R\$ mil)} & \textbf{Número de Vendas ($Y$, em unidades)} \\
+		\hline
+		\\
+		1 & 1 & 5 \\
+		2 & 2 & 8 \\
+		3 & 3 & 10 \\
+	\end{tabular}   
+\end{table}
+
+\textbf{Resultado do Modelo (Hipotético):}
+
+Após aplicar o método OLS, o modelo de regressão linear simples gera os seguintes coeficientes:
+
+$$\hat{Y} = 3,0 + 2,5 X$$
+
+\textbf{Interpretação:}
+
+\begin{enumerate}
+	\item \textbf{Intercepto ($\beta_0 = 3,0$):}
+	\subitem Se o \textbf{Investimento em Anúncios ($X$) for zero}, o número de vendas predito ($\hat{Y}$) é de \textbf{3 unidades}.
+	
+	\item \textbf{Inclinação ($\beta_1 = 2,5$):}
+	\subitem Para \textbf{cada aumento de R\$ 1.000} na semana em Investimento em Anúncios ($X$), o Número de Vendas predito ($\hat{Y}$) aumenta em \textbf{2,5 unidades}.
+	
+	\item \textbf{Previsão:}
+	\subitem Se a empresa investir R\$ 4.000 (ou $X=4$) na próxima semana:
+	$$\hat{Y} = 3,0 + 2,5 \times 4 = 3,0 + 10 = \mathbf{13}$$
+	\subitem A previsão é de \textbf{13 vendas}.
+\end{enumerate}
+
+
+\subsection{Pressupostos Fundamentais da Regressão Linear (LINE)}
+
+Os Pressupostos (Suposições) da Regressão Linear são cruciais, pois a validade das suas conclusões estatísticas (inferências) depende de eles serem atendidos. Se esses pressupostos não forem verificados, seus coeficientes ($\beta$) e os testes de hipóteses associados (como o valor-p) podem ser inválidos ou enviesados.
+
+Existem quatro pressupostos principais, frequentemente lembrados pelo acrônimo \textbf{LINE} (ou L.I.N.E.):
+
+\begin{enumerate}
+	\item \textbf{L}inearidade da Relação (Linearity)	
+	\begin{itemize}
+		\item \textbf{Conceito:} O relacionamento entre a variável independente ($X$) e a variável dependente ($Y$) deve ser \textbf{linear}. Isso significa que a média dos valores da variável dependente, para cada valor de $X$, deve cair sobre uma linha reta.
+		
+		\item \textbf{Verificação:}
+		\begin{itemize}
+			\item \textbf{Gráfico de Dispersão (Scatter Plot):} O método mais simples é plotar $X$ vs. $Y$. Se a relação parecer curva, este pressuposto está violado.
+			\item \textbf{Gráfico de Resíduos:} Plotar os resíduos vs. $X$. O gráfico não deve mostrar nenhum padrão sistemático (curvas, funis).
+		\end{itemize}
+		
+		\item \textbf{Solução para Violação:} Usar uma \textbf{Regressão Polinomial} ou aplicar transformações (ex: log) em $X$ ou $Y$.
+	\end{itemize}
+	
+	\item \textbf{I}ndependência dos Erros (Independence)
+	\begin{itemize}
+		\item \textbf{Conceito:} Os erros (resíduos, $\epsilon$) de uma observação \textbf{não devem estar correlacionados} com os erros de outras observações.
+		\begin{itemize}
+			\item \textbf{Na prática:} O valor do resíduo para o ponto de dados 1 não deve influenciar o valor do resíduo para o ponto de dados 2.
+		\end{itemize}
+		
+		\item \textbf{Violação Comum:} Isso ocorre frequentemente em \textbf{séries temporais}, onde o erro em um ponto no tempo está correlacionado com o erro no ponto de tempo seguinte (\textbf{Autocorrelação}).
+		
+		\item \textbf{Verificação:}
+		\begin{itemize}
+			\item \textbf{Teste de Durbin-Watson:} Valor próximo de 2 indica ausência de autocorrelação. Valores muito abaixo de 1 ou acima de 3 indicam problemas.
+		\end{itemize}
+		
+		\item \textbf{Solução para Violação:} Usar modelos de séries temporais (como ARIMA) ou \textbf{modelos de erros generalizados} (Generalized Least Squares).
+	\end{itemize}
+	
+	
+	\item \textbf{N}ormalidade dos Erros (Normality)
+	\begin{itemize}
+		\item \textbf{Conceito:} A distribuição dos \textbf{erros} (resíduos) deve ser \textbf{aproximadamente normal}. É crucial notar que \textbf{não} é a variável $Y$ ou $X$ que precisa ser normalmente distribuída, mas sim os resíduos.
+		
+		\item \textbf{Importância:} Este pressuposto é vital para a \textbf{inferência} (cálculo de valores-p e intervalos de confiança), mas é menos crítico para a estimativa dos coeficientes em amostras grandes.
+		
+		\item \textbf{Verificação:}
+		\begin{itemize}
+			\item \textbf{Histograma dos Resíduos:} Deve ter a forma de sino.
+			\item \textbf{QQ-Plot (Quantile-Quantile Plot):} Os pontos devem seguir a linha reta diagonal. 
+			\item \textbf{Teste de Shapiro-Wilk} (aplicado aos resíduos).
+		\end{itemize}
+		
+		\item \textbf{Solução para Violação:} Transformação de $Y$ (ex: log) ou uso de modelos não paramétricos/generalizados.
+	\end{itemize}
+	
+	\item \textbf{E}rros com Variância Constante (\textbf{E}qual Variance / Homoscedasticidade)
+	\begin{itemize}
+		\item \textbf{Conceito:} A variância dos erros ($\epsilon$) deve ser \textbf{constante} em todos os níveis da variável $X$. Isso é chamado de \textbf{Homoscedasticidade}.
+		
+		\item \textbf{Violação:} Se a variância dos resíduos aumentar ou diminuir à medida que $X$ aumenta, há \textbf{Heteroscedasticidade}.
+		
+		\item \textbf{Importância:} A Heteroscedasticidade não enviesa os coeficientes, mas torna os \textbf{erros-padrão dos coeficientes enviesados} (geralmente subestimados), levando a conclusões erradas sobre a significância (valor-p).
+		
+		\item \textbf{Verificação:}
+		\begin{itemize}
+			\item \textbf{Gráfico de Resíduos vs. Valores Preditos ($\hat{Y}$):} O gráfico deve parecer uma "nuvem de pontos" aleatória, sem a forma de \textbf{funil} (que indica heteroscedasticidade).
+		\end{itemize}
+		
+		\item \textbf{Solução para Violação:} Usar \textbf{erros-padrão robustos} (como o método Huber-White) ou aplicar transformações na variável $Y$.
+	\end{itemize}
+	
+\end{enumerate}
+
+Garantir que esses pressupostos sejam verificados e, se necessário, corrigidos, é uma parte essencial do trabalho de um cientista de dados ou estatístico ao aplicar a Regressão Linear.
+
+\subsection{Regressão Linear Múltipla}
+
+A \textbf{Regressão Linear Múltipla} é uma técnica estatística que modela a relação linear entre uma \textbf{variável dependente (resposta)} contínua ($Y$) e \textbf{duas ou mais} variáveis independentes (preditoras) ($X_1, X_2, \dots, X_k$).
+
+O objetivo continua sendo encontrar a "melhor linha de ajuste", mas, com múltiplos preditores, essa linha se torna um \textbf{hiperplano} no espaço multidimensional. O método de ajuste mais comum é, novamente, o \textbf{Mínimos Quadrados Ordinários (OLS)}, que minimiza a soma dos erros quadráticos.
+
+\subsubsection{Quando Utilizar esse Modelo?}
+
+Devemos usar a Regressão Linear Múltipla quando:
+
+\begin{itemize}
+	\item \textbf{Múltiplos Preditores:} Você acredita que a variável de interesse ($Y$) é influenciada por \textbf{mais de uma variável} simultaneamente.
+	
+	\item \textbf{Necessidade de Controle:} Você quer isolar e quantificar o efeito de uma variável preditora ($X_1$) em $Y$, \textbf{controlando} o impacto de outras variáveis relevantes ($X_2, X_3$, etc.).
+	\subitem \textbf{Exemplo:} Avaliar o efeito do \textbf{tamanho} de um apartamento no preço, controlando também o efeito da \textbf{localização} e do \textbf{número de quartos}.
+	
+	\item \textbf{Previsão Aprimorada:} O uso de múltiplas fontes de informação geralmente resulta em um modelo de previsão \textbf{mais preciso} do que o uso de um único preditor.
+	
+	\item \textbf{Variáveis Contínuas:} A variável dependente ($Y$) deve ser \textbf{contínua}. As variáveis independentes ($X$) podem ser contínuas ou categóricas (desde que codificadas corretamente, como *dummy variables*).
+\end{itemize}
+
+
+\subsubsection{Fórmula}
+
+A fórmula da Regressão Linear Múltipla generaliza a fórmula da Regressão Linear Simples, adicionando termos para cada preditor:
+
+$$\hat{Y} = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \dots + \beta_k X_k + \epsilon$$
+
+Onde:
+\begin{itemize}
+	\item $\hat{Y}$: O \textbf{valor predito} da variável dependente.
+	\item $X_1, X_2, \dots, X_k$: As $k$ variáveis independentes.
+	\item $\beta_0$: O \textbf{intercepto}, o valor esperado de $\hat{Y}$ quando todos os $X_i$ são zero.
+	\item $\beta_i$: Os \textbf{coeficientes parciais de inclinação}. Este é o ponto chave: $\beta_i$ representa a mudança média esperada em $\hat{Y}$ para um aumento de uma unidade em $X_i$, \textbf{mantendo todas as outras variáveis $X$ constantes} (o efeito ceteris paribus).
+	\item $\epsilon$: O termo de erro (resíduo).
+\end{itemize}
+
+\subsubsection{Exemplo Prático}
+
+\textbf{Cenário:} Uma rede de restaurantes deseja prever as \textbf{Vendas Diárias} ($Y$) com base em dois fatores: o \textbf{Número de Clientes} ($X_1$) e os \textbf{Gastos com Promoções Locais} ($X_2$, em R\$).
+
+\textbf{Modelo Estimado (Hipotético):}
+
+Após rodar a regressão, o modelo retorna os seguintes coeficientes:
+
+$$\hat{Y} = 500 + 15 X_1 + 2,0 X_2$$
+
+\textbf{Interpretação:}
+\begin{enumerate}
+	\item \textbf{Intercepto ($\beta_0 = 500$):}
+	\subitem Se não houver clientes ($X_1=0$) e nenhum gasto com promoções ($X_2=0$), o valor de vendas predito é de \textbf{R\$ 500}.
+	
+	\item \textbf{Coeficiente de Clientes ($\beta_1 = 15$):}
+	\subitem Para \textbf{cada cliente adicional} ($X_1$), as vendas médias aumentam em \textbf{R\$ 15}, \textbf{mantendo o gasto com promoções constante}.
+	
+	\item \textbf{Coeficiente de Promoções ($\beta_2 = 2,0$):}
+	\subitem Para \textbf{cada R\$ 1,00 adicional gasto em promoções} ($X_2$), as vendas médias aumentam em \textbf{R\$ 2,00}, \textbf{mantendo o número de clientes constante}.
+\end{enumerate}
+
+
+\textbf{Previsão:}
+
+Se, em um determinado dia, o restaurante espera 100 clientes ($X_1=100$) e planeja gastar R\$ 500 em promoções ($X_2=500$):
+
+$$\hat{Y} = 500 + (15 \times 100) + (2,0 \times 500)$$
+$$\hat{Y} = 500 + 1.500 + 1.000$$
+$$\hat{Y} = \mathbf{3.000}$$
+
+A previsão de vendas para o dia é de \textbf{R\$ 3.000,00}.
+
+A Regressão Linear Múltipla também deve satisfazer os pressupostos LINE, mas um desafio adicional aqui é a \textbf{Multicolinearidade} (quando os preditores $X$ estão altamente correlacionados entre si).
+
+
+
+\subsection{Regressão Ridge (Regularização $L2$)}
+
+A \textbf{Regressão Ridge} é uma extensão da Regressão Linear Múltipla que utiliza a \textbf{regularização $L2$} para melhorar a estabilidade e a generalização do modelo.
+
+Em vez de apenas minimizar a Soma dos Quadrados dos Erros (RSS), a Regressão Ridge adiciona um \textbf{termo de penalidade} à função de custo. Essa penalidade é proporcional ao \textbf{quadrado da magnitude dos coeficientes} ($\beta$).
+
+O objetivo da penalidade $L2$ é \textbf{encolher (shrink)} os coeficientes, tornando-os menores, mas \textbf{sem forçá-los a ser exatamente zero}.
+
+\textbf{Viés (*Bias*) vs. Variância (*Variance*):} A introdução dessa penalidade insere um pequeno \textbf{viés} nos coeficientes, mas reduz drasticamente a \textbf{variância} do modelo. Isso geralmente resulta em um erro de previsão geral menor em dados de teste não vistos (melhor generalização).
+
+
+\subsubsection{Quando Utilizar esse Modelo?}
+
+A Regressão Ridge é a melhor escolha nas seguintes situações:
+
+\begin{itemize}
+	\item \textbf{Multicolinearidade:} Quando as variáveis preditoras ($X$\'s) são \textbf{altamente correlacionadas} entre si. A multicolinearidade infla a variância dos coeficientes OLS, tornando-os instáveis e difíceis de interpretar. Ridge distribui o impacto entre as variáveis correlacionadas, esilizando os coeficientes.
+	
+	\item \textbf{Alto Número de Variáveis:} Quando o número de preditores é grande, o que pode levar ao overfitting (o modelo se ajusta muito bem aos dados de treinamento, mas mal aos novos dados).
+	
+	\item \textbf{Prioridade à Estabilidade:} Quando você precisa de um modelo com coeficientes mais estáveis e menos sensíveis a pequenas variações nos dados de treinamento.
+\end{itemize}
+
+
+\subsubsection{Fórmula}
+
+A \textbf{Regressão Ridge} modifica a função de custo dos Mínimos Quadrados Ordinários (OLS) ao adicionar o termo de penalidade $L2$. O modelo busca minimizar a seguinte expressão:
+
+$$J_{\text{Ridge}}(\beta) = \text{RSS} + \lambda \sum_{j=1}^{k} \beta_j^2$$
+
+Onde:
+
+\begin{itemize}
+	\item $J_{\text{Ridge}}(\beta)$: A função de custo que o modelo busca minimizar.
+	\item $\text{RSS}$: A Soma dos Quadrados dos Resíduos (o erro original do OLS).
+	\item $\lambda$ (\textbf{Lambda}): É o \textbf{parâmetro de regularização} (ou parâmetro de penalidade). É um valor não negativo ($ \lambda \geq 0$) que você deve escolher (\textbf{hiperparâmetro}).
+	\item \textbf{Se $\lambda = 0$}, a Regressão Ridge se reduz à Regressão Linear OLS comum.
+	\item \textbf{Se $\lambda \to \infty$}, os coeficientes ($\beta_j$) se aproximam de zero.
+	\item $\sum_{j=1}^{k} \beta_j^2$: O termo de penalidade $L2$, que é a soma dos quadrados de todos os coeficientes (excluindo o intercepto $\beta_0$).
+\end{itemize}
+
+
+\subsubsection{Exemplo}
+
+\textbf{Cenário:} Você está construindo um modelo para prever o preço de apartamentos ($Y$) usando:
+
+\begin{itemize}
+	\item $X_1$: Área útil (m²).
+	\item $X_2$: Área total (m²).
+\end{itemize}
+
+Como a \textbf{Área Útil ($X_1$) e a Área Total ($X_2$) são altamente correlacionadas} (multicolinearidade), o modelo OLS pode dar coeficientes irrealistas:
+
+\begin{table}[h]
+	\begin{tabular}{p{0.22\textwidth} p{0.35\textwidth} p{0.35\textwidth}}
+		\textbf{Coeficiente} & \textbf{OLS (Sem Ridge)} & \textbf{Ridge ($\lambda$ > 0)} \\
+		\hline
+		\\
+		$\beta_1$ (Área Útil) & +$10.000$ & +$1.500$ \\
+		\\
+		$\beta_2$ (Área Total) & $-9.900$ & +$500$ \\
+		\\
+	\end{tabular}   
+\end{table}
+
+\textbf{Interpretação dos Resultados:}
+
+\begin{enumerate}
+	\item \textbf{Modelo OLS:} O resultado sugere que um aumento na Área Útil aumenta o preço drasticamente, mas um aumento na Área Total (mantendo a Área Útil constante - uma situação irreal!) diminui o preço drasticamente. Os coeficientes são instáveis e sem sentido devido à multicolinearidade.
+	
+	\item \textbf{Modelo Ridge:} A Regressão Ridge penaliza esses coeficientes grandes e opostos. Ela encolhe ambos os coeficientes para valores menores e mais razoáveis (ex: $\beta_1=1500$ e $\beta_2=500$). Embora Ridge não zere nenhum deles, ela estabiliza o modelo, permitindo que ele faça previsões melhores em novos dados.
+\end{enumerate}
+
+
+\subsection{Regressão Lasso (Regularização $L1$)}
+
+A \textbf{Regressão Lasso} (\textit{Least Absolute Shrinkage and Selection Operator}) é uma técnica de regularização que, assim como a Ridge, modifica a função de custo da Regressão Linear Múltipla.
+
+Em vez da penalidade quadrática ($L2$) usada pela Ridge, a Lasso adiciona uma penalidade que é proporcional ao \textbf{valor absoluto da magnitude dos coeficientes} ($\beta$).
+
+O efeito dessa penalidade $L1$ é crucial: ela não apenas \textbf{encolhe} os coeficientes (como a Ridge), mas também tem a capacidade de forçar os coeficientes de variáveis irrelevantes a serem \textbf{exatamente zero}.
+
+\textbf{Seleção de Variáveis:} Ao zerar coeficientes, a Lasso \textbf{elimina efetivamente} essas variáveis do modelo. Por isso, a Lasso é a escolha padrão quando o objetivo é \textbf{seleção de features} e criação de um modelo mais simples e interpretável.
+
+
+\subsubsection{Quando Utilizar esse Modelo?}
+
+A Regressão Lasso é a melhor escolha nas seguintes situações:
+
+\begin{itemize}
+	\item \textbf{Alto Volume de Variáveis Irrelevantes:} Quando você tem um conjunto de dados com um grande número de variáveis preditoras, mas suspeita que \textbf{apenas um pequeno subconjunto} delas é realmente importante.
+	
+	\textbf{Simplificação do Modelo:} Quando a prioridade é a \textbf{interpretabilidade} e a \textbf{parcimônia}. Ao zerar coeficientes, a Lasso entrega um modelo mais limpo e fácil de explicar.
+	
+	\item \textbf{Multicolinearidade (Desvantagem):} Embora possa lidar com a multicolinearidade, se houver um grupo de variáveis altamente correlacionadas, a Lasso tende a escolher apenas uma delas aleatoriamente e zerar as demais, o que pode não ser ideal se todas as variáveis correlacionadas forem teoricamente importantes.
+\end{itemize}
+
+
+\subsubsection{Fórmula}
+
+A Regressão Lasso modifica a função de custo do OLS (RSS) ao adicionar o termo de penalidade $L1$ (a soma dos valores absolutos dos coeficientes):
+
+$$J_{\text{Lasso}}(\beta) = \text{RSS} + \lambda \sum_{j=1}^{k} |\beta_j|$$
+
+Onde:
+
+\begin{itemize}
+	\item $J_{\text{Lasso}}(\beta)$: A função de custo que o modelo busca minimizar.
+	\item $\text{RSS}$: A Soma dos Quadrados dos Resíduos.
+	\item $\lambda$ (\textbf{Lambda}): O \textbf{parâmetro de regularização}. Controla a força da penalidade.
+	\item $\sum_{j=1}^{k} |\beta_j|$: O termo de penalidade $L1$, que é a soma dos \textbf{valores absolutos} de todos os coeficientes (excluindo o intercepto $\beta_0$).
+\end{itemize}
+
+
+\subsubsection{Exemplo}
+
+\textbf{Cenário:} Você está construindo um modelo para prever a \textbf{Receita Anual} ($Y$) usando 100 variáveis, a maioria irrelevante.
+
+
+\begin{table}[h]
+	\begin{tabular}{p{0.40\textwidth} p{0.20\textwidth} p{0.20\textwidth} p{0.20\textwidth}}
+		\textbf{Variável} & \textbf{OLS (Sem Regularização)} & \textbf{ Ridge ($\lambda$ > 0)} &  Lasso ($\lambda$ > 0) \\
+		\hline
+		\\
+		$\beta_1$ (Invest. em Mkt) & +1,2 & +1,1 & +1,0 \\
+		\\
+		$\beta_2$ (Satisfação Cliente) & +0,8 & +0,7 & +0,7 \\
+		\\
+		$\beta_3$ (Cor do Logo) & +0,005 & +0,001 & 0,0 \\
+		\\
+		$\beta_4$ (Número de Lâmpadas) & -0,0001 & -0,00005 & 0,0 \\
+		\\
+		$\beta_5$ (Variável Irrelevante 3) & -0,002 & -0,0008 & 0,0 \\
+		\\
+	\end{tabular}   
+\end{table}
+
+\textbf{Interpretação dos Resultados:}
+
+\begin{enumerate}
+	\item \textbf{OLS:} Retorna coeficientes para \textbf{todas} as 100 variáveis, mesmo as irrelevantes (como Cor do Logo e Lâmpadas), resultando em um modelo complexo e com potencial de overfitting.
+	
+	\item \textbf{Ridge:} Encolhe todos os coeficientes para perto de zero, mas \textbf{nunca zero} (ex: $\beta_3 = +0,001$). O modelo continua a usar todas as 100 variáveis.
+	
+	\item \textbf{Lasso:} Força os coeficientes das variáveis irrelevantes (Cor do Logo, Lâmpadas) a serem \textbf{exatamente 0,0}. O modelo final de Lasso inclui automaticamente apenas as variáveis mais significativas (Invest. em Mkt e Satisfação Cliente), resultando em um modelo mais robusto e fácil de interpretar.
+\end{enumerate}
+
+
+\subsubsection{Comparação Final: Ridge vs. Lasso}
+
+\begin{table}[h]
+	\begin{tabular}{p{0.22\textwidth} p{0.35\textwidth} p{0.35\textwidth} }
+		\textbf{Característica} & \textbf{Regressão Ridge ($L2$)} & \textbf{Regressão Lasso ($L1$)} \\
+		\hline
+		\\
+		\textbf{Penalidade} & Soma dos Quadrados dos Coeficientes ($\sum \beta_j^2$) & Soma dos Valores Absolutos dos Coeficientes ($\sum |\beta_j|$) \\
+		\\
+		\textbf{Efeito nos $\beta$'s} & Encolhe (reduz magnitude), mas $\beta \neq 0$. & Encolhe e pode forçar $\beta = 0$. \\
+		\\
+		\textbf{Seleção de Variáveis} & Não realiza seleção de features. & \textbf{Realiza seleção de features} \\
+		\\
+		\textbf{Uso Principal} & Multicolinearidade e Estabilização de coeficientes. & Modelos com muitas features e necessidade de simplificação. \\
+		\\
+	\end{tabular}   
+\end{table}
