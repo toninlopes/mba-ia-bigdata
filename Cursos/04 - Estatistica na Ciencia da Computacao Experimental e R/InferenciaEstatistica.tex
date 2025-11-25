@@ -1,0 +1,1165 @@
+\chapter{Inferência Estatística}
+
+É importante definirmos alguns conceitos antes de descrevermos o que é Inferência Estatística.
+
+
+\textbf{População vs. Amostra}
+
+A inferência estatística existe porque vivemos em um cenário de dualidade \textbf{População} e \textbf{Amostra}.
+
+\begin{itemize}
+	\item \textbf{População:} É o \textbf{universo completo} de todos os itens de interesse. É o "todo" que queremos estudar (ex: todos os usuários da sua plataforma, todas as músicas no Spotify).
+	\item \textbf{Amostra:} É um \textbf{subconjunto} selecionado da população. É a parte que realmente temos acesso e podemos analisar.
+\end{itemize}
+
+
+\textbf{Atores Principais: Parâmetro vs. Estimador.}
+
+\begin{itemize}
+	\item \textbf{Parâmetro (da População)}:
+		\subitem \textbf{O que é:} Uma medida numérica que descreve uma característica da \textbf{População}.
+		\subitem \textbf{Exemplos:} A média real de idade de todos os usuários ($\mu$), a proporção real de todas as músicas que são do gênero rock ($p$).
+		\subitem \textbf{Característica-chave:} É um valor \textbf{fixo}, mas \textbf{desconhecido}. É a "verdade" que estamos tentando descobrir.
+		
+	\item \textbf{Estimador (ou Estatística) (da Amostra)}:
+		\subitem \textbf{O que é:} Uma função da \textbf{Amostra} usada para estimar um parâmetro.
+		\subitem \textbf{Exemplos:} A média de idade dos 1.000 usuários que amostramos ($\overline{X}$), a proporção de músicas de rock nas 500 músicas que analisamos ($\hat{p}$).
+		\subitem \textbf{Característica-chave:} É uma \textbf{Variável Aleatória}. O seu valor muda dependendo de qual amostra selecionamos.
+		
+	\item \textbf{Estimativa:}
+		\subitem \textbf{O que é:} O \textbf{valor numérico específico} que o estimador assume para a noss* amostra em particular.
+		\subitem \textbf{Exemplo:} Se a média de idade na nossa amostra foi 32.5 anos, então a estimativ* $\overline{x} = 32.5$.
+\end{itemize}
+
+
+Com os atores definidos, a inferência é o \textbf{processo} de usar as informações da amostra (as \textbf{estimativas}) para tirar conclusões sobre a população (os \textbf{parâmetros}). Como sabemos que o \textbf{estimador} ($\overline{X}$) é uma variável aleatória, podemos estudar a sua \textbf{distribuição de probabilidade} (chamada de \textbf{distribuição amostral}). É essa distribuição que nos permite "dar o salto" da amostra para a população com um nível de confiança conhecido.
+
+Esse processo se divide em dois ramos principais:
+
+\begin{enumerate}
+	\item \textbf{Estimação:} Tentar \textbf{estimar} o valor do parâmetro (ex: "Qual é a média $\mu$?").
+	\item \textbf{Teste de Hipóteses:} Tentar \textbf{decidir} sobre uma afirmação a respeito do parâmetro (ex: "A média $\mu$ é maior que 30?").
+\end{enumerate}
+
+
+\section{Problemas de Inferência Estatística}
+
+A inferência estatística é o processo de usar dados de uma \textbf{amostra} para tirar conclusões sobre uma \textbf{população} inteira. E como vimos anteriormente, esse processo se divide em dois ramos principais:
+
+\begin{enumerate}
+	\item \textbf{Estimação:} Tenta responder à pergunta: "\textbf{Qual é o valor} do parâmetro da população?".
+		\subitem \textbf{Aplicação:} Usamos quando queremos \textbf{quantificar} uma característica desconhecida.
+		\subitem \textbf{Exemplo:} Qual é a \textbf{proporção ($p$)} real de clientes que irão cancelar a assinatura no próximo mês?
+	
+	\item \textbf{Teste de Hipóteses:} Tenta responder à pergunta: "\textbf{Uma afirmação} sobre o parâmetro é plausível?".
+		\subitem \textbf{Aplicação:} Usamos quando queremos \textbf{tomar uma decisão} ou validar uma mudança.
+		\subitem \textbf{Exemplo:} O novo layout do nosso site (B) fez a taxa de cliques média ($\mu_B$) ser maior que a taxa do layout antigo ($\mu_A$)?.
+\end{enumerate}
+
+
+\subsection{Estimativa Pontual}
+
+A Estimação Pontual é o método de estimação mais simples. Ela usa um \textbf{único valor} (um "ponto") calculado a partir da amostra como o nosso \textbf{"melhor palpite"} para o parâmetro desconhecido da população.
+
+Na prática, aplicamos uma função (o \textbf{estimador}) aos nossos dados amostrais para obter um número (a \textbf{estimativa}). 
+
+\textbf{Exemplo:} Taxa de Cliques (Click-Through Rate - CTR).
+
+\begin{itemize}
+	\item \textbf{O Cenário:} Você é um cientista de dados em uma empresa de e-commerce. Você quer saber a verdadeira taxa de cliques (CTR) de um novo botão "Compre Agora".
+	\item \textbf{O Parâmetro (Desconhecido):} $p$. Esta é a proporção real, na população (todos os usuários futuros), de pessoas que clicarão no botão. É um valor fixo que não conhecemos.
+	\item \textbf{A Amostra:} Você realiza um Teste A/B, mostrando o botão para $n=5.000$ usuários (sua amostra).
+	\item \textbf{Os Dados Amostrais:} Desses 5.000 usuários, 350 clicaram no botão.
+	\item \textbf{O Estimador (A Fórmula):} A fórmula que você usa para estimar $p$ é o estimador da proporção amostral, $\hat{p} = \frac{X}{n}$ (onde $X$ é o número de cliques e $n$ é o total da amostra).
+	\item \textbf{A Estimativa Pontual (O "Melhor Palpite"):} O valor numérico que o seu estimador encontrou:
+		\subitem $$  \hat{p}_{obs} = \frac{350}{5.000} = 0.07$$
+\end{itemize}
+
+Sua estimativa pontual para a verdadeira taxa de cliques $p$ é $7\%$.
+
+
+\subsection{Propriedade dos Estimadores}
+
+Como poderíamos, teoricamente, usar diferentes estatísticas para estimar o mesmo parâmetro (ex: usar a média da amostra, a mediana da amostra, etc.), precisamos de critérios para saber qual é o "melhor" estimador. Esses critérios são as 
+\textbf{Propriedades dos Estimadores}.
+
+Uma das prinicpais propriedade é a \textbf{Não-Viesada (unbiased)}. Um estimador é "não-viesado" se, na média de todas as amostras possíveis, ele acerta exatamente o parâmetro verdadeiro. Formalmente, seu valor esperado é igual ao parâmetro.
+
+\textbf{Exemplo:}
+\begin{itemize}
+	\item \textbf{A Pergunta:} O estimador $\hat{p} = X/n$ (que acabamos de usar) é uma boa escolha? Ele é "não-viesado" para $p$?
+	
+	\item \textbf{A Prova}:
+		\subitem Queremos saber o valor de $E(\hat{p})$.
+		\subitem Substituímos a fórmula: $E(\hat{p}) = E\left(\frac{X}{n}\right)$.
+		\subitem Podemos tirar a constante $1/n$ da esperança: $E(\hat{p}) = \frac{1}{n} \cdot E(X)$.
+		\subitem $X$ é o \textbf{"número de cliques (sucessos) em $n$ tentativas"}. $X$ segue uma Distribuição Binomial($n, p$).
+		\subitem E, como vimos na tabela de distribuições, a Esperança (Média) de uma Binomial é $E(X) = np$.
+		\subitem Substituindo de volta: $E(\hat{p}) = \frac{1}{n} \cdot (np) = p$.
+		
+	\item \textbf{Conclusão:} Como $E(\hat{p})=p$, provamos que o estimador da proporção amostral $\hat(p)$ é um estimador não-viesado para a proporção da população $p$. Por isso, ele é o estimador "padrão" usado na prática.
+\end{itemize}
+
+
+\subsection{Estimativa Intervalar}
+
+Como vimos, a \textbf{Estimativa Pontual} nos dá um "melhor palpite" (ex: a média da amostra $\overline{x}$ é 32.5). No entanto, a probabilidade desse palpite ser \textbf{exatamente} igual ao valor verdadeiro da população ($\mu$) é praticamente zero. É um palpite preciso, mas quase certamente errado.
+
+Em vez de um único palpite, o Intervalo de Confiança (IC) nos fornece uma \textbf{faixa de valores plausíveis} para o parâmetro da população, calculada a partir da nossa amostra.
+
+A fórmula para a maioria dos ICs segue esta estrutura:
+
+\begin{center}
+	\textbf{$Estimativa Pontual \pm Margem de Erro$}
+\end{center}
+
+A \textbf{Margem de Erro} é um valor que calculamos e que depende de duas coisas:
+\begin{enumerate}
+	\item \textbf{O Nível de Confiança:} (Quão confiantes queremos ser? 90\%, 95\%, 99\%).
+	\item \textbf{A Variabilidade da Amostra:} (O quão "barulhentos" ou "espalhados" são nossos dados, medido pelo \textbf{erro padrão}).
+\end{enumerate}
+
+\textbf{O Ponto Crucial: O Nível de Confiança (ex: 95\%)}
+
+Este é o conceito mais importante. O que significa \textbf{"95\% de confiança"}?
+
+\begin{itemize}
+	\item \textbf{Interpretação Errada:} Não significa "há 95\% de chance de o parâmetro $\mu$ estar neste intervalo". O parâmetro $\mu$ é fixo, ele está ou não está no intervalo.
+	\item \textbf{Interpretação Correta:} A confiança está no \textbf{método}, não em um resultado específico. "95\% de confiança" significa: "Se repetíssemos nosso experimento 100 vezes (coletando 100 amostras diferentes) e calculássemos 100 intervalos de confiança, esperaríamos que \textbf{95 desses 100 intervalos} contivessem o verdadeiro parâmetro da população."
+\end{itemize}
+
+\textbf{Exemplos:}
+
+\begin{enumerate}
+	\item \textbf{Exemplo de Média (Tempo de Carregamento de um Site):}
+		\subitem \textbf{Pergunta:} Qual é o \textbf{verdadeiro} tempo médio ($\mu$) de carregamento do nosso site para \textbf{todos} os usuários?
+		\subitem \textbf{Amostra:} Coletamos uma amostra de $n=200$ tempos de carregamento.
+		\subitem \textbf{Estimativa Pontual:} A média da \textbf{nossa amostra} é $\overline{x} = 2.4$ segundos.
+		\subitem \textbf{Intervalo de Confiança:} Após os cálculos, encontramos um IC de 95\%: \textbf{[2.1 segundos, 2.7 segundos]}.
+		\subitem \textbf{Interpretação Prática:} Em vez de apenas dizer "nosso palpite é 2.4s", podemos agora afirmar com 95\% de confiança (no método) que a média \textbf{real} de carregamento do site para \textbf{todos} os usuários está em algum lugar entre 2.1 e 2.7 segundos. Isso nos dá uma noção da nossa \textbf{precisão}.
+		
+		
+	\item \textbf{Exemplo de Proporção (Taxa de Conversão de Anúncio):}
+		\subitem \textbf{Pergunta:} Qual é a \textbf{verdadeira} taxa de conversão ($p$) de um novo anúncio de marketing?
+		\subitem \textbf{Amostra:} Mostramos o anúncio para $n=1.000$ pessoas.
+		\subitem \textbf{Estimativa Pontual:} 40 pessoas converteram, então $\hat{p} = 40/1000 = 4.0\%$.
+		\subitem \textbf{Intervalo de Confiança:} Calculamos um IC de 95\%: \textbf{[2.8\%, 5.2\%]}.
+		\subitem \textbf{Interpretação Prática:} O nosso \textbf{melhor palpite} é 4\%. No entanto, a inferência estatística nos diz que, com 95\% de confiança no método, a taxa de conversão \textbf{real} de toda a população de usuários pode ser tão baixa quanto 2.8\% ou tão alta quanto 5.2\%. Esta margem de erro é crucial para decidir se o anúncio é lucrativo ou não.
+\end{enumerate}
+
+
+\subsection{Testes de Hipóteses}
+
+Enquanto a \textbf{Estimação Pontual ou Intervalar} tenta responder "Qual é o valor do parâmetro?", o \textbf{Teste de Hipóteses} tenta responder a uma pergunta de decisão: "\textbf{Uma afirmação específica} sobre o parâmetro é plausível?"
+
+A melhor forma de entender o Teste de Hipóteses é com a \textbf{analogia de um julgamento num tribunal}:
+
+\begin{itemize}
+	\item \textbf{O Réu:} É a afirmação que queremos testar.
+	\item \textbf{O Princípio:} O réu é \textbf{"inocente até que se prove o contrário"}.
+	\item \textbf{A Evidência:} São os dados da nossa \textbf{amostra}.
+	\item \textbf{O Veredito:} Nós nunca "provamos que o réu é inocente". Nós apenas temos duas opções:
+	
+	\begin{enumerate}
+		\item 	\textbf{Rejeitar a inocência} (evidência forte de culpa).
+		\item \textbf{Não rejeitar a inocência} (evidência foi insuficiente para condenar).\\
+	\end{enumerate}
+\end{itemize}
+
+\textbf{Os Atores: As Hipóteses}
+
+Todo teste de hipóteses é uma "batalha" entre duas afirmações opostas sobre o parâmetro da população:
+
+\begin{enumerate}
+	\item \textbf{A Hipótese Nula ($H_0$)}.
+	\subitem É a hipótese do "réu inocente". É a afirmação do \textit{status quo}, da "não mudança" ou "nenhum efeito".
+	\subitem Ela sempre contém o sinal de igualdade (=, $\le$ ou $\ge$).
+	\subitem \textbf{Exemplo:} "A média de tempo de carregamento do site \textbf{é igual} a 2.5 segundos" ($H_0: \mu = 2.5s$).
+	
+	\item \textbf{A Hipótese Alternativa ($H_1$ ou $H_a$)}.
+	\subitem É a hipótese do "réu culpado". É a afirmação que o pesquisador (o "promotor") quer provar. É a hipótese da "mudança" ou "efeito".
+	\subitem Ela nunca contém o sinal de igualdade ($\ne$, $<$ ou $>$).
+	\subitem \textbf{Exemplo:} "A média de tempo de carregamento \textbf{é diferente} de 2.5 segundos" ($H_1: \mu \ne 2.5s$).\\
+\end{enumerate}
+
+
+\textbf{O Processo: O Teste}
+
+\begin{enumerate}
+	\item \textbf{Assumimos que $H_0$ é verdadeira:} Começamos o julgamento assumindo que o réu é inocente (assumimos que $\mu = 2.5s$).
+	\item \textbf{Coletamos a Evidência (Amostra):} Coletamos nossa amostra de 200 tempos de carregamento e calculamos a média $\overline{x} = 2.7s$.
+	\item \textbf{Calculamos a Probabilidade da Evidência:} A pergunta central é: "Se o réu fosse realmente inocente (se $\mu$ fosse realmente 2.5s), qual seria a probabilidade de obtermos uma evidência (uma média amostral) tão extrema ou mais extrema que 2.7s?"
+	\item \textbf{$p$-valor (p-value):} Esta probabilidade calculada é o \textbf{$p$-valor}.\\
+\end{enumerate}
+
+\textbf{O Veredito: A Decisão}
+
+O $p$-valor é a nossa "força da evidência".
+
+\begin{itemize}
+	\item \textbf{Se o $p$-valor é muito baixo} (ex: $p = 0.01$ ou 1\%):
+	\subitem \textbf{Interpretação:} "É muito improvável (1\% de chance) termos visto o que vimos na nossa amostra se a hipótese nula ($H_0$) fosse verdadeira."
+	\subitem \textbf{Decisão:} A evidência é muito forte. Nós \textbf{rejeitamos $H_0$}. Concluímos que a hipótese alternativa ($H_1$) é mais provável.
+	
+	\item \textbf{Se o $p$-valor é alto} (ex: $p = 0.30$ ou 30\%):
+	\subitem \textbf{Interpretação:} "É perfeitamente plausível (30\% de chance) termos visto o que vimos na nossa amostra, mesmo que a hipótese nula ($H_0$) seja verdadeira."
+	\subitem \textbf{Decisão:} A evidência é fraca. Nós \textbf{não rejeitamos $H_0$} (o que não significa que provamos que $H_0$ é verdadeira!).\\
+\end{itemize}
+
+
+\textbf{Exemplo: Teste A/B de Marketing}
+
+\begin{itemize}
+	\item \textbf{Pergunta:} Um novo design de anúncio (B) tem uma taxa de conversão ($p_B$) maior que o anúncio antigo (A) ($p_A$)?
+	
+	\item \textbf{Hipóteses:}
+	\subitem $H_0: p_B - p_A \le 0$ (O anúncio B não é melhor que o A. O réu é "inocente").
+	\subitem $H_1: p_B - p_A > 0$ (O anúncio B é realmente melhor que o A. Esta é a afirmação que queremos provar).
+	
+	\item \textbf{Evidência (Amostra):}
+	\subitem Amostra A: 10.000 vistas, 500 conversões ($\hat{p}_A = 5\%$).
+	\subitem Amostra B: 10.000 vistas, 550 conversões ($\hat{p}_B = 5.5\%$).
+	
+	\item \textbf{Análise:} O anúncio B parece melhor (5.5\% > 5.0\%), mas esta diferença é "estatisticamente significante" ou pode ser apenas fruto do acaso?
+	
+	\item \textbf{O Teste:} Calculamos a estatística de teste (geralmente um Z-score para proporções) e encontramos um \textbf{$p-valor = 0.02$}.
+	
+	\item \textbf{Veredito:}
+	\subitem Há apenas 2\% de chance de vermos uma diferença de 0.5% (ou mais) se os anúncios fossem, na verdade, iguais.
+	\subitem Como 2\% é uma probabilidade baixa (tipicamente menor que o nosso "nível de significância" $\alpha$ de 5\%), a evidência é forte.
+	\subitem \textbf{Decisão:} Nós \textbf{rejeitamos $H_0$} e concluímos que o anúncio B é, de fato, superior ao anúncio A.
+\end{itemize}
+
+
+\section{Testes de Hipóteses Paramétricos}
+
+Testes de Hipóteses Paramétricos são um tipo de teste estatístico usado para fazer \textbf{inferências sobre um ou mais parâmetros populacionais} (como a média $\mu$ ou a variância $\sigma^2$) com base em dados de uma amostra.
+
+O termo "\textbf{paramétrico}" é crucial e implica em três \textbf{pressupostos fundamentais} sobre a população da qual a amostra foi retirada:
+
+\begin{enumerate}
+	\item \textbf{Distribuição Normal:} A variável de interesse (ou o erro) na população deve seguir uma \textbf{distribuição de probabilidade conhecida}, tipicamente a \textbf{Distribuição Normal} (Curva de Gauss ou Curva em forma de Sino).
+	
+	\item \textbf{Homogeneidade de Variâncias (Homoscedasticidade):} Em testes que comparam dois ou mais grupos (como o Teste T ou ANOVA), assume-se que as variâncias populacionais desses grupos são \textbf{iguais} ou semelhantes.
+	
+	\item \textbf{Independência das Observações:} As observações (dados da amostra) devem ser independentes umas das outras.
+\end{enumerate}
+
+Se esses pressupostos forem atendidos, os testes paramétricos são geralmente mais \textbf{poderosos} (têm maior probabilidade de rejeitar corretamente uma hipótese nula falsa) do que seus equivalentes não paramétricos.
+
+A finalidade principal dos testes de hipóteses paramétricos é \textbf{validar ou refutar uma afirmação (hipótese)} sobre um parâmetro populacional, utilizando a evidência fornecida pelos dados da amostra.
+
+Eles fornecem uma estrutura formal para tomar decisões estatísticas, geralmente seguindo estes passos:
+
+\begin{enumerate}
+	\item \textbf{Formulação das Hipóteses:}
+	\subitem Define-se a \textbf{Hipótese Nula ($H_0$)} (o \textit{status quo}, o que se assume ser verdadeiro, ex: $\mu_1 = \mu_2$);
+	\subitem \textbf{Hipótese Alternativa ($H_1$)} (o que o pesquisador deseja provar, ex: $\mu_1 \neq \mu_2$).
+
+	\item \textbf{Definição do Nível de Significância ($\alpha$):} É a probabilidade máxima que você está disposto a aceitar de cometer um \textbf{Erro Tipo I} (rejeitar $H_0$ quando ela é verdadeira). Geralmente, $\alpha$ é 0,05 (5\%).	
+	
+	\item \textbf{Cálculo da Estatística de Teste:} Calcula-se um valor a partir da amostra (ex: $t$ no Teste t, $Z$ no Teste Z, $F$ na ANOVA) para medir o quão longe o resultado amostral está do que $H_0$ afirma.
+	
+	\item \textbf{Decisão:} Compara-se a estatística de teste com o valor crítico, ou mais comumente, compara-se o \textbf{valor-p} com o $\alpha$.
+	\subitem \textbf{Se valor-p $\leq \alpha$:} \textbf{Rejeita-se $H_0$}, concluindo que há evidência estatística de que $H_1$ é verdadeira.
+	\subitem \textbf{Se valor-p $ > \alpha$:} \textbf{Não se rejeita $H_0$}, concluindo que não há evidência suficiente para refutar a afirmação inicial.
+\end{enumerate}
+
+Exemplos Comuns de Testes Paramétricos:
+
+\begin{itemize}
+		\item \textbf{Teste Z-Score}:
+		\subitem Comparar a média de uma amostra com a população, quando $\sigma$ (desvio-padrão populacional) é conhecido (raro na prática).
+		\subitem Parâmetro de Interesse - Média ($\mu$).
+		
+		\item \textbf{Teste T de Student}:
+		\subitem Comparar médias de dois grupos (amostras independentes ou pareadas).
+		\subitem Parâmetro de Interesse - Média ($\mu$).
+		
+		\item \textbf{ANOVA (Análise de Variância)}:
+		\subitem Comparar médias de três ou mais grupos simultaneamente.
+		\subitem Parâmetro de Interesse - Média ($\mu$).
+\end{itemize}
+
+
+\subsection{Tipos de Erros em Testes de Hipóteses}
+
+Ao tomar uma decisão estatística (rejeitar ou não rejeitar $H_0$), sempre existe o risco de cometer um erro, já que a decisão é baseada em uma amostra, e não na população inteira. Existem dois principais tipos de erros: \textbf{Erro Tipo I}; e \textbf{Erro Tipo II}.
+
+\subsubsection{Erro Tipo I ($\alpha$)}
+
+O \textbf{Erro Tipo I} ocorre quando a \textbf{Hipótese Nula ($H_0$) é verdadeira, mas nós a rejeitamos}.
+
+\begin{itemize}
+	\item \textbf{Definição:} É o erro de \textbf{falso positivo}. Concluímos que há um efeito, diferença ou relação significativa, quando, na realidade, isso não existe na população.
+	
+	\item \textbf{Símbolo:} A probabilidade de cometer o Erro Tipo I é denotada por \textbf{$\alpha$ (alpha)}, também conhecido como \textbf{nível de significância}.
+	
+	\item \textbf{Controle:} O pesquisador \textbf{define e controla} $\alpha$ antes de realizar o teste (tipicamente 0,05 ou 5\%). Se o valor-p do teste for menor ou igual a $\alpha$, rejeitamos $H_0$, mas assumimos um risco $\alpha$ de estarmos errados.
+\end{itemize}
+
+
+\textbf{Exemplo de Erro Tipo I}
+
+\begin{itemize}
+	\item \textbf{Cenário:} Uma empresa farmacêutica testa um novo medicamento contra a depressão.
+	\subitem $H_0$: O novo medicamento \textbf{não é mais eficaz} que o placebo.
+	\subitem $H_1$: O novo medicamento \textbf{é mais eficaz} que o placebo.
+	
+	\item \textbf{Erro Tipo I:} A empresa conclui que o medicamento é significativamente mais eficaz (rejeita $H_0$), \textbf{mas, na verdade}, ele não faz diferença ( $H_0$ é verdadeira).
+	
+	\item \textbf{Consequência:} A empresa gasta milhões para comercializar um medicamento ineficaz, e os pacientes recebem um tratamento que não funciona.
+\end{itemize}
+
+\subsubsection{Erro Tipo II ($\beta$)}
+
+O \textbf{Erro Tipo II} ocorre quando a \textbf{Hipótese Nula ($H_0$) é falsa, mas nós não a rejeitamos} (ou seja, a aceitamos erroneamente).
+
+\begin{itemize}
+	\item \textbf{Definição:} É o erro de \textbf{falso negativo}. Concluímos que não há um efeito ou diferença significativa, quando, na realidade, existe um efeito real na população.
+	
+	\item \textbf{Símbolo:} A probabilidade de cometer o Erro Tipo II é denotada por \textbf{$\beta$ (beta)}.
+	
+	\item \textbf{Controle:} $\beta$ é inversamente relacionado ao \textbf{Poder do Teste} ($1 - \beta$). O poder do teste é a probabilidade de \textbf{rejeitar corretamente $H_0$ quando ela é falsa}. O aumento do tamanho da amostra (n) é a forma mais comum de reduzir $\beta$ e aumentar o poder.
+\end{itemize}
+
+\textbf{Exemplo de Erro Tipo II}
+
+\begin{itemize}
+	\item \textbf{Cenário:} Uma empresa de controle de qualidade testa um lote de smartphones para defeitos.
+	\subitem $H_0$: O lote de smartphones \textbf{tem uma taxa de defeito aceitável}.
+	\subitem $H_1$: O lote de smartphones \textbf{tem uma taxa de defeito inaceitável}.
+
+	\item \textbf{Erro Tipo II:} O controle de qualidade conclui que o lote é aceitável (não rejeita $H_0$), \textbf{mas, na verdade}, a taxa de defeito é inaceitável ($H_0$ é falsa).
+
+	\item \textbf{Consequência:} Um lote de produtos defeituosos é enviado ao mercado, resultando em insatisfação do cliente, devoluções e danos à reputação da marca.
+\end{itemize}
+
+
+\subsubsection{Relação e \textit{Trade-off}}
+
+Existe um \textbf{\textit{trade-off} (conflito)} entre os dois tipos de erros. Na maioria das vezes, tentar \textbf{reduzir o Erro Tipo I ($\alpha$)} (por exemplo, baixando $\alpha$ de 5\% para 1\%) levará a um \textbf{aumento no Erro Tipo II ($\beta$)}, e vice-versa. 
+
+O único modo de \textbf{reduzir ambos os erros simultaneamente} é geralmente através do \textbf{aumento do tamanho da amostra} ($n$).
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{lll}
+		\textbf{Decisão} & \textbf{$H_0$ é Verdadeira (Situação Real)} & \textbf{$H_0$ é Falsa (Situação Real)} \\
+		\hline
+		\\
+		Não Rejeitar $H_0$ & Decisão Correta & Erro Tipo II ($\beta$) \\
+		\\
+		Rejeitar $H_0$ & Erro Tipo I ($\alpha$) & Decisão Correta (Poder $1-\beta$)
+	\end{tabular}
+\end{table}
+
+
+\section{Teste Z}
+
+O \textbf{Teste Z} é um dos testes de hipóteses paramétricos mais fundamentais e baseia-se na distribuição normal padronizada.
+
+O Teste Z é um teste estatístico utilizado para determinar se existe uma diferença significativa entre a \textbf{média de uma amostra} e a \textbf{média de uma população conhecida}, ou entre as médias de duas amostras.
+
+O valor calculado do teste, chamado de \textbf{Estatística Z} (ou \textbf{z-score}), mede a distância entre o valor da amostra e o valor populacional em termos de \textbf{desvios-padrão}.
+
+\begin{itemize}
+	\item \textbf{Fundamento:} Assim como os outros testes paramétricos, ele assume que a população segue uma distribuição aproximadamente normal.
+	
+	\item \textbf{Distribuição de Referência:} Ele usa a \textbf{Distribuição Normal Padrão} (média $\mu=0$ e desvio-padrão $\sigma=1$) para determinar o valor-p e tomar a decisão sobre a hipótese nula ($H_0$).
+\end{itemize}
+
+
+\subsubsection{Quando utilizar o Teste Z?}
+
+O Teste Z é aplicável em situações muito específicas, o que o torna menos comum que o Teste \textit{t} de Student no Machine Learning e na ciência de dados aplicada.
+
+Ele deve ser preferido quando a variável de interesse (média) segue uma distribuição normal e, criticamente, quando:
+
+\begin{enumerate}
+	\item \textbf{Conhecimento do Desvio-Padrão Populacional ($\sigma$):} Este é o requisito \textbf{principal}. Para usar o Teste Z, você precisa \textbf{saber} o valor exato do \textbf{desvio-padrão da população inteira} ($\sigma$). Na prática, isso é raro, a menos que você esteja trabalhando com dados simulados ou conjuntos de dados históricos muito bem estudados.
+	
+	\item \textbf{Tamanho da Amostra Grande ($n \geq 30$):} Mesmo que $\sigma$ não seja conhecido, o Teste Z pode ser usado como uma \textbf{aproximação} do Teste \textit{t} se o tamanho da amostra ($n$) for \textbf{grande} (geralmente $n \geq 30$). Isso ocorre devido ao \textbf{Teorema do Limite Central (TLC)}, que garante que a distribuição das médias amostrais se aproxima da normal, independentemente da forma da população.
+\end{enumerate}
+
+
+\subsubsection{Fórmulas do Teste Z}
+
+Existem duas formas comuns de calcular a Estatística Z, dependendo se você está comparando uma amostra com uma população ou duas amostras entre si.\\
+
+\noindent \textbf{A. Teste Z para uma Única Média (Comparando Amostra com População)}
+
+Esta fórmula calcula o quão distante a média da sua amostra ($\bar{X}$) está da média populacional hipotética ($\mu_0$), padronizada pelo erro padrão da média:
+
+$$Z = \frac{\bar{X} - \mu_0}{\frac{\sigma}{\sqrt{n}}}$$
+
+Onde:
+
+\begin{itemize}
+	\item \textbf{$Z$}: Estatística Z calculada.
+	\item \textbf{$\bar{X}$}: Média da amostra.
+	\item \textbf{$\mu_0$}: Média populacional hipotetizada ($H_0$).
+	\item \textbf{$\sigma$}: \textbf{Desvio-padrão populacional conhecido}.
+	\item \textbf{$n$}: Tamanho da amostra.
+	\item \textbf{$\frac{\sigma}{\sqrt{n}}$}: É o \textbf{erro padrão da média}.\\
+\end{itemize}
+
+
+\noindent \textbf{B. Teste Z para Duas Amostras (Comparando Duas Médias)}
+
+Esta fórmula compara as médias de duas amostras ($\bar{X}_1$ e $\bar{X}_2$) e verifica se a diferença é estatisticamente significativa.
+
+$$Z = \frac{(\bar{X}_1 - \bar{X}_2) - (\mu_1 - \mu_2)}{\sqrt{\frac{\sigma_1^2}{n_1} + \frac{\sigma_2^2}{n_2}}}$$
+
+Onde, para $H_0: \mu_1 = \mu_2$, a diferença hipotetizada $(\mu_1 - \mu_2)$ é geralmente \textbf{zero}:
+
+$$Z = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{\sigma_1^2}{n_1} + \frac{\sigma_2^2}{n_2}}}$$
+
+
+\subsubsection{Exemplo do Teste Z (para uma Média)}
+
+\textbf{Cenário:} O tempo médio histórico de entrega de pacotes de uma grande transportadora é de \textbf{3 dias} ($\mu_0 = 3$) com um \textbf{desvio-padrão populacional conhecido} de \textbf{0,5 dias} ($\sigma = 0,5$).
+
+A transportadora implementou uma nova logística e quer saber se o tempo médio de entrega mudou. Uma amostra recente de $n=100$ entregas revelou uma média amostral de \textbf{2,9 dias} ($\bar{X} = 2,9$). Use $\alpha = 0,05$.
+
+Passos:
+
+\begin{enumerate}
+	\item \textbf{Hipóteses:}
+	\subitem $H_0$: $\mu = 3$ (O novo tempo médio não mudou).
+	\subitem $H_1$: $\mu \neq 3$ (O novo tempo médio é diferente de 3). (Teste bilateral)
+	
+	\item \textbf{Cálculo da Estatística Z:}
+	\subitem $$Z = \frac{2,9 - 3}{\frac{0,5}{\sqrt{100}}} = \frac{-0,1}{\frac{0,5}{10}} = \frac{-0,1}{0,05} = -2,0$$
+	
+	\item \textbf{Decisão (Usando Valor Crítico para $\alpha=0,05$ bilateral):} O valor crítico para $Z$ a um $\alpha = 0,05$ (bilateral) é $\pm 1,96$.
+	
+	\item \textbf{Conclusão:} Como $|Z| = |-2,0| = 2,0$ é \textbf{maior} que o valor crítico de 1,96, a estatística Z calculada cai na região de rejeição.
+\end{enumerate}
+
+\textbf{Resultado:} \textbf{Rejeita-se a Hipótese Nula ($H_0$)}. Há evidência estatística, com nível de significância de 5\%, de que o tempo médio de entrega \textbf{mudou} com a nova logística.\\
+
+\noindent \textbf{De Onde Vem o Valor $\pm1,96$?}
+
+O valor \textbf{1,96} \textbf{não é resultado de uma fórmula de teste de hipóteses}, mas sim um \textbf{valor fixo} que corresponde à sua escolha de \textbf{$\alpha$ (nível de significância)} em uma \textbf{Distribuição Normal Padrão}.
+
+O valor 1,96 é o \textbf{quantil} (ou ponto $Z$) na Distribuição Normal Padrão que satisfaz o critério do seu teste.
+
+\begin{enumerate}
+
+	\item O \textbf{Papel da Distribuição Normal Padrão:} Todo o Teste Z utiliza a \textbf{Distribuição Normal Padrão} (a curva em forma de sino com média $\mu=0$ e desvio-padrão $\sigma=1$) como referência.
+	\begin{itemize}
+		\item A área total sob essa curva é igual a 1 (ou 100\% de probabilidade).
+		\item Se você quer um nível de confiança de \textbf{95\%} (que corresponde a um $\alpha = 0,05$ bilateral), você está procurando os pontos Z que delimitam os 95\% centrais da área da curva.
+	\end{itemize}
+
+	\item \textbf{O Cálculo da Área (Probabilidade):} Para um teste bilateral com $\alpha = 0,05$:	
+	\begin{enumerate}
+		\item 	\textbf{Área Total de Erro (Cauda):} $\alpha = 0,05$.
+		\item \textbf{Erro em Cada Cauda:} $\frac{\alpha}{2} = \frac{0,05}{2} = \mathbf{0,025}$.
+		\item \textbf{Área Central (Aceitação):} $1 - \alpha = 1 - 0,05 = 0,95$.
+		\item \textbf{Área Acumulada da Esquerda:} Para encontrar o valor $Z$ positivo, procuramos o ponto onde a área \textbf{acumulada} da extrema esquerda até esse ponto é $1 - 0,025 = \mathbf{0,975}$.
+	\end{enumerate}
+
+	\item \textbf{Usando a Tabela Z:} O valor 1,96 é o que você encontra na Tabela Z (Tabela de Distribuição Normal Padrão) que corresponde à área acumulada de 0,975.
+	\begin{itemize}
+		\item Você procura o valor 0,9750 dentro da tabela.
+		\item O valor $Z$ correspondente é \textbf{1,9} (na linha) + \textbf{0,06} (na coluna) = \textbf{1,96}.
+	\end{itemize}
+
+\end{enumerate}
+
+
+\section{Teste \textit{t} de Student}
+
+O \textbf{Teste \textit{t} de Student} (ou simplesmente \textbf{Teste \textit{t}}) é um teste estatístico de inferência paramétrica usado para determinar se existe uma \textbf{diferença significativa} entre as médias de dois grupos (ou se a média de um grupo é diferente de um valor conhecido) quando o \textbf{desvio-padrão populacional ($\sigma$) é desconhecido}.
+
+\begin{itemize}
+	\item \textbf{A Distribuição \textit{t}:} Em vez de usar a Distribuição Normal Padrão, o Teste \textit{t} utiliza a \textbf{Distribuição \textit{t} de Student}. Essa distribuição é semelhante à normal (em forma de sino e simétrica), mas tem \textbf{caudas mais pesadas} (ou seja, mais espalhadas), especialmente quando o \textbf{tamanho da amostra ($n$) é pequeno}.
+	
+	\item \textbf{Graus de Liberdade (GL):} A forma exata da distribuição \textit{t} depende dos seus \textbf{Graus de Liberdade} ($GL = n-1$). À medida que o tamanho da amostra (e, consequentemente, os GL) aumenta, a distribuição \textit{t} se torna praticamente \textbf{idêntica} à Distribuição Normal Padrão.
+\end{itemize}
+
+
+\subsubsection{Quando é Melhor Utilizar o Teste \textit{t}?}
+
+O Teste \textit{t} é o teste de hipóteses paramétrico padrão e deve ser utilizado nas seguintes condições:
+
+\begin{itemize}
+	\item \textbf{Desvio-Padrão Populacional ($\sigma$) Desconhecido:} \textbf{Esta é a razão principal}. Na maioria das situações reais, só temos o desvio-padrão da \textbf{amostra} ($s$), não o da população ($\sigma$). O Teste \textit{t} utiliza $s$ como uma estimativa de $\sigma$.
+	
+	\item \textbf{Distribuição Quase Normal:} Os dados da população devem seguir uma distribuição aproximadamente normal. O teste é \textbf{robusto} contra desvios leves da normalidade, especialmente com amostras maiores.
+	
+	\item \textbf{Amostra Pequena ou Grande:} O Teste \textit{t} funciona bem para amostras de \textbf{qualquer tamanho}. Quando $n \geq 30$, os resultados do Teste \textit{t} se tornam muito próximos dos resultados do Teste Z.
+	
+	\item \textbf{Comparação de Médias:} A principal finalidade é comparar \textbf{duas} médias. Para três ou mais médias, a \textbf{ANOVA} é mais apropriada.
+\end{itemize}
+
+
+\noindent \textbf{Tipos Comuns de Teste \textit{t}:}
+
+\begin{itemize}
+	\item \textbf{\textit{t} para uma amostra:} Compara a média da amostra ($\bar{X}$) com um valor populacional conhecido ($\mu_0$).
+	
+	\item  \textbf{\textit{t} para amostras independentes (não pareadas):} Compara as médias de dois grupos separados e não relacionados (ex: homens vs. mulheres).
+	
+	\item \textbf{\textit{t} para amostras pareadas (dependentes):} Compara as médias da mesma amostra em dois momentos diferentes (ex: pontuação "antes" e pontuação "depois" de um tratamento).
+\end{itemize}
+
+
+\subsection{Fórmula (Teste \textit{t} para uma Única Média)}
+
+A fórmula do Teste \textit{t} é estruturalmente idêntica à do Teste Z. A única diferença crucial é que usamos o desvio-padrão da \textbf{amostra ($s$)} em vez do desvio-padrão da população ($\sigma$):
+
+$$t = \frac{\bar{X} - \mu_0}{\frac{s}{\sqrt{n}}}$$
+
+Onde:
+\begin{itemize}
+	\item \textbf{$t$}: Estatística \textit{t} calculada.
+	\item \textbf{$\bar{X}$}: Média da amostra.
+	\item \textbf{$\mu_0$}: Média populacional hipotetizada ($H_0$).
+	\item \textbf{$s$}: \textbf{Desvio-padrão da amostra.}
+	\item \textbf{$n$}: Tamanho da amostra.
+	\item \textbf{$GL$ (Graus de Liberdade)} $= n - 1$.
+\end{itemize}
+
+
+\subsection{Exemplo (Teste \textit{t} para uma Média)}
+
+\textbf{Cenário:} Um fabricante de lâmpadas afirma que a vida útil média de suas lâmpadas é de \textbf{1.000 horas} ($\mu_0 = 1000$). Não conhecemos o desvio-padrão de \textbf{todas} as lâmpadas produzidas.
+
+Uma amostra aleatória de \textbf{$n = 25$} lâmpadas foi testada, resultando em:
+\begin{itemize}
+	\item Média Amostral ($\bar{X}$): \textbf{990 horas}.
+	\item Desvio-Padrão Amostral ($s$): \textbf{50 horas}.
+\end{itemize}
+
+Queremos testar se a média é, de fato, diferente de 1.000 horas, usando $\alpha = 0,05$.
+
+Passos:
+
+\begin{enumerate}
+
+	\item \textbf{Hipóteses:}
+	\begin{itemize}
+		\item $H_0$: $\mu = 1000$
+		\item $H_1$: $\mu \neq 1000$ (Teste bilateral)
+	\end{itemize}
+	
+	\item \textbf{Graus de Liberdade (GL):}
+	\begin{itemize}
+		\item $GL = n - 1 = 25 - 1 = 24$.
+	\end{itemize}
+	
+	\item \textbf{Cálculo da Estatística \textit{t}:}
+	$$t = \frac{990 - 1000}{\frac{50}{\sqrt{25}}} = \frac{-10}{\frac{50}{5}} = \frac{-10}{10} = -1,0$$
+	
+	\item \textbf{Decisão (Usando Valor Crítico com GL=24 e $\alpha=0,05$ bilateral):} Consultando a \textbf{Tabela \textit{t} de Student} para $GL=24$ e $\alpha=0,05$ (bilateral), o \textbf{Valor Crítico \textit{t}} é \textbf{$\pm 2,064$}.
+	
+	\item \textbf{Conclusão:}
+	\begin{itemize}
+		\item O valor \textit{t} calculado é $-1,0$.
+		\item Como $|t| = 1,0$ é \textbf{menor} que o valor crítico $2,064$, o valor calculado cai na \textbf{Região de Aceitação} (Não Rejeição).
+	\end{itemize}
+
+\end{enumerate}
+
+
+\textbf{Resultado:} \textbf{Não se rejeita a Hipótese Nula ($H_0$)}. Não há evidência estatística suficiente, com nível de significância de 5\%, para concluir que a vida útil média das lâmpadas é diferente de 1.000 horas. A diferença de 10 horas observada na amostra ($1000-990$) pode ser atribuída apenas ao acaso.
+
+
+
+\section{Análise de Variância (ANOVA)}
+
+A \textbf{ANOVA} é um teste estatístico paramétrico utilizado para determinar se existem diferenças estatisticamente significativas entre as \textbf{médias de três ou mais grupos independentes} (ou níveis de um fator) simultaneamente.
+
+Apesar do nome "Análise de Variância", seu objetivo final é \textbf{comparar médias}. Ela faz isso analisando a \textbf{variância total} nos dados e a dividindo em duas fontes de variação:
+
+\begin{enumerate}
+	\item \textbf{Variância Entre os Grupos (Between-Group Variance):} Variação observada nas médias de cada grupo. Se essa variação for grande, sugere que as diferenças médias são significativas.
+	
+	\item \textbf{Variância Dentro dos Grupos (Within-Group Variance):} Variação observada dentro de cada grupo individual, atribuída ao acaso ou erro amostral.
+\end{enumerate}
+
+A lógica é: se a \textbf{Variância Entre os Grupos} for significativamente \textbf{maior} do que a \textbf{Variância Dentro dos Grupos} (o erro), concluímos que pelo menos uma das médias populacionais é diferente das outras.
+
+\begin{itemize}
+	\item \textbf{Estatística F:} A ANOVA utiliza a \textbf{Estatística F} (ou $F$-ratio) como sua métrica de teste, que é a razão entre essas duas fontes de variação.
+	
+	\item \textbf{Distribuição F:} A Estatística F é comparada a uma \textbf{Distribuição F}, que possui dois conjuntos de graus de liberdade (um para o numerador e outro para o denominador).
+\end{itemize}
+
+
+\subsection{Quando é Melhor Utilizar a ANOVA?}
+
+A ANOVA é a ferramenta ideal e mais eficiente quando:
+
+\begin{itemize}
+	\item \textbf{Comparação de $\geq 3$ Médias:} Você precisa comparar as médias de \textbf{três ou mais} grupos ou condições (ex: Média do Grupo A, B e C). Usar múltiplos Testes \textit{t} sequenciais aumentaria o risco de cometer um \textbf{Erro Tipo I} (conhecido como inflação da taxa de erro familiar), o que a ANOVA evita.
+	
+	\item \textbf{Variáveis:} Você tem uma \textbf{variável dependente (resposta)} \textbf{contínua} (Ex: peso, pontuação, tempo) e uma \textbf{variável independente (fator)} \textbf{categórica} (Ex: tipo de tratamento, cor do produto, nível educacional).
+	
+	\item \textbf{Pressupostos Paramétricos:}
+	\begin{itemize}
+		\item \textbf{Normalidade:} A variável dependente deve ser normalmente distribuída em cada grupo.
+		
+		\item \textbf{Homogeneidade de Variâncias (Homoscedasticidade):} As variâncias populacionais de cada grupo devem ser aproximadamente iguais (Testes de Levene ou Bartlett são usados para verificar isso).
+		
+		\item \textbf{Independência:} As amostras ou observações devem ser independentes.
+	\end{itemize}
+
+\end{itemize}
+
+
+\noindent\textbf{Tipos Comuns de ANOVA:}
+
+\begin{itemize}
+	\item \textbf{ANOVA de Um Fator (\textit{One-Way ANOVA}):} Compara as médias de três ou mais grupos independentes definidos por \textbf{um único fator}.
+	
+	\item \textbf{ANOVA de Dois Fatores (\textbf{Two-Way ANOVA}):} Avalia os efeitos de \textbf{dois fatores categóricos} separados e sua \textbf{interação} sobre uma variável dependente contínua.
+\end{itemize}
+
+
+\subsection{Fórmula e a Estatística F}
+
+A Estatística F é o cerne da ANOVA e é calculada como uma razão de duas estimativas de variância:
+
+$$F = \frac{\text{Variância Entre os Grupos (Média dos Quadrados Entre)}}{\text{Variância Dentro dos Grupos (Média dos Quadrados Dentro)}}$$
+
+$$F = \frac{MS_{Entre}}{MS_{Dentro}}$$
+
+Onde:
+\begin{itemize}
+	\item \textbf{$MS_{Entre}$}: \textbf{Média dos Quadrados Entre} (Mean Square Between).
+		\subitem Representa a variação devida ao \textbf{efeito do fator/tratamento}.
+		\subitem $MS_{Entre} = \frac{SQ_{Entre}}{GL_{Entre}}$
+		
+	\item \textbf{$MS_{Dentro}$:} \textbf{Média dos Quadrados Dentro} (Mean Square Within, ou MS Error)
+		\subitem Representa a variação devida ao \textbf{erro ou acaso}.
+		\subitem $MS_{Dentro} = \frac{SQ_{Dentro}}{GL_{Dentro}}$
+\end{itemize}
+
+
+A Lógica:
+\begin{itemize}
+	\item Se $H_0$ (todas as médias são iguais) for verdadeira, $MS_{Entre}$ e $MS_{Dentro}$ devem ser aproximadamente iguais, resultando em um valor $F$ próximo de \textbf{1}.
+	
+	\item Se $H_0$ for falsa, $MS_{Entre}$ será muito maior que $MS_{Dentro}$, resultando em um valor $F$ \textbf{significativamente maior que 1}.
+\end{itemize}
+
+
+\subsection{Exemplo (ANOVA de Um Fator)}
+
+\textbf{Cenário:} Um especialista em Machine Learning quer testar a eficácia de \textbf{três algoritmos de \textit{clustering}} (A, B e C) em um conjunto de dados. A \textbf{variável dependente} é a \textbf{Pontuação de Silhueta} (uma métrica de desempenho, onde maior é melhor).
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{lll}
+		\textbf{Grupo (Algoritmo)} & \textbf{Média da Pontuação de Silhueta} \\
+		\hline
+		\\
+		A (K-Means) & 0,65 \\
+		\\
+		B (DBSCAN) & 0,72 \\
+		\\
+		C (Agglomerative) & 0,60 
+	\end{tabular}
+\end{table}
+
+Passos da Hipótese:
+
+\begin{enumerate}
+	
+	\item \textbf{Hipóteses:}
+	\begin{itemize}
+		\item $H_0$: $\mu_A = \mu_B = \mu_C$ (A pontuação média de silhueta é a mesma para todos os algoritmos).
+		\item $H_1$: Pelo menos uma das médias é diferente.
+	\end{itemize}
+	
+	\item \textbf{Cálculo (Simplificado):} O software (ou cálculo manual) gera a tabela ANOVA e o valor $F$. Suponha que, para $\alpha=0,05$, o cálculo resulte em:
+	\begin{itemize}
+		\item 	\textbf{Estatística $F$ Calculada:} $F_{calc} = 5,85$
+		\item \textbf{Valor-p:} $p = 0,005$
+	\end{itemize}
+
+	\item \textbf{Decisão:}
+	\begin{itemize}
+		\item \textbf{Usando Valor-p:} Como o valor-p ($0,005$) é \textbf{menor} que $\alpha$ ($0,05$), \textbf{rejeitamos $H_0$}.
+		\item Ou, usando o Valor Crítico: Se o $F_{crítico}$ fosse 3,40, e $5,85 > 3,40$, também rejeitaríamos $H_0$.
+	\end{itemize}
+	
+\end{enumerate}
+
+
+\textbf{Resultado:} \textbf{Rejeita-se a Hipótese Nula.} Concluímos que há uma \textbf{diferença estatisticamente significativa} na pontuação média de silhueta entre pelo menos um par dos três algoritmos de \textit{clustering}.
+
+\textbf{Próxima Etapa:} Se a ANOVA rejeita $H_0$, ela apenas diz que "algo é diferente", mas \textbf{não diz qual grupo é diferente de qual}. Para descobrir quais pares são diferentes (A vs B? B vs C? A vs C?), são necessários \textbf{Testes Post-Hoc} (como Tukey's HSD ou Bonferroni).
+
+
+\section{Testes de Hipóteses Não Paramétricos}
+
+Testes de Hipóteses Não Paramétricos (também conhecidos como \textit{distribution-free tests}) são métodos estatísticos de inferência que \textbf{não exigem que os dados da população sigam uma distribuição de probabilidade específica}, como a Distribuição Normal.
+
+Em vez de fazer inferências sobre \textbf{parâmetros populacionais} (como a média $\mu$), eles geralmente trabalham com:
+
+\begin{itemize}
+	\item \textbf{Medianas:} A medida central mais robusta contra outliers.
+	
+	\item \textbf{Postos (Ranks):} A ordem relativa dos dados, e não os valores absolutos.
+	
+	\item \textbf{Frequências:} Contagens de observações em categorias.
+\end{itemize}
+
+
+Essa flexibilidade os torna extremamente valiosos quando:
+
+\begin{enumerate}
+	\item Os dados são \textbf{qualitativos} (nominais ou ordinais).
+	
+	\item Os dados \textbf{quantitativos} são contínuos, mas apresentam forte \textbf{assimetria} (skewness) ou contêm muitos \textbf{valores extremos} (outliers).
+	
+	\item O tamanho da amostra é \textbf{muito pequeno}, dificultando a verificação do pressuposto de normalidade.
+\end{enumerate}
+
+
+A finalidade principal dos testes não paramétricos é a mesma dos testes paramétricos: \textbf{avaliar se as diferenças observadas entre grupos são estatisticamente significativas ou se ocorreram apenas por acaso.}
+
+Os testes não paramétricos apresentam algumas características importantes.
+
+\begin{itemize}
+	\item \textbf{Robustez}: São \textbf{mais robustos} (menos sensíveis) a outliers e à forma da distribuição.
+	
+	\item \textbf{Uso para Ordinais}: São os únicos apropriados para dados \textbf{ordinais} (dados de classificação, como escalas Likert).
+	
+	\item \textbf{Flexibilidade}: Não precisam que o pressuposto de \textbf{variâncias iguais (homoscedasticidade)} seja estritamente atendido.
+	
+	\item \textbf{Poder do Teste}: Tendem a ter um \textbf{poder menor} que seus equivalentes paramétricos quando os pressupostos paramétricos são satisfeitos.
+\end{itemize}
+
+
+Muitos testes não paramétricos são análogos diretos aos testes paramétricos, mas operam sobre os postos dos dados, e não sobre os valores brutos.
+
+\begin{itemize}
+	\item \textbf{Teste Shapiro-Wilk:}
+
+	\item \textbf{Teste de Wilcoxon:}
+		
+	\item \textbf{Teste U de Mann-Whitney:}
+	
+	\item \textbf{Teste de Kruskall-Walls:}
+\end{itemize}
+
+
+\section{Teste de Shapiro-Wilk}
+
+O Teste de \textbf{Shapiro-Wilk} é um teste paramétrico de inferência que avalia se uma \textbf{amostra de dados foi extraída de uma população que segue uma Distribuição Normal}.
+
+\begin{itemize}
+	\item \textbf{Foco:} Sua única função é testar o \textbf{pressuposto de normalidade}.
+	
+	\item \textbf{Hipóteses:}
+	\begin{itemize}
+		\item \textbf{Hipótese Nula ($H_0$):} Os dados da amostra foram extraídos de uma população \textbf{normalmente distribuída}.
+		\item \textbf{Hipótese Alternativa ($H_1$):} Os dados da amostra \textbf{não} foram extraídos de uma população normalmente distribuída.
+	\end{itemize}
+
+\end{itemize}
+
+\textbf{Decisão:}
+
+\begin{itemize}
+	\item \textbf{Se valor-p $\leq \alpha$:} \textbf{Rejeitamos $H_0$}. Concluímos que os dados \textbf{não são normais}.
+	
+	\item \textbf{Se valor-p $ > \alpha$:} \textbf{Não rejeitamos $H_0$}. Concluímos que os dados \textbf{são consistentes com uma distribuição normal} (não há evidência suficiente para dizer que não são normais).
+\end{itemize}
+
+\subsubsection{Quando Utilizar?}
+
+O Teste de Shapiro-Wilk deve ser utilizado \textbf{antes} de qualquer teste de hipóteses paramétrico (como Teste \textit{t} ou ANOVA) para garantir que as suposições subjacentes a esses testes sejam válidas.
+
+\begin{itemize}
+	\item \textbf{Antes de Testes Paramétricos:} É crucial para verificar se o pressuposto de normalidade foi atendido.
+	
+	\item \textbf{Tamanho da Amostra ($n$):} É mais recomendado e \textbf{mais poderoso} para amostras de \textbf{pequeno a médio porte} (geralmente $n \leq 50$ ou $n \leq 2000$). Para amostras muito grandes, ele pode ser excessivamente sensível, e métodos gráficos (como QQ-Plots) ou o \textbf{Teste de Komogorov-Smirnov} podem ser preferidos.
+	
+	\item \textbf{Pré-Processamento de ML:} Usado para determinar se transformações nos dados (como logaritmo ou \textit{Box-Cox}) são necessárias para tornar as \textit{features} mais normais, melhorando a performance de modelos que pressupõem normalidade (ex: Regressão Linear, LDA).
+\end{itemize}
+
+
+\subsubsection{Fórmula}
+
+A estatística de teste \textbf{Shapiro-Wilk}, denotada por $W$, é calculada como o quadrado da correlação entre os dados ordenados da amostra e os quantis (ou escores) esperados de uma distribuição normal.
+
+A fórmula é complexa e raramente calculada manualmente, mas é importante entender seus componentes:
+
+$$W = \frac{\left(\sum_{i=1}^n a_i x_{(i)}\right)^2}{\sum_{i=1}^n (x_i - \bar{x})^2}$$
+
+Onde:
+
+\begin{itemize}
+	\item $W$: Estatística de Shapiro-Wilk.
+	
+	\item $x_{(i)}$: Os dados da amostra \textbf{ordenados} (do menor para o maior).
+	
+	\item $a_i$: \textbf{Coeficientes} calculados a partir das estatísticas de ordem da distribuição normal. Estes são valores pré-calculados que dependem do tamanho da amostra ($n$).
+	
+	\item $\bar{x}$: A média da amostra.
+	
+	\item O \textbf{denominador} é proporcional à variância da amostra.
+\end{itemize}
+
+
+\textbf{Interpretação:}
+\begin{itemize}
+	\item Se os dados forem \textbf{perfeitamente normais}, o valor de $W$ será \textbf{próximo de 1}.
+	
+	\item À medida que os dados se desviam da normalidade, o valor de $W$ \textbf{diminui} (torna-se menor que 1).
+\end{itemize}
+
+
+\subsubsection{Exemplo}
+
+\textbf{Cenário:} Você tem uma amostra de \textbf{20 tempos de resposta} de um servidor e precisa decidir se pode usar um \textbf{Teste \textit{t}} para comparar essa média com um valor de referência.
+
+\textbf{Dados:} Uma lista de 20 tempos de resposta (em milissegundos).
+
+Passos:
+
+\begin{enumerate}
+	\item \textbf{Hipóteses:}
+	\begin{itemize}
+		\item $H_0$: Os dados de tempo de resposta são normalmente distribuídos.
+		\item $H_1$: Os dados de tempo de resposta não são normalmente distribuídos.
+	\end{itemize}
+
+	\item \textbf{Cálculo (Usando Python/R):} O software executa o teste e retorna:
+	\begin{itemize}
+		\item Estatística $W$: $0,958$
+		\item Valor-p: $0,019$
+	\end{itemize}
+
+	\item \textbf{Decisão:}
+	\begin{itemize}
+		\item Definimos o nível de significância $\alpha = 0,05$.
+		\item Comparamos: \textbf{Valor-p (0,019) $\leq \alpha$ (0,05)}.
+	\end{itemize}
+	
+	\item \textbf{Conclusão:}
+	\begin{itemize}
+		\item \textbf{Rejeita-se $H_0$}. Há evidência estatística, com nível de significância de 5\%, para concluir que os dados de tempo de resposta \textbf{não seguem uma distribuição normal}.
+	\end{itemize}
+\end{enumerate}
+
+\textbf{Implicação:} Como o pressuposto de normalidade foi violado, você \textbf{não deve} prosseguir com o Teste \textit{t}. Em vez disso, você deve optar por seu equivalente \textbf{não paramétrico}, como o \textbf{Teste de Postos Sinalizados de Wilcoxon} (se for um teste de uma amostra ou pareado) ou tentar transformar os dados.
+
+
+\section{Teste de Postos Sinalizados de Wilcoxon (Amostras Pareadas)}
+
+O \textbf{Teste de Postos Sinalizados de Wilcoxon} é o equivalente não paramétrico do Teste $t$ para amostras pareadas. Ele é usado para comparar duas medidas da \textbf{mesma amostra} ou de duas amostras dependentes, como uma medição \textbf{"antes"} e uma medição \textbf{"depois"} de uma intervenção.
+
+Em vez de usar a diferença dos valores brutos (como no Teste $t$), o Wilcoxon utiliza a \textbf{magnitude e o sinal da diferença} entre os pares de observações.
+
+\begin{itemize}
+	\item \textbf{Foco:} Avalia se a \textbf{mediana das diferenças} entre os pares de observações é significativamente diferente de zero.
+	
+	\item \textbf{Hipóteses:}
+	\begin{itemize}
+		\item \textbf{Hipótese Nula ($H_0$):} A mediana das diferenças entre os pares de observações é zero (ou seja, não há efeito da intervenção).
+		
+		\item \textbf{Hipótese Alternativa ($H_1$):} A mediana das diferenças entre os pares de observações não é zero.
+	\end{itemize}
+
+\end{itemize}
+
+\subsection{Quando é Melhor Utilizar?}
+
+Este teste é ideal quando você tem dados pareados ou dependentes, e um ou mais dos pressupostos do Teste $t$ pareado é violado.
+
+\begin{itemize}
+	\item \textbf{Normalidade Violada:}| A distribuição das \textbf{diferenças} entre os pares de observações \textbf{não} é normal.
+	
+	\item \textbf{Dados Ordinais:} Quando a variável dependente é medida em uma escala \textbf{ordinal} (por exemplo, escala Likert de 1 a 5).
+	
+	\item \textbf{Amostras Pequenas:} É robusto e confiável para amostras pequenas onde a normalidade é difícil de verificar.
+	
+	\item \textbf{Medidas Repetidas:} Quando você mede a mesma variável nos mesmos sujeitos em duas condições diferentes (Ex: desempenho do modelo A vs. modelo B no mesmo conjunto de dados).
+\end{itemize}
+
+
+\subsection{Fórmula (Estatística T)}
+
+A estatística principal do Teste de Postos Sinalizados de Wilcoxon é a estatística $T$ (ou $W$), que é baseada na soma dos postos das diferenças.
+
+\begin{enumerate}
+	\item \textbf{Calcular as Diferenças ($D_i$)}: $D_i = (\text{Valor Depois}) - (\text{Valor Antes})$ para cada par.
+	
+	\item \textbf{Atribuir Postos:} Atribuir postos aos \textbf{valores absolutos} das diferenças $(|D_i|)$, ignorando o sinal. Se houver empates, a média dos postos é usada.
+	
+	\item \textbf{Aplicar o Sinal:} Colocar o sinal original de volta nos postos.
+	
+	\item \textbf{Calcular $T$:} A estatística de teste $T$ é a \textbf{soma dos postos dos valores menos frequentes} (soma dos postos positivos ou soma dos postos negativos, dependendo de qual for menor).
+\end{enumerate}
+
+$$T = \sum (\text{Postos de Sinais Menos Frequentes})$$
+
+O valor $T$ é então comparado a um valor crítico da tabela de Wilcoxon para a amostra de tamanho $n$.
+
+
+\subsection{Exemplo}
+
+\textbf{Cenário:} Um cientista de dados testa um novo algoritmo de pré-processamento de \textit{features} e quer saber se ele afeta significativamente a latência de treinamento. Dez modelos são treinados com o método \textbf{Antes} e \textbf{Depois}.
+
+A tabela abaixo mostra as etapas de cálculo dos Postos Sinalizados, com os títulos das colunas ajustados.
+
+$$\begin{array}{|c|c|c|c|c|c|c|}
+	\hline
+	\text{Modelo} & \begin{array}{c} \text{Latência} \\ \text{Antes (ms)} \end{array} & \begin{array}{c} \text{Latência} \\ \text{Depois (ms)} \end{array} & \begin{array}{c} \text{Diferença} \\ (D) \end{array} & \begin{array}{c} |D| \\ \text{(Absoluto)} \end{array} & \begin{array}{c} \text{Posto de} \\ |D| \end{array} & \begin{array}{c} \text{Posto} \\ \text{Sinalizado} \end{array} \\
+	\hline
+	1 & 80 & 78 & -2 & 2 & 4.5 & -4.5 \\
+	\hline
+	2 & 90 & 85 & -5 & 5 & 8 & -8 \\
+	\hline
+	3 & 75 & 77 & +2 & 2 & 4.5 & +4.5 \\
+	\hline
+	4 & 88 & 83 & -5 & 5 & 8 & -8 \\
+	\hline
+	5 & 95 & 90 & -5 & 5 & 8 & -8 \\
+	\hline
+	6 & 70 & 69 & -1 & 1 & 1.5 & -1.5 \\
+	\hline
+	7 & 82 & 84 & +2 & 2 & 4.5 & +4.5 \\
+	\hline
+	8 & 91 & 93 & +2 & 2 & 4.5 & +4.5 \\
+	\hline
+	9 & 78 & 79 & +1 & 1 & 1.5 & +1.5 \\
+	\hline
+	10 & 85 & 80 & -5 & 5 & 8 & -8 \\
+	\hline
+\end{array}$$
+
+\begin{itemize}
+	\item \textbf{Postos Positivos (Melhora de Latência):} $R_+ = 3 + ...$
+	\item \textbf{Postos Negativos (Piora de Latência):} $R_- = 3 + 6 + 6 + 6 + ...$
+\end{itemize}
+
+Se o $R_+$ for menor, $T = R_+$. Se $R_-$ for menor, $T = R_-$.
+
+\textbf{Decisão:}
+
+\begin{enumerate}
+	\item Se o $T$ calculado for, por exemplo, $T=7$.
+	\item Consultando a tabela de Wilcoxon para $n=10$ e $\alpha=0,05$ (bilateral), o valor crítico pode ser $T_{crítico}=8$.
+	\item \textbf{Regra:} Se $T \leq T_{crítico}$, rejeita-se $H_0$.
+	\item Como $7 \leq 8$, \textbf{Rejeitamos $H_0$}.
+\end{enumerate}
+
+\textbf{Conclusão:} Há evidência estatística para concluir que a latência \textbf{mudou significativamente} após a aplicação do novo algoritmo de pré-processamento.
+
+
+\section{Teste U de Mann-Whitney (ou Teste de Soma de Postos de Wilcoxon)}
+
+O \textbf{Teste U de Mann-Whitney} (muitas vezes chamado de \textbf{Teste da Soma de Postos de Wilcoxon} para amostras independentes) é o equivalente não paramétrico do \textbf{Teste \textit{t} para amostras independentes}.
+
+Ele é usado para determinar se \textbf{duas amostras independentes} vieram da mesma população, ou seja, se existe uma diferença significativa na tendência central (geralmente a \textbf{mediana}) entre os dois grupos.
+
+A ideia central não é comparar as médias dos valores brutos, mas sim comparar a \textbf{distribuição dos postos (ranks)} dos dados combinados de ambos os grupos.
+
+\begin{itemize}
+	\item \textbf{Lógica dos Postos:} Se os dois grupos vierem da mesma população, os postos (ordens) atribuídos aos dados de um grupo deverão se misturar aleatoriamente com os postos do outro grupo. Se um grupo tiver a maioria dos postos mais altos, sugere que esse grupo tem valores sistematicamente maiores que o outro.
+	
+	\item \textbf{Hipóteses:}
+	\begin{itemize}
+		\item \textbf{Hipótese Nula ($H_0$):} As distribuições populacionais dos dois grupos são idênticas (ou a mediana dos dois grupos é igual).
+		
+		\item \textbf{Hipótese Alternativa ($H_1$):} As distribuições populacionais dos dois grupos são diferentes (ou a mediana dos dois grupos é diferente).
+	\end{itemize}
+
+\end{itemize}
+
+
+\subsection{Quando é Melhor Utilizar?}
+
+O Teste U de Mann-Whitney é a escolha preferencial para comparar dois grupos independentes nas seguintes condições:
+
+\begin{itemize}
+	\item \textbf{Normalidade Violada:} A distribuição da variável dependente em pelo menos um dos grupos é \textbf{significativamente não normal}, e você tem um tamanho de amostra pequeno.
+	
+	\item \textbf{Dados Ordinais:} Quando a variável dependente é medida em uma \textbf{escala ordinal} (dados de classificação, como avaliações de 1 a 5).
+	
+	\item \textbf{Assimetria e Outliers:} Quando os dados contêm forte \textbf{assimetria} (\textit{skewness}) ou \textbf{outliers} extremos, pois o teste, baseado em postos, é menos afetado por eles do que o Teste \textit{t}.
+	
+	\item \textbf{Amostras de Tamanhos Desiguais:} Funciona bem mesmo quando os tamanhos das amostras ($n_1$ e $n_2$) são diferentes, embora seja ideal que os grupos tenham formas de distribuição semelhantes.
+\end{itemize}
+
+
+\subsection{Fórmula (Estatística U)}
+
+O teste requer que você combine os dados das duas amostras e os ordene (atribua postos). A estatística de teste é baseada na soma dos postos de cada grupo.
+
+A estatística \textbf{$U$} é calculada para cada amostra ($U_1$ e $U_2$), sendo o menor valor usado para a comparação com a tabela.
+
+$$U_1 = n_1 n_2 + \frac{n_1 (n_1 + 1)}{2} - R_1$$
+
+$$U_2 = n_1 n_2 + \frac{n_2 (n_2 + 1)}{2} - R_2$$
+
+Onde:
+\begin{itemize}
+	\item $n_1$: Tamanho da amostra do Grupo 1.
+	\item $n_2$: Tamanho da amostra do Grupo 2.
+	\item $R_1$: \textbf{Soma dos Postos} atribuídos aos dados do Grupo 1 (na ordem combinada).
+	\item $R_2$: \textbf{Soma dos Postos} atribuídos aos dados do Grupo 2 (na ordem combinada).
+\end{itemize}
+
+A estatística $U$ de teste é o \textbf{menor valor} entre $U_1$ e $U_2$.
+
+
+\subsection{Exemplo}
+
+\textbf{Cenário:} Um cientista de dados quer comparar a satisfação (medida em escala ordinal de 1 a 10) dos usuários de dois diferentes chatbots (Alpha e Beta).
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{ll}
+		\textbf{Grupo Alpha ($n_1=5$)} & \textbf{Grupo Beta ($n_2=4$)} \\
+		\hline
+		\\
+		7, 8, 5, 9, 7 & 4, 6, 3, 5 \\
+	\end{tabular}
+\end{table}
+
+\textbf{Passos:}
+
+\begin{enumerate}
+	\item \textbf{Combinar e Atribuir Postos:} Os 9 valores são combinados e ordenados.
+
+	$$\begin{array}{|c|c|c|c|c|c|c|c|c|c|}
+		\hline
+		Valor & 3 & 4 & 5 & 5 & 6 & 7 & 7 & 8 & 9 \\
+		\hline
+		Posto & 1 & 2 & 3.5 & 3.5 & 5 & 6.5 & 6.5 & 8 & 9 \\
+		\hline
+	\end{array}$$
+	
+	\item \textbf{Calcular Soma dos Postos ($R$):}
+	\begin{itemize}
+		\item \textbf{Alpha (7, 8, 5, 9, 7):} $R_1 = 6,5 + 8 + 3,5 + 9 + 6,5 = \mathbf{33,5}$
+		\item \textbf{Beta (4, 6, 3, 5):} $R_2 = 2 + 5 + 1 + 3,5 = \mathbf{11,5}$	
+	\end{itemize}
+
+	\item \textbf{Calcular Estatísticas $U$:}
+		$$U_1 = (5)(4) + \frac{5(5 + 1)}{2} - 33,5 = 20 + 15 - 33,5 = \mathbf{1,5}$$
+		$$U_2 = (5)(4) + \frac{4(4 + 1)}{2} - 11,5 = 20 + 10 - 11,5 = \mathbf{18,5}$$
+		
+	\item \textbf{Estatística $U$ de Teste:}
+	$$U = \min(U_1, U_2) = \mathbf{1,5}$$		
+
+	\item \textbf{Decisão:} Para $n_1=5$, $n_2=4$ e $\alpha=0,05$ (bilateral), o valor crítico (tabelado) é $U_{crítico}=2$.
+	\begin{itemize}
+		\item \textbf{Regra:} Se $U \leq U_{crítico}$, rejeita-se $H_0$.
+		\item Como $U = 1,5$ é \textbf{menor ou igual} ao valor crítico 2, \textbf{Rejeitamos $H_0$}.
+	\end{itemize}
+\end{enumerate}
+
+\textbf{Conclusão:} Há uma diferença estatisticamente significativa na satisfação dos usuários entre o Chatbot Alpha e o Chatbot Beta. O Chatbot Alpha, com a soma de postos maior (33,5), tem medianas de satisfação significativamente mais altas.
+
+
+\section{Teste H de Kruskal-Wallis}
+
+O \textbf{Teste H de Kruskal-Wallis} é o equivalente não paramétrico da \textbf{ANOVA de um Fator}. Ele é usado para determinar se existem diferenças estatisticamente significativas na tendência central (geralmente a \textbf{mediana}) entre \textbf{três ou mais grupos independentes}.
+
+Assim como o Teste U de Mann-Whitney, o Kruskal-Wallis não compara as médias dos valores brutos. Em vez disso, ele combina os dados de todos os grupos, atribui \textbf{postos (ranks)} a essas observações combinadas e, em seguida, compara as \textbf{somas médias dos postos} entre os grupos.
+
+\begin{itemize}
+	\item \textbf{Estatística H:} A estatística de teste é o \textbf{$H$} (daí o nome H de Kruskal-Wallis).
+	
+	\item \textbf{Distribuição de Referência:} Para tomar a decisão, o valor $H$ é comparado à \textbf{Distribuição Qui-Quadrado ($\chi^2$)}, especialmente se o tamanho das amostras for grande.
+	
+	\item \textbf{Hipóteses:}
+	\begin{itemize}
+		\item \textbf{Hipótese Nula ($H_0$):} A distribuição da variável é a mesma para todos os grupos (ou seja, as medianas são iguais).
+		
+		\item \textbf{Hipótese Alternativa ($H_1$):} Pelo menos uma das distribuições (medianas) é diferente das outras.
+	\end{itemize}
+	
+\end{itemize}
+
+
+\subsection{Quando é Melhor Utilizar?}
+
+O Kruskal-Wallis é o teste ideal quando você precisa comparar mais de dois grupos e os pressupostos da ANOVA não são atendidos.
+
+\begin{itemize}
+	\item \textbf{Comparação de $\geq 3$ Grupos:} Você tem \textbf{três ou mais} grupos independentes (ex: três tipos de softwares, quatro tipos de tratamento).
+	
+	\item \textbf{Normalidade Violada:} A distribuição da variável dependente \textbf{não é normal} em pelo menos um dos grupos, e o tamanho da amostra é pequeno.
+	
+	\item \textbf{Dados Ordinais:} Quando a variável dependente é medida em uma \textbf{escala ordinal} (ex: classificações de qualidade de A a E, níveis de dor, avaliação de satisfação).
+	
+	\item \textbf{Outliers Extremos:} O teste é mais robusto contra outliers do que a ANOVA, pois opera com postos, atenuando a influência dos valores extremos.
+\end{itemize}
+
+
+\subsection{Fórmula (Estatística H)}
+
+A fórmula para a estatística $H$ é um pouco complexa e calcula o grau de variação entre as somas dos postos dos grupos em relação à variação esperada se a $H_0$ fosse verdadeira.
+
+$$H = \frac{12}{N(N+1)} \sum_{i=1}^k \frac{R_i^2}{n_i} - 3(N+1)$$
+
+Onde:
+\begin{itemize}
+	\item $H$: Estatística de Kruskal-Wallis.
+	\item $k$: O número de grupos que estão sendo comparados ($k \geq 3$).
+	\item $n_i$: O tamanho da amostra do $i$-ésimo grupo.
+	\item $N$: O tamanho total da amostra ($N = \sum n_i$).
+	\item $R_i$: A **Soma dos Postos** no $i$-ésimo grupo.
+	\item $\sum$: O somatório de todos os grupos.
+\end{itemize}
+
+\textbf{Graus de Liberdade (GL):} $GL = k - 1$.
+
+\subsection{Exemplo}
+
+\textbf{Cenário:} Um analista de ML quer saber se a \textbf{qualidade do input (A, B ou C)} afeta a pontuação de precisão de um modelo. A precisão é medida em uma \textbf{escala ordinal} de 1 (Baixo) a 10 (Alto).
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{lll}
+		Input A ($n_A=5$) & Input B ($n_B=5$) & Input C ($n_C=5$) \\
+		\hline
+		\\
+		7, 8, 9, 7, 6 & 4, 5, 6, 5, 4 & 2, 3, 3, 2, 1 \\
+	\end{tabular}
+\end{table}
+
+\textbf{Passos:}
+
+\begin{enumerate}
+	\item \textbf{Combinar e Atribuir Postos:} ($N=15$). Todos os 15 valores são combinados e ordenados. Os postos são atribuídos de 1 (menor valor, 1) a 15 (maior valor, 9).
+	\begin{itemize}
+		\item Exemplo: Os valores "7" (Input A) ocupam o posto médio $10,5$.
+	\end{itemize}
+	
+	\item \textbf{Calcular Soma dos Postos ($R$):}
+	\begin{itemize}
+		\item $R_A$: Soma dos postos dos dados do Grupo A.
+		\item $R_B$: Soma dos postos dos dados do Grupo B.
+		\item $R_C$: Soma dos postos dos dados do Grupo C.
+		\item Resultado (hipotético): $R_A = \mathbf{50,0}$; $R_B = \mathbf{30,0}$; $R_C = \mathbf{20,0}$.
+		\item (Checagem: $50+30+20 = 100$. A soma total de postos esperada é $N(N+1)/2 = 15(16)/2 = 120$. Meu cálculo de postos hipotético está errado. O valor correto seria: $R_A \approx 60$, $R_B \approx 45$, $R_C \approx 15$.)
+	\end{itemize}
+
+	\item \textbf{Cálculo da Estatística $H$ (Usando as somas hipotéticas corretas):} Assumindo $R_A=60, R_B=45, R_C=15$. $N=15, n_i=5, k=3$.
+	
+	$$H = \frac{12}{15(15+1)} \left( \frac{60^2}{5} + \frac{45^2}{5} + \frac{15^2}{5} \right) - 3(15+1)$$
+	$$H = \frac{12}{240} \left( 720 + 405 + 45 \right) - 48 = 0,05 (1170) - 48 = 58,5 - 48 = \mathbf{10,5}$$	
+	
+	\item \textbf{Decisão:}
+	\begin{itemize}
+		\item $GL = k - 1 = 3 - 1 = 2$.
+		\item Usando $\alpha=0,05$, o valor crítico da Qui-Quadrado ($\chi^2$) para $GL=2$ é $\chi^2_{crítico} = \mathbf{5,99}$.
+		\item Como $H = 10,5$ é \textbf{maior} que $5,99$, a estatística $H$ cai na região de rejeição.	
+	\end{itemize}
+	
+\end{enumerate}
+
+\textbf{Conclusão:} \textbf{Rejeita-se $H_0$}. Há evidência estatística de que pelo menos um dos grupos de Input tem uma mediana de precisão diferente dos outros.

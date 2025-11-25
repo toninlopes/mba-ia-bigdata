@@ -1,0 +1,647 @@
+\chapter{Análise Descritiva ou Análise Exploratória de Dados (AED)}
+
+A \textbf{Análise Descritiva}, ou como John Tukey a popularizou, \textbf{Análise Exploratória de Dados (AED)}, é o "primeiro passo" de qualquer investigação. A \textbf{AED} é literalmente um \textbf{trabalho de detetive}. Antes de tentar provar uma teoria (o que seria o "trabalho judicial" da Análise Inferencial), seu objetivo é:
+
+\begin{itemize}
+	\item \textbf{Explorar os dados} para descobrir e identificar padrões, tendências ou aspectos de maior interesse.
+	\item \textbf{Representar os dados} (geralmente com visualizações) para destacar esses padrões.
+\end{itemize}
+
+Em suma, a AED é o processo de "interrogar" sua \textbf{amostra} para entender profundamente suas características, encontrar "pistas", identificar problemas de qualidade (dados faltantes, outliers) e gerar hipóteses.
+
+A AED é usada para transformar um conjunto de dados brutos e "caóticos" em um resumo compreensível. Ela é fundamental para:
+
+\begin{itemize}
+	\item \textbf{Entender o Básico:} Qual é o perfil dos meus dados? (Ex: Qual o valor médio? Qual o valor mais comum?)
+	\item \textbf{Identificar Problemas de Qualidade:} Existem dados impossíveis (ex: idade = -5)? Há muitos valores faltantes? Existem \textbf{outliers} (pontos muito fora da curva) que podem distorcer a análise?
+	\item \textbf{Encontrar Padrões e Tendências:} Há um pico de atividade em um horário específico? Um grupo se comporta de forma diferente de outro?
+	\item \textbf{Gerar Hipóteses:} A AED não \textbf{prova} nada, mas gera suspeitas.
+\end{itemize}
+
+\textbf{Exemplo: Análise de E-commerce}
+
+Vamos supor que você é um cientista de dados em um site de e-commerce e acabou de receber um \textbf{dataset} com todas as transações dos últimos 6 meses. O \textbf{dataset} tem colunas como `valor\_total`, `categoria\_produto`, `hora\_compra` e `regiao\_cliente`.
+
+A motivação é entender o comportamento de compra para otimizar o estoque e o marketing.
+
+O seu "trabalho de detetive" (AED) seria fazer perguntas como:
+
+\begin{enumerate}
+	\item \textbf{Analisando `valor\_total` (Quantitativa Contínua):} Qual é a distribuição dos valores de compra? A maioria das compras é pequena, com algumas compras muito grandes (uma "cauda longa" ou assimetria)? Existem compras com valor R\$ 0,00 que precisam ser filtradas?
+	\item \textbf{Analisando `categoria\_produto` (Qualitativa Nominal):} Quais são as categorias mais vendidas? (Ex: 'Eletrônicos', 'Livros', 'Moda'). Isso nos ajuda a entender o foco do negócio.
+	\item \textbf{Analisando `hora\_compra`:} Existe um "horário nobre" para as compras? (Ex: um pico claro de atividade na hora do almoço ou após as 22h). Isso é um padrão de interesse.
+	\item \textbf{Analisando `regiao\_cliente`:} As vendas estão concentradas no Sudeste ou estão bem distribuídas pelo país?
+\end{enumerate}
+
+Ao final da sua AED, você teria um relatório de "pistas": "Chefe, nossas vendas explodem entre 12h-14h, e embora 'Eletrônicos' seja a categoria mais vendida, o `valor\_total` médio de 'Moda' é maior. Além disso, encontramos 500 transações com valor R\$ 0,00 que precisam ser investigadas."
+
+Você ainda não fez nenhuma \textbf{inferência} sobre a \textbf{população}, mas já entende perfeitamente a \textbf{amostra} que tem em mãos.
+
+
+\section{Medidas-Resumo}
+
+As \textbf{Medidas-Resumo} são o arsenal principal da Análise Exploratória de Dados (AED). Elas nos permitem pegar um conjunto de dados, que pode ter milhares ou milhões de pontos, e "resumi-lo" em alguns números-chave.
+
+\subsection{Medidas de Tendência Central (ou Posição)}
+
+Essas medidas indicam o "centro" ou "meio" do conjunto de dados. Elas nos dão um valor típico ou central em torno do qual os dados se agrupam.
+
+\begin{itemize}
+	\item \textbf{Média (amostral observada):} A soma de todos os valores dividida pelo número total de observações.
+	\subitem $$ \overline{x} = \frac{\sum_{i=1}^{n}x_{i}}{n}  $$
+	
+	\item \textbf{Mediana (Md):} O valor central que divide o conjunto de dados *ordenado* em duas metades iguais (50\% dos dados estão abaixo dela).
+	\subitem Primeiro, ordene os dados: $x_{(1)} \le ... \le x_{(n)}$.
+	\subitem \textbf{Se $n$ é ímpar:} A Mediana é o valor na posição central $c = (n+1)/2$. $Md = x_{(c)}$.
+	\subitem \textbf{Se $n$ é par:} A Mediana é a \textbf{média} dos dois valores centrais $c = n/2$ e $c+1$. $Md = \frac{x_{(c)} + x_{(c+1)}}{2}$.
+	
+	\item \textbf{Moda:} O valor que aparece com \textbf{mais frequência} na amostra. Um conjunto de dados pode não ter moda ou ter mais de uma (multimodal).
+\end{itemize}
+
+\subsection{Medidas de Dispersão (ou Variação)}
+
+Essas medidas nos dizem o quão "espalhados" ou "variáveis" são os dados. Eles medem a distância entre os valores e o seu centro.
+
+\begin{itemize}
+	\item \textbf{Amplitude (A):} A diferença entre o valor máximo e o valor mínimo da amostra. $A = x_{(n)} - x_{(1)}$.
+	
+	\item \textbf{Variância Amostral ($s^2$):} É (aproximadamente) a média dos desvios ao quadrado em relação à média
+	\subitem \textbf{Variância Amostral:}
+	\subitem
+	$$
+	s^{2} = \frac{\sum_{i=1}^{n}(x_{i}-\overline{x})^{2}}{n}
+	$$
+	\subitem \textbf{Variância Amostral Corrigida:} Esta é a mais usada na prática para inferência.
+	\subitem
+	$$
+	s^{2} = \frac{\sum_{i=1}^{n}(x_{i}-\overline{x})^{2}}{n-1}
+	$$
+	
+	\item \textbf{Desvio Padrão ($s$):} É simplesmente a raiz quadrada da variância. Ele tem a vantagem de estar na mesma unidade de medida dos dados originais.
+	\subitem \textbf{Desvio Padrão Corrigido:}
+	\subitem
+	$$
+	s = \sqrt{\frac{\sum_{i=1}^{n}(x_{i}-\overline{x})^{2}}{n-1}} 
+	$$
+	
+	\item \textbf{Coeficiente de Variação (CV):} Medida \textbf{relativa} de dispersão, útil para comparar a variação entre datasets com médias diferentes. $CV = \frac{s}{\overline{x}}$.
+\end{itemize}
+
+
+\subsection{Medidas de Forma}
+
+Essas medidas descrevem a "forma" da distribuição dos dados, comparando-a com a curva Normal.\\
+
+\textbf{Assimetria (Skewness)}
+
+Mede o grau de "inclinação" da distribuição. A fórmula conceitual é a relação entre as medidas centrais:
+
+\begin{itemize}
+	\item \textbf{Distribuição Simétrica:} A cauda é igual para os dois lados - \textbf{Média = Mediana = Moda}. 
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.5\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/DadosSimetricos.png"}
+		\caption{Dados Simétricos}
+		\label{fig:dadossimetricos}
+	\end{figure}
+	
+	\item \textbf{Assimétrica à Direita (Positiva)}: A cauda longa está à direita. A média é "puxada" pelos valores altos - \textbf{Moda < Mediana < Média}.
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.5\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/DadosSimetricosDireita.png"}
+		\caption{Dados Simétricos}
+		\label{fig:dadossimetricosdireita}
+	\end{figure}
+	
+	\item \textbf{Assimétrica à Esquerda (Negativa):} A cauda longa está à esquerda. A média é "puxada" pelos valores baixos - \textbf{Média < Mediana < Moda}.
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.5\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/DadosSimetricosEsquerda.png"}
+		\caption{Dados Simétricos}
+		\label{fig:dadossimetricosesquerda}
+	\end{figure}
+\end{itemize}
+
+
+\subsection{Curtose (Kurtosis)}
+
+Mede o quão "pontuda" ou "achatada" é a distribuição, comparada à Normal.
+
+\begin{itemize}
+	\item \textbf{Mesocúrtica:} Possui o achatamento de uma distribuição Normal (Curtose $\approx$ 0).
+	\item \textbf{Leptocúrtica:} É mais "pontuda" e concentrada que a Normal (caudas mais pesadas) (Curtose > 0).
+	\item \textbf{Platicúrtica:} É mais "achatada" que a Normal (caudas mais leves) (Curtose < 0).
+\end{itemize}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/Kurtosis.png"}
+	\caption{Dados Simétricos}
+	\label{fig:kurtosi}
+\end{figure}
+
+
+\section{Análise de Variáveis Qualitativas (Categóricas)}
+
+A análise de dados qualitativos não envolve cálculos complexos como média ou variância (pois não podemos somar "cores", por exemplo), mas sim foca em \textbf{contagem} e \textbf{proporção}. O objetivo é entender a distribuição das nossas observações entre as diferentes categorias.
+
+\subsection{Tabela de Frequência}
+
+É a ferramenta mais fundamental. Trata-se de uma tabela que lista todas as categorias possíveis de uma variável e quantas vezes cada uma delas ocorreu na amostra. Ela se divide em:
+\begin{itemize}
+	\item \textbf{Frequência Absoluta:} A contagem exata de observações em cada categoria. (ex: `Compasso` "4" apareceu 6334 vezes).
+	\item \textbf{Frequência Relativa:} A proporção ou porcentagem de cada categoria em relação ao total. (ex: `Compasso` "4" representa 0.822384, ou 82.2\% do total).
+\end{itemize}
+
+É o ponto de partida para entender a distribuição dos dados. Ela "resume" uma coluna inteira de dados categóricos (que pode ter milhares de linhas) em uma pequena tabela, permitindo-nos ver imediatamente quais categorias são dominantes e quais são raras.
+
+\subsection{Gráfico de Barras}
+
+É a visualização direta da tabela de frequências. Cada categoria é representada por uma barra, e a altura (ou comprimento) da barra é proporcional à sua frequência (seja absoluta ou relativa).
+
+Seu principal ponto forte é a \textbf{comparação}. É muito mais fácil para o cérebro humano comparar o tamanho de diferentes barras do que ler uma tabela.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/GraficoBarras.png"}
+	\caption{Exmplo Gráfico de Barras}
+	\label{fig:graficobarras}
+\end{figure}
+
+\subsection{Gráfico de Setores (Pizza ou Donut)}
+
+É um gráfico circular dividido em "fatias" (setores). O círculo inteiro representa 100\% dos dados, e o tamanho (ângulo) de cada fatia é proporcional à frequência *relativa* (porcentagem) daquela categoria. O gráfico de \textbf{Donut} é apenas uma variação estilística do de Pizza.
+
+O gráfico de setores é usado exclusivamente para mostrar a \textbf{composição do todo} (relação parte-todo). Ele responde à pergunta: "Do total de músicas, qual a fatia que pertence a cada categoria?".
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.4\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/GraficoPizza.png"}
+	\caption{Exmplo Gráfico de Pizza}
+	\label{fig:graficopizza}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.4\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/GraficoDonuts.png"}
+	\caption{Exmplo Gráfico de Donuts}
+	\label{fig:graficodonuts}
+\end{figure}
+
+\section{Análise de Variáveis Qualitativas (Numéricas)}
+
+Para variáveis quantitativas (numéricas) a análise exploratória foca em entender a \textbf{forma da distribuição} dos dados, seu \textbf{centro} e sua \textbf{dispersão}.
+
+\subsection{Histograma e Densidade Alisada}
+
+O histograma é a ferramenta mais clássica para visualizar a "forma" de dados quantitativos. Ele agrupa os dados em "faixas" (ou *bins*) de valores e desenha barras para mostrar a \textbf{frequência} (quantos pontos de dados caem) em cada faixa. A "densidade alisada" (ou KDE) é uma linha suave desenhada sobre o histograma para melhor estimar a forma da distribuição.
+
+Seu principal objetivo é permitir uma inspeção visual da \textbf{distribuição} dos dados. Com ele, podemos identificar:
+\begin{itemize}
+	\item \textbf{Assimetria:} (se os dados estão "puxados" para um lado).
+	\item Onde está o "pico" (a \textbf{Moda}).
+	\item Se há mais de um pico (\textbf{multimodalidade}). O gráfico de `Energia` na aula, por exemplo, é claramente bimodal (tem um pico em valores baixos e outro em valores altos).
+\end{itemize}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/GraficoHistogramaDensidadeAlisada.png"}
+	\caption{Exmplo Gráfico Histograma e Densidade Alisada}
+	\label{fig:graficohistogramadensidadealisada}
+\end{figure}
+
+\subsection{Gráficos de Caixa (Boxplots)}
+
+O boxplot é um resumo gráfico incrivelmente denso da distribuição dos dados. Seus componentes são:
+
+\begin{itemize}
+	\item A "caixa" central representa o \textbf{Intervalo Interquartil (IIQ)}, contendo os 50\% centrais dos dados (entre $Q_1$ - Quartil 1 e $Q_3$ - Quartil 3).
+	\item A \textbf{linha no meio da caixa} é a \textbf{Mediana} ($Q_2$), que marca o centro dos dados.
+	\item As "hastes" (ou bigodes) mostram o "menor valor que não é outlier" e o "maior valor que não é outlier".
+	\item Os \textbf{pontos} fora das hastes são identificados como \textbf{outliers} (valores extremos).
+\end{itemize}
+
+O boxplot é excelente para identificar rapidamente a \textbf{mediana} (centro), a \textbf{dispersão} (o tamanho da caixa) e a \textbf{assimetria} (pela posição da mediana na caixa). Sua maior força é \textbf{comparar distribuições} lado a lado.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/GraficoBoxPlot.png"}
+	\caption{Exmplo Gráfico BoxPlot}
+	\label{fig:graficoboxplot}
+\end{figure}
+
+\subsection{Gráficos de Linha}
+
+É um gráfico que plota pontos de dados (observações) e os conecta com uma linha.
+
+Esta visualização tem um uso muito específico: mostrar a evolução de \textbf{dados ao longo do tempo}. É a ferramenta padrão para analisar \textbf{séries temporais}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/GraficoLinhas.png"}
+	\caption{Exmplo Gráfico de Linhas}
+	\label{fig:graficolinhas}
+\end{figure}
+
+
+\chapter{Associação de Variáveis}
+
+Na \textbf{Análise Exploratória de Dados} o foco era a análise \textbf{univariada}: olhar para \textbf{uma} variável de cada vez (ex: o histograma de `Energia` ou o gráfico de barras de `Compasso`). Na \textbf{Associação de Variáveis}, o foco muda para a análise \textbf{bivariada}: como duas (ou mais) variáveis se comportam \textbf{juntas}. A pergunta-chave que estamos tentando responder é:
+
+\begin{center}
+	\textbf{"Será que o valor de uma variável tem alguma relação com o valor de outra?"}
+\end{center}
+
+A forma como investigamos essa associação depende inteiramente dos \textbf{tipos de variáveis} que estamos comparando:
+
+\begin{itemize}
+	\item \textbf{Qualitativa x Qualitativa:} Procuramos padrões de frequência.
+	\item \textbf{Quantitativa x Quantitativa:} Procuramos por tendências e correlações.
+	\item \textbf{Qualitativa x Quantitativa:} Procuramos por diferenças na distribuição.
+\end{itemize}
+
+O objetivo é descobrir "pistas" mais profundas nos dados, que é a essência do "trabalho de detetive" da AED.
+
+
+\section{Análise de Variáveis Qualitativas x Qualitativas}
+
+Analisar duas variáveis qualitativas (Quali x Quali) significa investigar se existe uma \textbf{associação} ou \textbf{dependência} entre elas. A pergunta-chave é:
+	
+\begin{center}
+	\textbf{"O fato de uma observação pertencer a uma categoria da Variável A altera a probabilidade dela pertencer a uma categoria da Variável B?"}
+\end{center}
+
+Se as categorias de uma variável se distribuem de forma diferente entre as categorias da outra, dizemos que elas estão \textbf{associadas}. Se a distribuição for a mesma, elas são \textbf{independentes}.
+
+\textbf{Exemplo:} Vamos imaginar que você está analisando dados de uma empresa de tecnologia.
+\begin{itemize}
+	\item \textbf{Variável 1:} `Departamento` (Engenharia, Vendas, Marketing).
+	\item \textbf{Variável 2:} `Sistema\_Operacional` (Windows, macOS, Linux).
+\end{itemize}
+
+A \textbf{pergunta de interesse} é: "O departamento de um funcionário tem associação com o sistema operacional que ele usa?"
+
+Para responder a isso, usamos três ferramentas principais: Tabela de Contingência (Tabela de Dupla Entrada); Gráfico de Barras Agrupado; e Gráfico de Mosaíco.
+
+
+\subsection{Tabela de Contingência (Tabela de Dupla Entrada)}
+
+É uma tabela que cruza as categorias das duas variáveis e mostra a \textbf{contagem} (frequência absoluta) para cada combinação.
+
+É a base de toda a análise Quali x Quali. Ela nos permite ver os números brutos e calcular proporções. Por exemplo, podemos ver quantos funcionários da "Engenharia" usam "Linux" e comparar com quantos do "Marketing" usam "Linux".
+
+\textbf{Exemplo:}
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{lcccc}
+		\hline
+		\textbf{Departament} & \multicolumn{1}{l}{\textbf{Windows}} & \multicolumn{1}{l}{\textbf{macOS}} & \multicolumn{1}{l}{\textbf{Linux}} & \multicolumn{1}{l}{\textbf{Total}} \\
+		\hline
+		Engenharia                  & 50                                   & 30                                 & 120                                & 200                                \\
+		Vendas               & 80                                   & 15                                 & 5                                  & 100                                \\
+		Marketing            & 20                                   & 70                                 & 10                                 & 100                                \\
+		\hline
+		Total                & 150                                  & 115                                & 135                                & 400                               
+	\end{tabular}
+\end{table}
+
+\subsection{Gráfico de Barras Agrupado}
+
+É uma visualização onde, para cada categoria da primeira variável (ex: `Departamento` no eixo X), desenhamos um \textbf{grupo} de barras, uma para cada categoria da segunda variável (ex: uma barra para Windows, uma para macOS, uma para Linux).
+
+É a melhor ferramenta para \textbf{comparar as contagens absolutas} entre os grupos. No nosso exemplo, veríamos lado a lado que o `Departamento` "Engenharia" tem uma barra de "Linux" muito maior que os outros, enquanto "Marketing" tem a maior barra de "macOS".
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/GraficoBarrasAgrupado.png"}
+	\caption{Grafíco de Barras Agrupado}
+	\label{fig:graficodebarrasagrupado}
+\end{figure}
+
+\textbf{Interpretação:}
+\begin{itemize}
+	\item \textbf{Engenharia:} Vemos imediatamente que a barra "Linux" é massivamente dominante, ultrapassando 100 funcionários.
+	\item \textbf{Vendas:} A barra "Windows" é a mais alta, mostrando que é o sistema preferido.
+	\item \textbf{Marketing:} A barra "macOS" é visivelmente a mais alta neste departamento.
+\end{itemize}
+
+\subsection{Gráfico de Mosaico}
+
+É uma visualização gráfica da Tabela de Contingência, focada em \textbf{proporções}. É um grande retângulo (100\% dos dados) dividido da seguinte forma:
+
+\begin{itemize}
+	\item A \textbf{largura} de cada \textbf{coluna} é proporcional à frequência total daquela categoria (ex: a coluna "Engenharia" seria mais larga, pois tem 200/400 funcionários).
+	\item A \textbf{altura} de cada \textbf{retângulo} dentro da coluna é proporcional à frequência \textbf{relativa} da segunda variável (ex: dentro da coluna "Engenharia", o retângulo "Linux" ocuparia 60\% da altura).
+\end{itemize}
+
+É a melhor ferramenta para \textbf{comparar visualmente as proporções} e identificar associações. Se as variáveis fossem independentes, todos os retângulos de "macOS", por exemplo, teriam a mesma altura em todas as colunas. No nosso exemplo, veríamos um retângulo "Linux" muito alto na coluna "Engenharia" e muito baixo nas outras, e o oposto para "macOS" no "Marketing", indicando uma forte associação.Grafico
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/GraficoMosaico.png"}
+	\caption{Dados Simétricos}
+	\label{fig:graficomosaico}
+\end{figure}
+
+\textbf{Interpretação:}
+\begin{itemize}
+	\item \textbf{Largura das Colunas:} Note que a coluna "Engenharia" é mais larga que as outras. Isso ocorre porque ela representa 50\% do total de funcionários (200 de 400). As colunas "Vendas" e "Marketing" têm larguras iguais (100 de 400 cada).
+	
+	\item \textbf{Altura dos Blocos:} A altura de cada bloco mostra a proporção dentro daquele departamento:
+	\subitem O bloco "Linux" ocupa 60\% da altura da coluna "Engenharia" (120/200).
+	\subitem O bloco "macOS" ocupa 70\% da altura da coluna "Marketing" (70/100).
+	\subitem O bloco "Windows" ocupa 80\% da altura da coluna "Vendas" (80/100).
+\end{itemize}
+
+\section{Análise de Variáveis Quantitativas x Quantitativas}
+
+Esta análise investiga como duas variáveis \textbf{numéricas} (quantitativas) se movem juntas. O objetivo é descobrir a \textbf{direção} e a \textbf{força} dessa relação.
+
+A pergunta-chave é: \textbf{"Quando a Variável A aumenta, o que acontece com a Variável B?"}
+\begin{itemize}
+	\item Ela também aumenta? (\textbf{Associação Positiva})
+	\item Ela diminui? (\textbf{Associação Negativa})
+	\item Ela não faz nada em particular? (\textbf{Sem Associação})
+\end{itemize}
+
+\textbf{Exemplo:} Vamos usar um dataset de \textbf{preços de imóveis}.
+
+\begin{itemize}
+	\item \textbf{Variável 1 (Quant):} `Area\_m2` (O tamanho da casa em metros quadrados).
+	\item \textbf{Variável 2 (Quant):} `Preco\_Venda` (O preço que a casa foi vendida).
+\end{itemize}
+
+A \textbf{pergunta de interesse} é: "O tamanho de uma casa está associado ao seu preço de venda?"
+
+
+\subsection{Scatter Plot (Gráfico de Dispersão)}
+
+É a ferramenta visual fundamental para esta análise. Cada observação (cada casa) é plotada como um único ponto em um gráfico 2D, onde o eixo X é uma variável (`Area\_m2`) e o eixo Y é a outra (`Preco\_Venda`).
+
+É utilizada para \textbf{visualizar} a relação entre as variáveis. Ele nos permite ver instantaneamente:
+\begin{enumerate}
+	\item A \textbf{Direção:} Os pontos sobem da esquerda para a direita (positiva) ou descem (negativa)?
+	\item A \textbf{Forma:} A relação parece ser uma linha reta (linear) ou uma curva (não linear)?
+	\item A \textbf{Força:} Os pontos estão firmemente agrupados (forte) ou muito espalhados (fraca)?
+	\item \textbf{Outliers:} Existem pontos (casas) que fogem completamente do padrão?
+\end{enumerate}
+
+Esperaríamos ver uma nuvem de pontos subindo da esquerda para a direita, indicando que casas maiores (`Area\_m2` alta) tendem a ter preços maiores (`Preco\_Venda` alto).
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/GraficoDispersao.jpeg"}
+	\caption{Dados Simétricos}
+	\label{fig:graficodispersao}
+\end{figure}
+
+
+\subsection{Coeficiente de Correlação Linear de Pearson ($r$)}
+
+É uma \textbf{medida numérica} que quantifica a \textbf{força} e a \textbf{direção} de uma relação \textbf{LINEAR} entre duas variáveis quantitativas.
+
+\begin{itemize}
+	\item Sua fórmula $r = \frac{s_{XY}}{\sqrt{s_{X}^{2}s_{Y}^{2}}}$ basicamente normaliza a covariância ($s_{XY}$), forçando o resultado a ficar entre \textbf{-1 e +1}.
+	\item $r = +1$: Correlação linear positiva perfeita.
+	\item $r = -1$: Correlação linear negativa perfeita.
+	\item $r = 0$: Nenhuma correlação *linear*.
+\end{itemize}
+
+Utilizamos o Coeficiente de Correlação Linear de Pearson para obter um único número que resuma a relação linear. Uma classificação comum:
+\begin{itemize}
+	\item $|r| \ge 0.7$ é forte.
+	\item $|r| \ge 0.5$ é moderada.
+	\item $|r| [cite_start]< 0.5$ é fraca.
+\end{itemize}
+
+Poderíamos encontrar $r = +0.85$, indicando uma correlação linear \textbf{forte e positiva} entre `Area\_m2` e `Preco\_Venda`.
+
+
+\subsection{Matriz de Correlação (Heatmap)}
+
+A Matriz de Correlação é uma tabela que mostra o coeficiente $r$ de Pearson para \textbf{todos os pares} de variáveis quantitativas do dataset. Um \textbf{Heatmap (Mapa de Calor)} é a visualização gráfica dessa matriz, onde as cores (ex: vermelho para positivo, azul para negativo) representam os valores de $r$.
+
+É uma ferramenta de AED poderosa para identificar rapidamente quais variáveis estão correlacionadas em um dataset com muitas colunas, sem precisar fazer dezenas de gráficos de dispersão. É o "trabalho de detetive" em larga escala.
+
+\textbf{Exemplo:} Se tivéssemos mais variáveis (ex: `Idade\_Imovel`, `Distancia\_Centro`), o heatmap nos mostraria:
+\begin{itemize}
+	\item `Area\_m2` vs `Preco\_Venda`: Vermelho forte (+0.85).
+	\item `Distancia\_Centro` vs `Preco\_Venda`: Azul forte (negativo, ex: -0.70).
+	\item `Idade\_Imovel` vs `Area\_m2`: Cinza (perto de 0).
+\end{itemize}
+
+A Tabela \ref{tab:matrizcorrelacao} mostra a Matriz de Correlação de Pearson calculada a partir dos dados. Esta tabela é a fonte numérica para o gráfico.
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{lcccc}
+		\hline
+		 												& \multicolumn{1}{l}{\textbf{Area\_m2}} & \multicolumn{1}{l}{\textbf{Preco\_Venda}} & \multicolumn{1}{l}{\textbf{Idade\_Imovel}} & \multicolumn{1}{l}{\textbf{Distancia\_Centro}} \\
+		\hline
+		{\textbf{Area\_m2}}	  				& 1.0	& 0.83 & -0.05 & -0.18 \\
+		{\textbf{Preco\_Venda}}			& 0.83	& 1.00 & -0.47  & -0.51 \\
+		{\textbf{Idade\_Imovel}}		 & -0.05 & -0.47 & 1.00 & 0.23 \\
+		{\textbf{Distancia\_Centro}}	& -0.18	& -0.51 & 0.23 & 1.00 \\
+	\end{tabular}
+	\caption{Matriz de Correlação de Pearson}
+	\label{tab:matrizcorrelacao}
+\end{table}
+
+Abaixo está o Heatmap (Mapa de Calor) que visualiza a matriz acima.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/GraficoHeatmap.png"}
+	\caption{Gráfico Heatmap}
+	\label{fig:graficoheadmap}
+\end{figure}
+
+\textbf{Interpretação do Heatmap:}
+\begin{itemize}
+	\item \textbf{Cores (Vermelho/Azul):} O mapa de cores divergente torna a interpretação instantânea.
+	\subitem \textbf{Vermelho Forte:} Indica correlação positiva forte (ex: Area\_m2 e Preco\_Venda com $r=0.83$).
+	\subitem \textbf{Azul Forte:} Indica correlação negativa moderada/forte (ex: Distancia\_Centro e Preco\_Venda com $r=-0.51$).
+	\subitem \textbf{Cores Claras/Brancas:} Indicam correlação fraca, próxima de zero (ex: Area\_m2 e Idade\_Imovel com $r=-0.05$).
+	
+	\item \textbf{Anotações:} Os valores numéricos (com 2 casas decimais) estão anotados em cada célula, permitindo a leitura precisa.
+\end{itemize}
+
+\subsection{Correlação de Spearman ($\rho$) e Kendall ($\tau$)}
+
+São duas alternativas ao Pearson. Elas são medidas "não paramétricas" de associação, ou seja, elas \textbf{não} medem apenas relações lineares, mas sim relações \textbf{monotônicas}. Uma relação é monotônica se, quando $X$ aumenta, $Y$ \textbf{consistentemente} aumenta (ou \textbf{consistentemente} diminui), mesmo que não seja em linha reta.
+
+\textbf{Como funcionam?}
+\begin{itemize}
+	\item \textbf{Spearman:} Basicamente, calcula o $r$ de Pearson, mas não sobre os valores, e sim sobre os \textbf{postos (ranks)} dos valores.
+	\item \textbf{Kendall:} Mede a associação comparando o número de pares de pontos que são \textbf{"concordantes" vs. "discordantes"}.
+\end{itemize}
+
+São usadas quando a relação entre as variáveis claramente \textbf{não é linear} (ex: uma curva, como no gráfico da aula) ou quando os dados são \textbf{ordinais}.
+
+\textbf{Exemplo:} Imagine a relação entre `Anos\_de\_Experiencia` e `Salario`. O salário cresce rápido no início e depois desacelera (uma curva). O $r$ de Pearson pode ser +0.7 (moderado), mas o $\rho$ de Spearman pode ser +0.95 (quase perfeito), por capturar a relação monotônica "quanto mais experiência, maior o salário".
+
+\section{Análise de Variáveis Quantitativas x Qualitativas}
+
+A Análise de Variáveis Quantitativas x Qualitativas investiga a \textbf{relação entre uma variável numérica (Quant) e uma variável categórica (Quali)}.
+
+A pergunta-chave que queremos responder é:
+
+\textbf{\begin{center}
+		"A **distribuição** da variável numérica (seu centro, sua dispersão, sua forma) é a **mesma** para todas as categorias da variável qualitativa?"
+\end{center}}
+
+Se a distribuição mudar, dizemos que as variáveis estão \textbf{associadas}.
+
+\textbf{Exemplo:} Vamos usar um dataset de uma empresa de tecnologia.
+\begin{itemize}
+	\item \textbf{Variável 1 (Quantitativa):} `Salario` (o salário mensal do funcionário).
+	\item \textbf{Variável 2 (Qualitativa):} `Senioridade` (uma categoria ordinal: 'Júnior', 'Pleno', 'Sênior').
+\end{itemize}
+
+A \textbf{pergunta de interesse} é: "O salário dos funcionários é diferente entre os níveis de senioridade?"
+
+
+\subsection{Boxplot (Lado a Lado)}
+
+Boxplot (Lado a Lado) é a ferramenta visual principal para esta análise. Em vez de um único boxplot, desenhamos múltiplos boxplots (um para cada categoria da variável qualitativa) lado a lado, no mesmo eixo numérico.
+
+É a forma mais rápida e eficaz de \textbf{comparar as distribuições}. Com um único olhar, podemos comparar:
+\begin{enumerate}
+	\item O \textbf{Centro (Mediana):} A linha central do boxplot de 'Sênior' é mais alta que a de 'Pleno'?
+	\item A \textbf{Dispersão (Variabilidade):} O "tamanho da caixa" (o IIQ) é maior para 'Sênior' (salários mais variáveis) do que para 'Júnior' (salários mais concentrados)?
+	\item A \textbf{Forma (Assimetria):} A mediana está centrada na caixa para todos os grupos?
+	\item \textbf{Outliers:} Algum nível de senioridade tem muitos salários "fora da curva"?
+\end{enumerate}
+
+\textbf{Exemplo:} Esperaríamos ver três boxplots, onde a caixa de 'Júnior' estaria mais baixa, a de 'Pleno' no meio, e a de 'Sênior' mais alta, mostrando uma clara associação positiva entre `Senioridade` e `Salario`.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/GraficoBoxplotLadoLado.png"}
+	\caption{Gráfico Boxplot Lado a Lado}
+	\label{fig:graficoboxplotladolado}
+\end{figure}
+
+\textbf{Interpretação:}
+\begin{itemize}
+	\item \textbf{Centro (Mediana):} Vemos a progressão clara que esperávamos. A linha mediana de 'Júnior' está em torno de R\$4.000, Pleno em R\$8.000, e 'Sênior' em R\$15.000.
+	\item \textbf{Dispersão (Variabilidade)}: A altura da caixa (o Intervalo Interquartil) aumenta com a senioridade, refletindo a realidade de que os salários 'Júnior' são mais padronizados, enquanto os salários 'Sênior' têm uma variabilidade muito maior.
+\end{itemize}
+
+\subsection{Gráfico de Violino (Violin Plot)}
+
+O gráfico de violino é uma versão "turbinada" do boxplot. Ele combina um boxplot (geralmente mostrado como uma pequena caixa branca por dentro) com um \textbf{gráfico de densidade (KDE)}, que é espelhado para criar a forma de um "violino".
+
+Ele nos dá todas as informações do boxplot, \textbf{MAIS} a \textbf{forma exata da distribuição} dos dados.
+\begin{itemize}
+	\item A \textbf{largura} do violino em qualquer ponto indica quantos dados existem naquele nível.
+	\item Boxplots podem ser enganosos se a distribuição tiver dois picos (bimodal). O boxplot mostraria uma caixa larga, mas o violino mostraria duas "barrigas", revelando os dois picos.
+\end{itemize}
+
+\textbf{Exemplo:}
+\begin{itemize}
+	\item O boxplot de 'Sênior' pode parecer apenas "largo".
+	\item O gráfico de violino de 'Sênior' poderia revelar que existem *dois picos* de salário: um para "Especialistas" e outro para "Gestores", algo que o boxplot sozinho esconderia.
+\end{itemize}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/GraficoViolino.png"}
+	\caption{Gráfico de Violino}
+	\label{fig:graficoviolino}
+\end{figure}
+
+\textbf{Interpretação:}
+\begin{itemize}
+	\item \textbf{Forma da Distribuição:} A largura do "violino" mostra onde os dados estão concentrados. Podemos ver que para todos os três níveis, os dados estão mais concentrados em torno da média (a parte mais "gorda" do violino).
+	\item \textbf{Combinação:} Eu instruí o gráfico a desenhar os quartis (inner='quartile') dentro dos violinos (as linhas pontilhadas), combinando o melhor do boxplot (as medidas de posição) com o melhor da curva de densidade (a forma).
+\end{itemize}
+
+
+\section{Análise Multivariada}
+
+A \textbf{Análise Multivariada} (ou "Gráficos Multivariados") é o que nos permite investigar a estrutura, os padrões e as inter-relações entre \textbf{três ou mais variáveis simultaneamente}.
+
+Enquanto a análise bivariada (ex: um único gráfico de dispersão) nos mostra uma "fatia" da história (ex: `Preço` vs. `Área`), a análise multivariada nos ajuda a ver o "quadro completo".
+
+\textbf{Exemplo:} Vamos usar um dataset de \textbf{classes de personagens em um jogo de RPG}.
+\begin{itemize}
+	\item \textbf{As Observações:} As classes ('Guerreiro', 'Mago', 'Ladino').
+	\item \textbf{As Variáveis (Quantitativas):} Seus atributos médios, em uma escala de 0 a 100 (`Força`, `Agilidade`, `Inteligência`, `Resistência`, `Magia`).
+\end{itemize}
+
+A \textbf{pergunta de interesse} é: "Como os perfis de atributos dessas classes se comparam?"
+
+\subsection{Gráfico de Radar (Radar Chart)}
+
+Gráfico de Radar é um gráfico 2D que plota múltiplas variáveis quantitativas em "eixos" que irradiam de um ponto central. Os valores de uma observação são plotados em cada eixo e conectados por linhas, formando um "polígono".
+
+Sua principal força é \textbf{comparar perfis} de diferentes observações (ou grupos) através de um conjunto comum de variáveis. É excelente para identificar "forças" e "fraquezas".
+
+\textbf{Exemplo:} Plotaríamos os atributos médios de cada classe em um único Gráfico de Radar:
+\begin{itemize}
+	\item O \textbf{'Guerreiro'} teria um polígono com pontas grandes em `Força` e `Resistência`, mas pontas pequenas em `Inteligência`.
+	\item O \textbf{'Mago'} teria pontas grandes em `Inteligência` e `Magia`.
+	\item O \textbf{'Ladino'} teria uma ponta grande em `Agilidade`.
+\end{itemize}
+
+A forma de cada polígono nos dá um "perfil" visual instantâneo da classe.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/GraficoRadar.png"}
+	\caption{Gráfico de Violino}
+	\label{fig:graficoradar}
+\end{figure}
+
+\textbf{Interpretação:}
+\begin{itemize}
+	\item \textbf{Guerreiro (Vermelho):} Mostra um perfil dominante em Força e Resistência, mas muito baixo em Inteligência e Magia.
+	\item \textbf{Mago (Azul):} É o oposto, com picos claros em Inteligência e Magia.
+	\item \textbf{Ladino (Verde):} Tem um perfil mais equilibrado, mas com uma ponta distinta em Agilidade.
+\end{itemize}
+
+
+\subsection{Matriz de Dispersão (Scatter Plot Matrix ou Pair Plot)}
+
+É uma \textbf{grade (matriz)} de gráficos que mostra o relacionamento bivariado entre todos os pares de variáveis quantitativas do seu dataset.
+
+\begin{itemize}
+	\item \textbf{Fora da Diagonal:} Cada célula mostra um \textbf{gráfico de dispersão} entre a variável da linha e a variável da coluna.
+	\item \textbf{Na Diagonal:} Cada célula mostra um gráfico \textbf{univariado} (geralmente um histograma ou gráfico de densidade) daquela variável.
+\end{itemize}
+
+É a ferramenta de "diagnóstico" multivariado mais poderosa. Em vez de criar dezenas de gráficos de dispersão individuais, a matriz nos permite, em uma única visualização:
+
+\begin{itemize}
+	\item Ver a \textbf{distribuição} de cada variável (na diagonal).
+	\item Escanear rapidamente \textbf{todas} as \textbf{correlações} lineares e não lineares entre \textbf{todas} as variáveis (fora da diagonal).
+\end{itemize}
+
+\textbf{Exemplo:} Uma Matriz de Dispersão dos atributos (`Força`, `Agilidade`, `Inteligência`, etc.) de \textbf{todos} os personagens individuais (não apenas a média) poderia revelar:
+\begin{itemize}
+	\item Um gráfico de dispersão mostrando uma correlação positiva forte entre `Inteligência` e `Magia`.
+	\item Um gráfico de dispersão mostrando uma correlação negativa entre `Força` e `Inteligência`.
+	\item Um histograma (na diagonal) mostrando que `Agilidade` tem uma distribuição bimodal (picos em 'Ladinos' e 'Guerreiros', talvez).
+\end{itemize}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/MatrizDispersao.png"}
+	\caption{Gráfico de Violino}
+	\label{fig:matrizdispersao}
+\end{figure}
+
+\textbf{Interpretação:}
+\begin{itemize}
+	\item \textbf{Diagonal (Gráficos de Densidade):} A diagonal mostra a distribuição univariada de cada atributo. Podemos ver que atributos como Força e Inteligência são bimodais (têm dois picos), pois os Magos têm pouca força e os Guerreiros têm muita, criando dois grupos distintos.
+	
+	\item \textbf{Fora da Diagonal (Gráficos de Dispersão):} Aqui vemos as correlações.
+	\subitem \textbf{Inteligência vs. Magia:} Mostra uma correlação positiva muito forte (os pontos sobem juntos).
+	\subitem \textbf{Força vs. Inteligência:} Mostra uma correlação negativa forte (os pontos descem da esquerda para a direita).
+	\subitem \textbf{Agilidade vs. Força:} Não mostra uma correlação clara; os pontos estão mais espalhados.
+	
+	\item \textbf{hue='Classe' (Cores):} Ao colorir os pontos, podemos ver quais classes estão formando esses padrões. A correlação negativa entre Força e Inteligência é claramente formada pelos clusters opostos de Guerreiros e Magos.
+\end{itemize}
+	

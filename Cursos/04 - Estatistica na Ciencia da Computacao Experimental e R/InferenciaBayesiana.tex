@@ -1,0 +1,301 @@
+\chapter{Inferência Bayesiana}
+
+A Inferência Bayesiana é uma abordagem estatística baseada no \textbf{Teorema de Bayes} para atualizar a probabilidade de uma hipótese à medida que novas evidências ou informações são levadas em consideração.
+
+O paradigma bayesiano trata os parâmetros do modelo (como a média $\mu$ ou os coeficientes $\beta$) como \textbf{variáveis aleatórias}, em vez de constantes fixas e desconhecidas (como na inferência Frequentista).
+
+O processo é um ciclo contínuo de atualização de crenças, estruturado em três componentes principais:
+
+\begin{enumerate}
+	\item Crença Prévia (Prior)
+	\begin{itemize}
+		\item Representa o seu conhecimento ou crença sobre os parâmetros do modelo \textbf{antes} de observar quaisquer dados.
+		\item É expresso como uma \textbf{distribuição de probabilidade a priori} ($P(\theta)$), onde $\theta$ representa os parâmetros de interesse.
+	\end{itemize}
+	
+	\item Evidência (Likelihood)
+	\begin{itemize}
+		\item É a probabilidade de observar os \textbf{dados reais} ($D$) que você coletou, \textbf{dado um determinado conjunto de parâmetros} ($\theta$).
+		\item É expressa pela função de \textbf{verossimilhança} ($P(D|\theta)$).
+	\end{itemize}
+	
+	\item Crença Posterior (Posterior)
+	\begin{itemize}
+		\item É a crença atualizada sobre os parâmetros \textbf{após} incorporar os novos dados.
+		\item É expressa como uma \textbf{distribuição de probabilidade a posteriori} ($P(\theta|D)$). Esta é a meta da inferência bayesiana.
+	\end{itemize}
+
+\end{enumerate}
+
+
+\section{Teorema de Bayes}
+
+O Teorema de Bayes é a regra matemática que formaliza o processo de atualização da crença:
+
+$$P(\theta|D) = \frac{P(D|\theta) \cdot P(\theta)}{P(D)}$$
+
+Onde:
+\begin{itemize}
+	\item $P(\theta|D)$: \textbf{Posterior} (Crença Atualizada) — O que queremos saber: a probabilidade dos parâmetros dados os dados.
+	\item $P(D|\theta)$: \textbf{Verossimilhança} (Evidência) — A probabilidade dos dados dados os parâmetros.
+	\item $P(\theta)$: \textbf{Prior} (Crença Prévia) — O nosso conhecimento inicial sobre os parâmetros.
+	\item $P(D)$: \textbf{Evidência Marginal} (ou Normalizador) — A probabilidade dos dados em si. Muitas vezes é tratada como uma constante de normalização, pois não depende dos parâmetros $\theta$ e garante que o Posterior integre a 1.
+\end{itemize}
+
+$$\text{Posterior} \propto \text{Verossimilhança} \times \text{Prior}$$
+
+\textbf{Motivações Chave:}
+\begin{enumerate}
+	\item \textbf{Incorporação de Conhecimento Prévio:} O paradigma bayesiano permite incluir informações históricas, conhecimento especializado ou restrições teóricas (o $P(\theta)$) diretamente no modelo, algo que a inferência Frequentista ignora.
+	\item \textbf{Quantificação Completa da Incerteza:} A saída bayesiana é uma \textbf{distribuição de probabilidade completa} ($P(\theta|D)$), e não apenas um único ponto de estimativa (como $\hat{\beta}$ no OLS). Isso fornece uma medida rica e completa da incerteza sobre os parâmetros.
+	\item \textbf{Resposta a Perguntas Diretas:} A inferência bayesiana responde a perguntas diretas, como: "\textbf{Qual é a probabilidade de a média populacional ser maior que 5, dados os meus dados?}" (Frequentista só pode dizer: "Rejeitamos $H_0: \mu \leq 5$").
+\end{enumerate}
+
+
+\subsection{Contrastes com o Paradigma Frequentista}
+
+\begin{table}[h]
+	\begin{tabular}{p{0.22\textwidth} p{0.35\textwidth} p{0.35\textwidth} }
+		Característica & Inferência Bayesiana & Inferência Frequentista (Clássica) \\
+		\hline
+		\\
+		\textbf{Parâmetros ($\theta$)} & Variáveis aleatórias. Têm distribuições de probabilidade. & Constantes fixas e desconhecidas. \\
+		\\
+		\textbf{Incerteza} & Expressa via \textbf{Intervalos de Credibilidade} (diretamente probabilísticos). & Expressa via \textbf{Intervalos de Confiança}** (baseados na frequência). \\
+		\\
+		\textbf{Base} & Teorema de Bayes ($P(\theta|D)$). & Mínimos Quadrados, Máxima Verossimilhança (MLE) sem prior. \\
+		\\
+		\textbf{Ponto Forte} & Incorpora informação prévia, ideal para amostras pequenas e modelagem complexa. & Simplicidade e boa performance em grandes amostras. \\
+		\\
+	\end{tabular}   
+\end{table}
+
+A Inferência Bayesiana não substitui a Frequentista, mas a complementa, oferecendo uma filosofia mais coerente para a interpretação da probabilidade e da incerteza.
+
+
+\section{Intervalos de Credibilidade (Credible Intervals - CI)}
+
+O Intervalo de Credibilidade (IC) é o equivalente bayesiano do Intervalo de Confiança (IC) Frequentista, mas com uma interpretação fundamentalmente \textbf{mais direta e intuitiva}.
+
+Um Intervalo de Credibilidade de $95\%$ para um parâmetro ($\theta$) é um intervalo onde há uma probabilidade de \textbf{$95\%$ de que o valor verdadeiro do parâmetro esteja contido}.
+
+\begin{itemize}
+	\item \textbf{Fonte:} O IC é calculado diretamente a partir da \textbf{Distribuição Posterior} ($P(\theta|D)$) do parâmetro.
+	\item \textbf{Interpretação:} É uma afirmação probabilística sobre o \textbf{parâmetro em si}, refletindo nossa crença atualizada.
+\end{itemize}
+
+
+\subsection{Contraste Chave com o Intervalo de Confiança (Frequentista)}
+
+É vital entender a diferença de interpretação:
+
+\begin{table}[h]
+	\begin{tabular}{p{0.22\textwidth} p{0.35\textwidth} p{0.35\textwidth} }
+		Característica & Intervalo de Credibilidade (Bayesiano) & Intervalo de Confiança (Frequentista) \\
+		\hline
+		\\
+		\textbf{Interpretação} & "\textbf{Há 95\% de chance de que o verdadeiro valor de $\theta$ esteja neste intervalo.}" & "\textbf{Se repetirmos este experimento muitas vezes, 95\% dos intervalos construídos conterão o verdadeiro valor de $\theta$.}" \\
+		\\
+		\textbf{Parâmetro} & Visto como \textbf{aleatório} (variável). & Visto como \textbf{fixo} e desconhecido. \\
+		\\
+		\textbf{Base} & Distribuição Posterior. & Distribuição Amostral. \\
+		\\
+		\textbf{Intuitivo} & Sim, reflete a crença. & Não, é baseado em repetição hipotética. \\
+		\\
+	\end{tabular}   
+\end{table}
+
+
+\subsection{Tipos de Intervalos de Credibilidade}
+
+Existem duas formas principais de construir um Intervalo de Credibilidade:
+
+\begin{enumerate}
+	\item Intervalo de Credibilidade de Maior Densidade (HDI - Highest Density Interval)
+	\begin{itemize}
+		\item \textbf{Definição:} O HDI é o intervalo mais estreito possível que contém a porcentagem desejada da probabilidade (ex: 95\%).
+		\item \textbf{Vantagem:} Garante que todos os pontos dentro do intervalo tenham uma densidade de probabilidade maior do que qualquer ponto fora do intervalo. É o intervalo mais informativo.
+		\item \textbf{Uso:} É ideal quando a distribuição posterior é simétrica ou unimodal.
+	\end{itemize}
+	
+	\item Intervalo de Credibilidade de Quantis (ou Percentis)
+	\begin{itemize}
+		\item \textbf{Definição:} É o intervalo definido pelos quantis da distribuição posterior. Para um IC de $95\%$, o intervalo é delimitado pelo \textbf{$2,5\%$ quantil} e pelo \textbf{$97,5\%$ quantil}.
+		\item \textbf{Vantagem:} É o método mais fácil de calcular e é adequado para distribuições posteriores que são \textbf{assimétricas} ou \textbf{enviesadas}.
+		\item \textbf{Uso:} É o método mais comum na prática, pois é robusto a diferentes formas de distribuição.
+	\end{itemize}
+		
+\end{enumerate}
+
+
+\subsection{Exemplo Prático}
+
+Suponha que você está estimando o retorno médio ($\mu$) de um investimento usando Inferência Bayesiana. Após observar os dados e aplicar o Teorema de Bayes, a Distribuição Posterior é calculada.
+
+\textbf{Resultado:}
+\begin{itemize}
+	\item \textbf{Média Posterior:} $7,5\%$
+	\item \textbf{IC de $95\%$ (Quantis):} $[4,2\%, 10,8\%]$
+\end{itemize}
+
+\textbf{Conclusão Bayesiana:}
+
+Com base em nossos dados e em nosso conhecimento prévio, há \textbf{$95\%$ de probabilidade} de que o \textbf{verdadeiro retorno médio do investimento esteja entre $4,2\%$ e $10,8\%$}."
+
+Essa clareza e o uso de probabilidade direta tornam a Inferência Bayesiana muito atraente para a tomada de decisões.
+
+
+\section{Cadeia de Markov Monte Carlo (MCMC)}
+
+O objetivo da Inferência Bayesiana é calcular a \textbf{Posterior} $P(\theta|D)$, que requer calcular o termo de \textbf{Evidência Marginal} $P(D)$:
+
+$$P(\theta|D) = \frac{P(D|\theta) \cdot P(\theta)}{P(D)}$$
+
+O termo $P(D)$ é o integrador da Verossimilhança vezes o Prior sobre todos os valores possíveis do parâmetro $\theta$:
+
+$$P(D) = \int P(D|\theta) P(\theta) d\theta$$
+
+Para modelos simples com poucos parâmetros, essa integral pode ser resolvida analiticamente. No entanto, em modelos de Machine Learning com \textbf{centenas ou milhares de parâmetros}, essa integral é \textbf{impossível de ser resolvida analiticamente}.
+
+O \textbf{MCMC} é um conjunto de algoritmos que \textbf{resolvem esse problema de integração} de forma computacional.
+
+\subsection{O que é MCMC?}
+
+MCMC é um método para \textbf{amostrar} (retirar pontos) de uma distribuição de probabilidade complexa da qual você não consegue amostrar diretamente (como a Posterior), transformando-o em um problema de caminhada aleatória.
+
+\begin{itemize}
+	\item \textbf{Cadeia de Markov:} Um processo onde o estado futuro depende apenas do estado atual (e não de toda a história). A "cadeia" é uma sequência de estados (valores de $\theta$) que são gerados iterativamente.
+	\item \textbf{Monte Carlo:} Refere-se ao uso de amostragem e números aleatórios para obter resultados numéricos, aproximando a distribuição.
+\end{itemize}
+
+
+\subsection{O Algoritmo (Mecanismo da Amostra)}
+
+O MCMC gera uma sequência de valores de $\theta$ de tal forma que, com o tempo, a frequência com que ele visita cada região do espaço de parâmetros se torna \textbf{proporcional à densidade de probabilidade Posterior} nessa região.
+
+O algoritmo mais famoso para MCMC é o \textbf{Amostrador de Metropolis-Hastings} ou suas variantes (como o \textbf{Gibbs Sampler}).
+
+\textbf{Lógica do Metropolis-Hastings (Conceitual):}
+
+\begin{enumerate}
+	\item \textbf{Começa:} O algoritmo começa em um ponto $\theta_{atual}$ aleatório.
+	\item \textbf{Propõe:} Ele propõe um novo ponto $\theta_{novo}$ nas proximidades de $\theta_{atual}$.
+	\item \textbf{Aceita/Rejeita:} Ele calcula a razão entre a densidade Posterior no ponto $\theta_{novo}$ e o ponto $\theta_{atual}$.
+	\begin{itemize}
+		\item Se $\theta_{novo}$ for mais provável (maior Posterior), ele \textbf{aceita} o novo ponto e se move para lá.
+		\item Se $\theta_{novo}$ for menos provável, ele \textbf{aceita} o novo ponto com uma \textbf{certa probabilidade} (para evitar ficar preso em picos locais), mas a maioria dos movimentos será para regiões de maior probabilidade.
+	\end{itemize}
+	
+	
+\end{enumerate}
+
+
+\subsection{O Resultado Final}
+
+O resultado do MCMC não é uma fórmula, mas sim uma \textbf{longa sequência de milhares de amostras} do parâmetro $\theta$ (a cadeia).
+
+\begin{itemize}
+	\item \textbf{Distribuição Posterior:} Um histograma dessas amostras se aproxima da forma da verdadeira Distribuição Posterior.
+	\item \textbf{Intervalos de Credibilidade:} Os quantis dessa coleção de amostras fornecem os Intervalos de Credibilidade (IC).
+	\item \textbf{Estimativa Pontual:} A média ou mediana dessas amostras é usada como a estimativa pontual bayesiana do parâmetro.
+\end{itemize}
+
+O MCMC transformou a Inferência Bayesiana de uma curiosidade teórica para uma ferramenta prática para modelagem complexa em áreas como o Deep Learning e modelos hierárquicos.
+
+
+
+\section{Resumo}
+
+
+\subsection{Motivação e Paradigma}
+
+A inferência bayesiana interpreta probabilidade como \textbf{grau de crença}.
+Novas evidências atualizam o conhecimento anterior via Teorema de Bayes:
+
+$$
+p(\theta|y) \propto p(y|\theta), p(\theta)
+$$
+
+A posterior reflete tudo o que sabemos sobre o parâmetro após observar os dados.
+
+
+\subsection{Prioris}
+
+A priori representa o conhecimento prévio sobre os parâmetros.
+
+\textbf{Tipos principais:}
+\begin{itemize}
+	\item \textbf{Não-informativa:} pouco impacto quando há muitos dados.
+	\item \textbf{Informativa:} usada quando há conhecimento acumulado.
+	\item \textbf{Conjugada:} prior + likelihood = posterior da mesma família.
+\end{itemize}
+
+Exemplo clássico:
+
+$$
+\text{Se } X\sim\text{Binomial}(n,\theta) \text{ e } \theta\sim\text{Beta}(a,b), \quad \theta|x \sim \text{Beta}(a+k, b+n-k)
+$$
+
+
+\subsection{Posterior e Inferência}
+
+Da posterior extraímos:
+\begin{itemize}
+	\item \textbf{Média da posterior}
+	\item \textbf{Moda (MAP)}
+	\item \textbf{Mediana}
+	\item \textbf{Intervalos de credibilidade} (ex.: 95\%)
+\end{itemize}
+
+Diferente do intervalo de confiança, o intervalo de credibilidade diz:
+
+\begin{center}
+	“O parâmetro tem 95\% de probabilidade de estar neste intervalo.”
+\end{center}
+
+
+\subsection{Quando não há solução analítica}
+
+Para muitos modelos reais, a posterior não tem forma fechada.
+Usa-se então \textbf{computação bayesiana}, especialmente:
+
+\begin{itemize}
+	\item \textbf{MCMC} (Markov Chain Monte Carlo)
+	\item \textbf{HMC/NUTS} (mais eficientes)
+\end{itemize}
+
+
+\subsection{Ferramentas modernas}
+
+\begin{itemize}
+	\item \textbf{PyMC (Python):}
+	\begin{itemize}
+		\item Modelo definido de forma declarativa
+		\item Amostragem via NUTS
+		\item Visualizações automáticas
+	\end{itemize}
+
+	\item \textbf{brms (R):}
+	\begin{itemize}
+		\item Interface amigável parecida com `glm` e `lme4`
+		\item Usa o Stan para amostragem
+		\item Fácil controle de prioris e modelos hierárquicos	
+	\end{itemize}
+
+
+\end{itemize}
+
+
+\subsection{Resumo Final}
+
+A inferência bayesiana combina conhecimento prévio, dados observados e computação para produzir distribuições completas de crença sobre parâmetros, permitindo inferência flexível, interpretável e robusta.
+
+
+\subsection{Mapa Mental}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{"Cursos/04 - Estatistica na Ciencia da Computacao Experimental e R/imagens/MapaMentalInferenciaBayesiana.png"}
+	\caption{Mapa Mental Inferência Bayesiana}
+	\label{fig:mapamentalinferenciabayesiana}
+\end{figure}
