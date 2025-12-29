@@ -1,0 +1,203 @@
+\chapter{Perceptron}
+
+O \textbf{Perceptron} é o modelo mais simples de uma Rede Neural Artificial. Ele consiste em um único neurônio artificial de saída e é um algoritmo de \textbf{aprendizado supervisionado} utilizado para resolver problemas de \textbf{classificação binária}.
+
+\textbf{Em resumo, o Perceptron é um classificador linear.} Ele aprende um conjunto de pesos que define um hiperplano (uma linha em 2D, um plano em 3D, e assim por diante) que separa as duas classes de dados (por exemplo, 0 ou 1, "Sim" ou "Não").
+
+
+
+\subsection{Estrutura Matemática}
+
+O Perceptron opera em três etapas principais:
+
+
+\noindent\textbf{1. Entradas e Pesos}
+
+O Perceptron recebe $n$ valores de entrada ($x_1, x_2, \dots, x_n$). Cada entrada é multiplicada pelo seu peso correspondente ($w_1, w_2, \dots, w_n$).
+
+
+\noindent\textbf{2. Soma Ponderada (Net Input)}
+
+É o cálculo da soma de todas as entradas ponderadas, mais o termo de viés (bias, $b$):
+
+$$u = \sum_{i=1}^{n} (x_i w_i) + b$$
+
+O viés ($b$) é crucial porque permite que a linha de separação (o hiperplano) seja deslocada da origem, aumentando a flexibilidade do modelo.
+
+
+\noindent\textbf{3. Função de Ativação (Saída)}
+
+O resultado da soma ponderada ($u$) é passado por uma \textbf{Função de Ativação} simples, tipicamente a \textbf{Função Degrau (Step Function)}. Esta função produz uma saída binária (ativação), decidindo a classe da entrada.
+
+$$\hat{y} = \text{Saída} = \begin{cases} 1 & \text{se } u \ge 0 \\ 0 & \text{se } u < 0 \end{cases}$$
+
+Onde $\hat{y}$ é a previsão do Perceptron.
+
+
+\section{O Algoritmo de Aprendizado (Regra do Perceptron)}
+
+O Perceptron aprende ajustando iterativamente seus pesos e o viés para minimizar o erro de classificação. Este processo é chamado de \textbf{Regra do Perceptron}.
+
+\begin{enumerate}
+	\item \textbf{Inicialização:} Os pesos ($w_i$) e o viés ($b$) são inicializados com valores pequenos e aleatórios (ou zero).
+	\item \textbf{Iteração:} Para cada exemplo de treinamento:
+	
+	\begin{itemize}
+		\item Calcula-se a \textbf{saída ($\hat{y}$)} do Perceptron.
+		\item Calcula-se o \textbf{erro ($E$):} $E = y - \hat{y}$, onde $y$ é a saída desejada (rótulo verdadeiro).
+		\item \textbf{Atualização dos Pesos:} Se houver um erro ($E \ne 0$), os pesos e o viés são atualizados usando a fórmula:
+		
+		$$\text{Novo Peso} = \text{Peso Antigo} + (\text{Taxa de Aprendizado} \times \text{Erro} \times \text{Entrada})$$
+		
+		$$w_{i}^{novo} = w_{i}^{antigo} + \eta \cdot E \cdot x_i$$
+
+		\item Onde $\eta$ (eta) é a \textbf{Taxa de Aprendizado} (Learning Rate), que controla o quão grande será o ajuste a cada erro.		
+	\end{itemize}
+
+\end{enumerate}
+
+
+O algoritmo continua o treinamento até que a rede não cometa mais erros de classificação ou atinja um número máximo de iterações (epochs).
+
+
+
+\section{Limitações Cruciais: O Problema do XOR}
+
+O Perceptron simples teve seu ápice de popularidade na década de 1960, mas seu interesse diminuiu drasticamente após a formalização de suas limitações.
+
+\noindent\textbf{1. Separação Linear}
+
+A principal limitação é que o Perceptron de camada única só é capaz de resolver problemas que são \textbf{linearmente separáveis}.
+
+\begin{itemize}
+	\item \textbf{Problemas Linearmente Separaveis:} Operadores lógicos como \textbf{AND} e \textbf{OR} podem ser resolvidos por um Perceptron, pois seus pontos de dados podem ser separados por uma única linha reta no espaço de entrada. 
+	
+	\item \textbf{Problemas Não-Linearmente Separaveis:} O operador lógico \textbf{XOR (OU Exclusivo)}, no entanto, é o exemplo clássico de um problema que \textbf{não é linearmente separável}. Não importa onde você desenhe uma única linha reta, você não conseguirá separar corretamente os pontos de dados de classe 1 dos pontos de classe 0.
+\end{itemize}
+
+
+\noindent\textbf{2. O Livro "Perceptrons" (1969)}
+
+Em 1969, Marvin Minsky e Seymour Papert publicaram o influente livro "Perceptrons", que demonstrou matematicamente a incapacidade do Perceptron de camada única de resolver problemas não-lineares, como o XOR.
+
+Essa descoberta teve um impacto profundo, levando ao primeiro \textbf{"Inverno da IA"}, onde o financiamento e a pesquisa em Redes Neurais foram quase interrompidos.
+
+
+\noindent\textbf{A Solução}
+
+A solução para o problema do XOR e para as limitações de separação linear reside em adicionar \textbf{camadas ocultas} (hidden layers) ao modelo, transformando-o em um \textbf{Perceptron Multicamadas (Multi-Layer Perceptron - MLP)}, que é o que chamamos hoje de Redes Neurais Feedforward. O MLP é capaz de criar \textbf{fronteiras de decisão não-lineares}, superando a principal falha do Perceptron simples.
+
+
+\section{Resumo}
+
+O \textbf{Perceptron} é o modelo de rede neural artificial mais simples e foi a primeira RNA definida formalmente. É a base conceitual para diversos modelos posteriores e marca o início das redes neurais treináveis.
+
+Criado por \textbf{Frank Rosenblatt (1958)}, o Perceptron é:
+
+\begin{itemize}
+	\item Um \textbf{classificador linear binário}.
+	\item Composto por \textbf{um único neurônio}.
+	\item Possui \textbf{pesos}, \textbf{bias} e \textbf{função de ativação degrau}.
+	\item Utiliza um algoritmo de aprendizado com prova de convergência (sob separabilidade linear).
+\end{itemize}
+
+Ele toma uma decisão baseada no sinal da soma ponderada das entradas:
+
+$$
+y = f\left(\sum_{i=1}^n x_i w_i + b\right)
+$$
+
+Onde:
+
+\begin{itemize}
+	\item $( x\_i ) = entradas$.
+	\item $( w\_i ) = pesos$.
+	\item $( b ) = bias$.
+	\item $( f ) = função degrau$.
+\end{itemize}
+
+
+\noindent\textbf{Problema Resolvido pelo Perceptron}
+
+O Perceptron resolve problemas \textbf{linearmente separáveis}, ou seja, quando existe um \textbf{hiperplano} que separa as classes C1 (+1) e C2 (–1).
+
+Exemplo:
+\begin{itemize}
+	\item separa AND.
+	\item não separa XOR.
+\end{itemize}
+
+
+\noindent\textbf{Como Funciona a Classificação}
+
+\begin{enumerate}
+	\item Recebe um vetor de entrada.
+	\item Calcula a soma ponderada dos valores:
+	$$
+	v = w^T x + b
+	$$
+	
+	\item Aplica a função degrau:
+	$$
+	f(v) =
+	\begin{cases}
+		+1  \&  \text{se } v \ge 0 \\
+		-1  \&  \text{se } v < 0
+	\end{cases}
+	$$
+	
+	\item A saída indica a classe prevista.
+\end{enumerate}
+
+
+\noindent\textbf{Treinamento: Aprendizado por Correção de Erro}
+
+A regra de aprendizado do Perceptron ajusta os pesos com base no erro:
+
+\noindent\textbf{A) Cálculo do erro}.
+
+$$
+e = y - \hat{y}
+$$
+
+\noindent\textbf{B) Atualização dos pesos (Regra Delta simples)}
+
+$$
+\Delta w_i = \eta , e , x_i
+$$
+
+$$
+w_i^{(novo)} = w_i^{(antigo)} + \Delta w_i
+$$
+
+Onde:
+
+\begin{itemize}
+	\item $( \eta ) = taxa de aprendizado$.
+	\item $( x_i ) = entrada$.
+	\item $( e ) = erro da predição$.
+\end{itemize}
+
+
+O bias também é atualizado com a mesma lógica.
+
+
+\noindent\textbf{Interpretação do Processo}
+
+\begin{itemize}
+	\item Se o Perceptron erra a predição, ele \textbf{ajusta os pesos na direção correta}.
+	\item Se acerta, \textbf{não altera os pesos}.
+	\item Repetindo o processo em ciclos (épocas), o Perceptron converge se o problema for linearmente separável.
+\end{itemize}
+
+
+\noindent\textbf{Limitações do Perceptron}
+
+\begin{itemize}
+	\item Só aprende \textbf{fronteiras lineares}
+	\item Não resolve problemas como \textbf{XOR}.
+	\item É sensível à escala dos dados.
+	\item É incapaz de modelar padrões complexos.
+\end{itemize}
+
+Essas limitações motivaram o surgimento de arquiteturas mais avançadas, como o \textbf{Perceptron Multi-Camadas (MLP)} e o algoritmo \textbf{Backpropagation}.

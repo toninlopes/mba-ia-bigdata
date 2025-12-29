@@ -1,0 +1,73 @@
+\chapter{Redes Neurais Convolucionais Temporais (TCN)}
+
+As \textbf{Redes Neurais Convolucionais Temporais (TCN - Temporal Convolutional Networks)} representam uma mudança de paradigma. Elas surgiram para resolver um dilema: as RNNs (LSTMs/GRUs) são ótimas para sequências, mas são difíceis de paralelizar e treinar em sequências muito longas.
+
+As TCNs provaram que é possível usar \textbf{Convoluções (CNNs)} para modelar o tempo, muitas vezes superando as RNNs em desempenho e eficiência.
+
+Uma TCN é basicamente uma CNN 1D adaptada para sequências, mas com três características "obrigatórias" que a definem:
+
+\begin{itemize}
+	\item \textbf{Convoluções Causais (Causal Convolutions):} Garante que não haja "vazamento" de informação do futuro. Para prever o instante , o modelo só pode olhar para os instantes;
+	\item \textbf{Arquitetura de Saída para Entrada:} A rede pode receber uma sequência de qualquer tamanho e mapeá-la para uma saída de mesmo tamanho, assim como uma RNN;
+	\item \textbf{Convoluções Dilatadas (Dilated Convolutions):} Esta é a "mágica". Para que uma CNN consiga olhar para um passado muito distante sem precisar de milhares de camadas, ela usa "buracos" no kernel, saltando passos para aumentar o campo receptivo exponencialmente.
+\end{itemize}
+
+\subsection{Por que usar TCN em vez de LSTM?}
+
+Segue tabela de comparação entre RNN (LSTM/GRU) e TCN.
+\begin{table}[h]
+	\begin{tabular}{p{0.20\textwidth} p{0.30\textwidth} p{0.40\textwidth}}
+		Característica & RNN (LSTM/GRU) & TCN (Convolucional)\\
+		\hline
+		\\
+		Paralelismo & Baixo (precisa calcular  antes de ).& \textbf{Alto} (todas as convoluções ocorrem simultaneamente).\\
+		\\
+		Memória & Gradientes podem sumir/explodir. & \textbf{Estável} (gradientes fluem melhor em CNNs).\\
+		\\
+		Campo Receptivo & Teórico (limitado na prática). & \textbf{Controlável} (ajustado pela dilatação e camadas).\\
+		\\
+	\end{tabular}   
+\end{table}
+
+
+\subsection{Exemplo Prático: Detecção de Anomalias em Sensores}
+
+Imagine uma turbina de avião com sensores gerando dados a cada milissegundo.
+
+\begin{itemize}
+	\item Uma \textbf{LSTM} processaria cada milissegundo em ordem, o que seria lento;
+	\item Uma \textbf{TCN} aplicaria filtros sobre grandes janelas de tempo de uma só vez. Graças à \textbf{dilatação}, uma camada pode olhar para os últimos 10ms, a próxima para os últimos 100ms e a terceira para o último 1 segundo inteiro, detectando uma vibração estranha que começou sutilmente há muito tempo.
+\end{itemize}
+
+
+\subsection{Exemplo em Python (Keras/TensorFlow)}
+
+Embora o Keras tenha Conv1D, para uma TCN pura costumamos usar a dilatação (dilation\_rate):
+
+
+\begin{lstlisting}[language=python]
+from tensorflow.keras import layers, models
+
+def tcn_block(x, filters, kernel_size, dilation_rate):
+	# Convolucao 1D com dilatacao e padding 'causal'
+	# O padding causal garante que o output em t dependa apenas de t e anteriores
+	res = layers.Conv1D(filters, kernel_size, padding='causal', 
+	dilation_rate=dilation_rate, activation='relu')(x)
+	res = layers.BatchNormalization()(res)
+
+	# Conexao Residual (estilo ResNet) para ajudar no fluxo do gradiente
+	shortcut = layers.Conv1D(filters, 1, padding='same')(x)
+	return layers.add([res, shortcut])
+
+# Exemplo de uso
+inputs = layers.Input(shape=(100, 1)) # 100 passos de tempo, 1 caracteristica
+x = tcn_block(inputs, 32, 3, 1) # Dilatacao 1 (olha vizinhos diretos)
+x = tcn_block(x, 32, 3, 2)      # Dilatacao 2 (salta 1)
+x = tcn_block(x, 32, 3, 4)      # Dilatacao 4 (salta 3)
+# Com apenas 3 camadas, o campo receptivo cresceu muito rapido!
+
+model = models.Model(inputs, x)
+model.summary()
+\end{lstlisting}
+
+

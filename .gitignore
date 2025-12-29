@@ -7,5 +7,5 @@ MBA - IA e Big Data.pdf
 *.toc
 **/.DS_Store
 **.DS_Store
-.DS_Store
-Cursos/.DS_Store
+*.DS_Store
+**/**/*.DS_Store

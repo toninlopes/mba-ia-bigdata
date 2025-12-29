@@ -1,0 +1,139 @@
+\chapter{Redes Neurais}
+
+Uma \textbf{Rede Neural Artificial (RNA)} é um modelo computacional inspirado na estrutura e funcionamento do \textbf{cérebro biológico}, especificamente nos neurônios e suas sinapses.
+
+\textbf{Definição:} Uma RNA é um \textbf{sistema adaptativo} que aprende a realizar tarefas (como reconhecer padrões, classificar dados ou fazer previsões) através do \textbf{processamento de exemplos}. 
+
+
+
+\textbf{Estrutura Básica:}
+\begin{itemize}
+	\item Ela é composta por unidades de processamento (chamadas \textbf{neurônios} ou \textbf{nós}) organizadas em \textbf{camadas} (entrada, ocultas e saída).
+	\item Os neurônios são interconectados, e cada conexão possui um \textbf{peso} associado.
+	\item Durante o treinamento, a rede ajusta esses pesos com base nos dados, de modo a \textbf{minimizar o erro} e melhorar sua precisão, imitando a forma como as conexões neurais no cérebro se fortalecem com a experiência (o que é conhecido como \textbf{aprendizado}).
+\end{itemize}
+
+Em essência, uma RNA aprende a mapear entradas complexas (como pixels de uma imagem, palavras em uma frase) para saídas desejadas (rótulo, tradução, etc.) sem ser explicitamente programada para isso.
+
+
+\section{Quando Surgiu a Rede Neural? (Breve Histórico)}
+
+A história das Redes Neurais é marcada por fases de grande entusiasmo e períodos de "inverno" (onde o interesse e o financiamento diminuíram).
+
+\begin{table}[h]
+	\begin{tabular}{p{0.15\textwidth} p{0.22\textwidth} p{0.55\textwidth} }
+		Período & Marco Principal & O Que Aconteceu \\
+		\hline
+		\\
+		1943 & Primeiro Modelo de Neurônio Artificial & O neurofisiologista Warren \textbf{McCulloch} e o matemático Walter \textbf{Pitts} criaram um modelo matemático do neurônio biológico, estabelecendo a base para as RNAs.\\
+		\\
+		1957 & O Perceptron & Frank \textbf{Rosenblatt} desenvolveu o Perceptron, um algoritmo de aprendizado supervisionado para redes de camada única. Foi o primeiro modelo capaz de aprender com dados (porém, com limitações para problemas não-lineares).\\
+		\\
+		1969/1970s & Primeiro Inverno da IA/RN & A publicação de um livro por Minsky e Papert demonstrou as limitações do Perceptron (não podia resolver o problema do XOR), levando a uma grande perda de interesse e financiamento.\\
+		\\
+		1980s & Ressurgimento (Backpropagation) & O desenvolvimento e popularização do algoritmo de \textbf{Backpropagation} (Retropropagação do Erro) por Werbos, Rumelhart, Hinton e outros permitiu o treinamento eficiente de redes neurais com \textbf{múltiplas camadas ocultas} (as redes profundas).\\
+		\\
+		2006 em Diante & Deep Learning (Aprendizado Profundo) & Com o aumento da \textbf{capacidade computacional} (graças às GPUs), a disponibilidade de \textbf{grandes volumes de dados (Big Data)} e o uso de técnicas como a inicialização de pesos e funções de ativação aprimoradas, as redes neurais profundas voltaram com força total, levando à revolução do Deep Learning.\\
+		\\
+	\end{tabular}   
+\end{table}
+
+O Deep Learning, portanto, não é um conceito totalmente novo, mas sim a \textbf{aplicação e otimização de Redes Neurais com muitas camadas (redes profundas)}, possibilitadas pelos avanços tecnológicos e metodológicos.
+
+
+\section{Resumo}
+
+As Redes Neurais Artificiais (RNAs) surgiram como tentativa de modelar o comportamento do cérebro humano para resolver problemas complexos. Elas pertencem ao campo de \textbf{Aprendizado de Máquina}, cuja essência é permitir que computadores aprendam a partir de dados.
+
+Diversos autores definiram Machine Learning (ML):
+
+\begin{itemize}
+	\item \textbf{Arthur Samuel (1959):} ML dá ao computador a habilidade de aprender sem ser explicitamente programado.
+	\item \textbf{Tom Mitchell (1998):} Um programa aprende quando seu desempenho em uma tarefa melhora com a experiência.
+	\item \textbf{Goodfellow (2016):} ML é a capacidade de aprender a partir de dados.
+\end{itemize}
+
+A ideia central é: \textbf{estimamos uma função desconhecida usando observações do fenômeno}.
+
+Existem três categorias principais de aprendizado:
+
+\begin{itemize}
+	\item \textbf{Supervisionado:} classificação e regressão.
+	\item \textbf{Não supervisionado:} agrupamento e padrões.
+	\item \textbf{Reforço:} aprendizagem via interação com o ambiente.
+\end{itemize}
+
+
+\subsection{Primeiros Anos das Redes Neurais}
+
+\begin{itemize}
+	\item \textbf{1943 — McCulloch \& Pitts:} primeiro neurônio artificial, inspirado em processos biológicos.
+	\item \textbf{1949 — Donald Hebb:} regra de Hebb ("neurônios que disparam juntos se conectam").
+	\item \textbf{1958–1959 — Rosenblatt (Perceptron) e ADALINE:} primeiros modelos treináveis.
+\end{itemize}
+
+Esses modelos permitiram as primeiras aplicações práticas de RNAs.
+
+
+\subsection{O Inverno da IA}
+
+Em \textbf{1969}, Minsky e Papert mostraram limitações severas do Perceptron (incapaz de resolver XOR). Somado ao hardware fraco da época, isso gerou desânimo e cortes de financiamento: o \textbf{Inverno da IA}.
+
+\subsection{Avanços nas Décadas de 80 e 90}
+
+A partir dos anos 80:
+
+\begin{itemize}
+	\item Computadores mais rápidos.
+	\item Novas ideias promissoras surgiram, como:
+	\begin{itemize}
+		\item \textbf{Neocognitron (1980)} — precursor das CNNs.
+		\item \textbf{Backpropagation (1986)} — popularizado por Rumelhart, Hinton e Williams.
+		\item \textbf{Início das redes recorrentes (RNNs)}.
+	\end{itemize}
+\end{itemize}
+
+
+Nos anos 90:
+
+\begin{itemize}
+	\item \textbf{1997 — LSTM} (Hochreiter \& Schmidhuber)
+	\item \textbf{1998 — LeNet} (LeCun) — marco na visão computacional.
+\end{itemize}
+
+
+\subsection{5. Avanços Recentes (Anos 2000 e 2010)}
+
+\begin{itemize}
+	\item \textbf{2006:} Hinton introduz Deep Belief Networks, trazendo novamente popularidade às redes profundas.
+	\item Avanço das \textbf{GPUs} e grandes conjuntos de dados impulsionaram o boom do Deep Learning.
+\end{itemize}
+
+A partir dos anos 2010, houve enorme evolução em:
+
+\begin{itemize}
+	\item Visão computacional (classificação, detecção, segmentação).
+	\item Processamento de linguagem natural.
+	\item Modelos generativos (GANs, diffusion models).
+	\item Grandes modelos de linguagem (LLMs).
+\end{itemize}
+
+
+\subsection{Onde Estamos Hoje}
+
+\begin{itemize}
+	\item RNAs revolucionam setores inteiros: saúde, finanças, indústria, educação e entretenimento.
+	\item Muitas tarefas humanas passam a ser automatizadas.
+	\item O campo cresce rapidamente e continua em expansão.
+	\item Ainda se debate se estamos nos aproximando de limites teóricos ou de hardware.
+\end{itemize}
+
+
+\subsection{Mapa Mental}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{"Cursos/05 - Redes Neurais e Deep Learning/imagens/MapaMentalRedesNeurais.png"}
+	\caption{Mapa Mental Redes Neurais}
+	\label{fig:mapamentalredesneurais}
+\end{figure}

@@ -1,0 +1,226 @@
+\chapter{Ativação e Reguralização em Redes Neurais}
+
+Ativação e Regularização são dois pilares que determinam se uma rede neural realmente aprende padrões úteis ou se ela apenas "decora" os dados.
+
+\section{Funções de Ativação}
+
+A \textbf{Função de Ativação} é aplicada após a soma ponderada em cada neurônio. Sem ela, uma rede com mil camadas seria matematicamente equivalente a uma rede de apenas uma camada (uma simples combinação linear).
+
+Principais Funções e Por Que Usá-las:
+
+\begin{table}[h]
+	\begin{tabular}{p{0.20\textwidth} p{0.25\textwidth} p{0.50\textwidth} }
+		Função & Fórmula Matemática & Características e Uso |\\
+		\hline
+		\\
+		Sigmoide (Logística) & $\sigma(x) = \frac{1}{1 + e^{-x}}$ & Mapeia valores para o intervalo $(0, 1)$. Muito usada na camada de saída para \textbf{classificação binária}. Sofre com o problema do Vanishing Gradient (Gradiente Desaparecendo). \\
+		\\
+		Tangente Hiperbólica (Tanh) & $tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$ & Mapeia para $(-1, 1)$. Frequentemente melhor que a Sigmoide para camadas ocultas, pois a média da saída é próxima de zero, o que ajuda na convergência.\\
+		\\
+		ReLU (Rectified Linear Unit) & $f(x) = \max(0, x)$ & \textbf{A padrão para Deep Learning.} É computacionalmente barata e resolve o problema do gradiente em redes profundas. Porém, pode criar neurônios "mortos" que nunca ativam.\\
+		\\
+		Softmax & $\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum e^{z_j}}$ & Usada exclusivamente na \textbf{camada de saída para classificação multiclasse}. Transforma as saídas em uma distribuição de probabilidade (soma = 1).\\
+		\\
+	\end{tabular}   
+\end{table}
+
+
+\section{Regularização: Evitando o Overfitting}
+
+O maior medo em Deep Learning é o \textbf{Overfitting} (Sobreajuste): quando a rede aprende o "ruído" dos dados de treino tão bem que perde a capacidade de generalizar para dados novos.
+
+A regularização introduz técnicas para "dificultar" a vida da rede durante o treino, forçando-a a focar apenas nos padrões mais importantes.
+
+\subsection{L1 e L2 Regularization (Weight Decay)}
+
+Adiciona uma penalidade à função de custo baseada no tamanho dos pesos ($w$).
+\begin{itemize}
+	\item \textbf{L2 ($w^2$):} Tenta manter os pesos pequenos. Impede que qualquer característica individual domine o modelo.
+	\item \textbf{L1 ($|w|$):} Tende a zerar pesos pouco importantes, agindo como um selecionador de características (feature selection).
+\end{itemize}
+
+
+\subsection{Dropout}
+
+Durante o treinamento, uma porcentagem de neurônios aleatórios é "desligada" a cada iteração.
+
+\textbf{Por que funciona?} Isso impede que os neurônios dependam excessivamente uns dos outros (co-adaptação). A rede é forçada a aprender representações robustas de múltiplas formas, como se fosse um "comitê" de redes menores.
+
+
+\subsection{Early Stopping (Interrupção Precoce)}
+
+Monitoramos o erro nos dados de validação. No momento em que o erro de validação começa a subir (enquanto o de treino continua descendo), interrompemos o treinamento. É a forma mais simples e eficaz de evitar overfitting.
+
+
+\subsection{Batch Normalization (Normalização em Lote)}
+
+Embora às vezes vista como técnica de otimização, ela tem efeito regularizador. Ela normaliza as entradas de cada camada para terem média zero e variância unitária durante o treino, o que acelera a convergência e reduz a sensibilidade à inicialização dos pesos.
+
+
+\section{Resumo}
+
+As funções de ativação e as técnicas de regularização são componentes essenciais para o bom desempenho de redes neurais. Elas garantem tanto a capacidade de aprender padrões complexos quanto a habilidade de generalizar para novos dados.
+
+\noindent \textbf{Funções de Ativação}
+
+A função de ativação é aplicada ao potencial de ativação ($v = \sum x_i w_i + b$) e introduz \textbf{não linearidade} no modelo — sem ela, a rede inteira se comportaria como uma simples regressão linear.
+
+Principais funções de ativação:
+
+\begin{itemize}
+	\item \textbf{Sigmoide}:
+	
+	$$\sigma(v) = \frac{1}{1 + e^{-v}}$$
+	
+	\begin{itemize}
+		\item Intervalo: (0, 1).
+		\item Usada historicamente em camadas ocultas.
+		\item Problema: \textbf{vanishing gradient}.
+	\end{itemize}
+	
+	\item \textbf{tanh}:
+	
+	$$\tanh(v) = \frac{e^v - e^{-v}}{e^v + e^{-v}}$$
+	
+	\begin{itemize}
+		\item Intervalo: (–1, 1).
+		\item Mais centrada que a sigmoide.
+		\item Também sofre com saturação.
+	\end{itemize}
+	
+	\item \textbf{ReLU (Rectified Linear Unit)}:
+	
+	$$\text{ReLU}(v) = \max(0, v)$$
+	
+	\begin{itemize}
+		\item A mais utilizada atualmente.
+		\item Resolve parcialmente vanishing gradient.
+		\item Problema: “neurônios mortos” (regiões de gradiente zero).
+	\end{itemize}
+	
+	\item \textbf{Leaky ReLU}:
+	\begin{itemize}
+		\item Variante da ReLU.
+		\item Mantém pequeno gradiente quando ( v < 0 ).
+	\end{itemize}
+	
+	\item \textbf{Softmax}:
+	\begin{itemize}
+		\item Converte valores em \textbf{probabilidades}.
+		\item A soma das saídas é igual a 1.
+	\end{itemize}
+	
+	
+\end{itemize}
+
+
+Resumo das motivações:
+\begin{itemize}
+	\item Funções lineares → rede não aprende padrões complexos.
+	\item Funções não lineares → ampliam capacidade de representação.
+	\item Escolha da ativação influencia \textbf{velocidade e estabilidade do treinamento}.
+\end{itemize}
+
+
+\noindent \textbf{Regularização}
+
+A regularização tem como objetivo \textbf{reduzir o overfitting}, impedindo que a rede memorize o conjunto de treinamento e perca capacidade de generalização.
+
+Overfitting ocorre quando:
+
+\begin{itemize}
+	\item o erro no treino é baixo.
+	\item mas o erro na validação/teste é alto.
+\end{itemize}
+
+
+\begin{itemize}
+	\item \textbf{L2 Regularization (Weight Decay)}:	
+	$$C' = C + \lambda \sum w^2$$]
+
+	\begin{itemize}
+		\item Adiciona um termo de penalização ao custo
+		
+		\item Benefícios:
+		\begin{itemize}
+			\item Mantém pesos pequenos.
+			\item Reduz complexidade do modelo.
+			\item Evita explosões numéricas.
+		\end{itemize}
+		
+	\end{itemize}
+
+
+	\item \textbf{L1 Regularization}:
+	
+	\begin{itemize}
+		\item Promove esparsidade.
+		\item Remove pesos pequenos.
+		\item Útil quando se deseja selecionar características.
+	\end{itemize}
+	
+
+	\item \textbf{Dropout}:
+	\begin{itemize}
+		\item Durante o treinamento:
+		
+		\begin{itemize}
+			\item Neurônios são \textbf{desligados aleatoriamente}.
+			\item Impede dependência excessiva entre neurônios.
+			\item Forte redução de overfitting.
+		\end{itemize}
+		
+		\item Recomendação comum: dropout entre \textbf{0.2 e 0.5}.
+	\end{itemize}
+
+	\item \textbf{Early Stopping}:
+	\begin{itemize}
+		\item Interrompe o treino quando a loss de validação começa a piorar.
+		\item Impede que a rede memorize o dataset.
+	\end{itemize}
+
+	\item \textbf{Batch Normalization}:
+	\begin{itemize}
+		\item Normaliza ativações internas.
+		\item Estabiliza gradientes.
+		\item Acelera o treinamento.
+		\item Atua como leve regularizador.
+	\end{itemize}
+
+\end{itemize}
+
+
+\noindent \textbf{Validação e Generalização}
+
+Além das técnicas acima, é fundamental utilizar um \textbf{conjunto de validação} para avaliar o desempenho enquanto a rede é treinada. Isso evita enganos ao olhar apenas o erro de treinamento.
+
+Boas práticas:
+\begin{itemize}
+	\item Separar treino/validação/teste.
+	\item Monitorar loss e métricas.
+	\item Ajustar hiperparâmetros conforme desempenho na validação.
+\end{itemize}
+
+
+\noindent \textbf{Conclusão}
+
+Funções de ativação e regularização são essenciais para:
+
+\begin{itemize}
+	\item Melhorar a capacidade de modelagem.
+	\item Evitar overfitting.
+	\item Acelerar e estabilizar o aprendizado.
+	\item Garantir desempenho real em dados novos.
+\end{itemize}
+
+Esse conjunto de técnicas forma a base das redes modernas e é indispensável para treinar modelos de Deep Learning de forma eficiente.
+
+
+\subsection{Mapa Mental}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{"Cursos/05 - Redes Neurais e Deep Learning/imagens/MapaMentalAtivacaoRegularizacao.png"}
+	\caption{Mapa Mental Ativação e Regularização}
+	\label{fig:mapamentalativacaoregularizacao}
+\end{figure}

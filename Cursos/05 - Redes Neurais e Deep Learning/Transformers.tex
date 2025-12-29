@@ -1,0 +1,105 @@
+\chapter{Transformers}
+
+Os \textbf{Transformers} representam o estado da arte em inteligência artificial generativa (sendo o "T" do ChatGPT). Eles surgiram em 2017 com o artigo \textbf{"Attention is All You Need"} e resolveram o maior problema das RNNs e LSTMs: a dificuldade de processar longas sequências em paralelo.
+
+Diferente das RNNs, os Transformers \textbf{não processam os dados em ordem}. Eles tratam a sequência inteira de uma só vez.
+
+\begin{itemize}
+	\item \textbf{Paralelismo Total:} Enquanto uma LSTM precisa ler a palavra 1 para depois ler a palavra 2, o Transformer lê a frase inteira simultaneamente. Isso permite o uso massivo de GPUs, tornando o treinamento muito mais rápido;
+	\item \textbf{Mecanismo de Atenção (Self-Attention):} Em vez de tentar "lembrar" o passado em um estado oculto, o Transformer olha para todas as palavras da frase ao mesmo tempo e decide quais são as mais relevantes para entender o contexto.
+\end{itemize}
+
+
+\noindent\textbf{O Coração do Transformer: Self-Attention}
+
+O mecanismo de \textbf{Self-Attention} permite que o modelo crie conexões entre palavras, não importa a distância entre elas.
+
+Considere a frase: "O animal não atravessou a rua porque \textbf{ele} estava cansado."
+
+Como o modelo sabe a quem a palavra "\textbf{ele}" se refere?
+
+\begin{enumerate}
+	\item O Transformer calcula a "atenção" da palavra "ele" em relação a todas as outras;
+	\item A pontuação de atenção será muito alta para "animal" e baixa para "rua";
+	\item Assim, o modelo entende o contexto sem precisar de uma memória sequencial.
+\end{enumerate}
+
+\noindent\textbf{Componentes Principais}
+
+Uma arquitetura Transformer clássica é dividida em duas partes:
+
+\begin{itemize}
+	\item \textbf{*Encoder (Codificador):} Lê a entrada (ex: uma frase em Português) e gera uma representação matemática rica em contexto;
+	\item \textbf{Decoder (Decodificador):} Pega essa representação e gera a saída (ex: a tradução para o Inglês), uma palavra por vez;
+	\item \textbf{Positional Encoding:} Como o Transformer lê tudo ao mesmo tempo, ele perde a noção de ordem. Para resolver isso, ele adiciona um "vetor de posição" a cada palavra, indicando se ela é a primeira, a segunda, etc.
+\end{itemize}
+
+\subsection{Exemplo em Python (Hugging Face)}
+
+Hoje em dia, raramente construímos um Transformer do zero; usamos bibliotecas como a transformers da Hugging Face.
+
+\begin{lstlisting}[language=python]
+from transformers import pipeline
+
+# Usando um modelo Transformer pre-treinado para analise de sentimento
+classifier = pipeline("sentiment-analysis")
+
+result = classifier("I love studying deep learning with Transformers!")
+print(result)
+# Saída: [{'label': 'POSITIVE', 'score': 0.999}]
+\end{lstlisting}
+
+
+\section{Resumo}
+
+Os \textbf{Transformers} são uma arquitetura de redes neurais profundas desenvolvida para lidar com \textbf{dados sequenciais}, especialmente em \textbf{Processamento de Linguagem Natural (PLN)}, representando uma ruptura com modelos baseados em recorrência, como \textbf{RNNs, LSTMs e GRUs}. A principal inovação dos Transformers é o uso exclusivo do \textbf{mecanismo de atenção}, eliminando conexões recorrentes e permitindo \textbf{processamento paralelo}, maior eficiência computacional e melhor escalabilidade.
+
+A arquitetura Transformer é baseada no modelo \textbf{Encoder–Decoder}. O \textbf{encoder} transforma a sequência de entrada em representações internas ricas e contextualizadas, enquanto o \textbf{decoder} utiliza essas representações para gerar a sequência de saída de forma \textbf{autoregressiva}. Diferentemente das RNNs, que processam a sequência passo a passo, os Transformers analisam toda a sequência simultaneamente.
+
+Como os Transformers não possuem recorrência, é necessário fornecer explicitamente informações sobre a \textbf{ordem dos tokens}. Isso é feito por meio da soma de dois tipos de embeddings:
+
+\begin{itemize}
+	\item \textbf{Embeddings de tokens}, que representam semanticamente cada palavra ou subpalavra;
+	\item \textbf{Embeddings de posição}*, que codificam a posição de cada token na sequência.
+\end{itemize}
+
+O texto é inicialmente convertido em tokens utilizando \textbf{tokenização por subpalavras}, baseada em algoritmos como \textbf{Byte Pair Encoding (BPE)} ou \textbf{SentencePiece}, o que permite lidar com palavras fora do vocabulário (Out-of-Vocabulary).
+
+O elemento central da arquitetura é o \textbf{mecanismo de atenção}, formulado a partir de três vetores: \textbf{Query (Q)}; \textbf{Key (K)}; e \textbf{Value (V)}.
+
+A atenção mede a similaridade entre Q e K, normaliza esses valores com \textbf{softmax} e utiliza os pesos obtidos para combinar os vetores V. Esse processo permite que o modelo identifique \textbf{quais tokens da sequência são mais relevantes} para cada posição. Para aumentar a capacidade de representação, o Transformer utiliza \textbf{Multi-Head Attention}, em que múltiplas atenções são calculadas em paralelo, capturando diferentes tipos de relações semânticas e sintáticas.
+
+Cada bloco do \textbf{Encoder} contém:
+
+\begin{itemize}
+	\item enumerate
+	\item Uma camada de \textbf{autoatenção multi-head};
+	\item \textbf{Conexões residuais} e \textbf{normalização};
+	\item Uma rede \textbf{feed-forward (MLP)} aplicada de forma independente a cada token;
+	\item Nova normalização e conexão residual.
+\end{itemize}
+
+O empilhamento de vários blocos permite que o modelo aprenda representações cada vez mais abstratas e contextuais.
+
+O \textbf{Decoder} possui uma estrutura semelhante, mas inclui dois mecanismos adicionais:
+
+\begin{itemize}
+	\item \textbf{Autoatenção mascarada}, que impede o acesso a tokens futuros;
+	\item \textbf{Atenção cruzada}, que conecta o decoder às saídas do encoder.
+\end{itemize}
+
+As \textbf{máscaras causais} garantem que o processo de geração respeite a ordem temporal da sequência.
+
+Os Transformers produzem \textbf{representações contextuais}, nas quais o significado de uma palavra depende do contexto completo da frase, diferentemente de embeddings estáticos como Word2Vec e GloVe. Essa capacidade, aliada ao paralelismo e ao uso de conexões residuais, torna o treinamento mais estável e eficiente, mesmo em arquiteturas profundas.
+
+Em síntese, os Transformers combinam \textbf{atenção global}, \textbf{representações contextuais}, \textbf{tokenização por subpalavras} e \textbf{processamento paralelo}, constituindo a base dos modelos modernos de linguagem e sendo amplamente utilizados em tarefas como tradução automática, sumarização, geração de texto, análise de sentimentos e em \textbf{Large Language Models (LLMs)}.
+
+
+\subsection{Mapa Mental}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{"Cursos/05 - Redes Neurais e Deep Learning/imagens/MapaMentalTransformers.png"}
+	\caption{Mapa Mental Transformers}
+	\label{fig:mapamentaltransformers}
+\end{figure}

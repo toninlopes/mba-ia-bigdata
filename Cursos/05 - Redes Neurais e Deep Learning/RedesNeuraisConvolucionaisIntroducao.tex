@@ -1,0 +1,282 @@
+\chapter{Redes Neurais Convolucionais}
+
+As \textbf{Redes Neurais Convolucionais (CNNs)}, ou ConvNets, são uma classe especializada de redes neurais profundas projetadas para processar dados que possuem uma topologia de grid, como:
+
+\begin{itemize}
+	\item \textbf{Imagens:} Onde os pixels são organizados em uma grade 2D (altura x largura x canais de cor);
+	\item \textbf{Vídeos:} Sequências de imagens;
+	\item \textbf{Séries Temporais:} Dados 1D.
+\end{itemize}
+
+Sua característica distintiva é o uso de \textbf{camadas convolucionais}, que automaticamente e adaptativamente aprendem hierarquias espaciais de características a partir dos dados de entrada. Isso as torna excepcionalmente eficazes para tarefas como reconhecimento de objetos, detecção, segmentação, etc.
+
+Para entender o poder das CNNs, é crucial compará-las com os MLPs (Perceptrons Multicamadas) que estudamos:
+
+\begin{table}[h]
+	\begin{tabular}{p{0.20\textwidth} p{0.38\textwidth} p{0.38\textwidth} }
+		Característica & MLP (Totalmente Conectada) & CNN (Convolucional)\\
+		\hline
+		\\
+		Conectividade & Cada neurônio de uma camada está conectado a \textbf{TODOS} os neurônios da camada anterior. & Cada neurônio está conectado apenas a uma \textbf{pequena região local} (receptive field) da camada anterior.\\
+		\\
+		Pesos & Cada conexão tem seu próprio peso único. & \textbf{Pesos Compartilhados (Shared Weights):} Um único conjunto de pesos (o filtro/kernel) é aplicado repetidamente em diferentes locais da entrada.\\
+		\\
+		Robustez Espacial & Não tem conhecimento explícito da estrutura espacial. Se um objeto move na imagem, precisa aprender novamente. & \textbf{Invariância de Posição:} Devido aos pesos compartilhados e pooling, é mais robusta a pequenas translações, rotações ou escalonamentos de objetos na imagem.\\
+		\\
+		Número de Parâmetros & \textbf{Extremamente alto}, especialmente com entradas de alta dimensão (ex: imagens). Uma imagem 28x28 (784 pixels) para 100 neurônios na primeira camada já são 78.400 pesos! & \textbf{Significativamente menor} devido aos pesos compartilhados e conectividade local.\\
+		\\
+		Melhor Para & Dados tabulares, séries temporais simples. & Imagens, vídeos, áudio (dados com estrutura espacial/temporal).\\
+		\\
+	\end{tabular}   
+\end{table}
+
+
+\subsection{Exemplo Aplicado de Redes Convolucionais}
+
+Imagine que queremos classificar imagens de \textbf{cães e gatos}.
+
+Um MLP precisaria "achatar" cada imagem em um único vetor longo de pixels. Se a imagem tem 100x100 pixels (cores RGB), são 100x100x3 = 30.000 entradas! A primeira camada do MLP já teria um número gigantesco de pesos.
+
+Uma CNN, por outro lado, abordaria isso de forma mais inteligente:
+
+\begin{enumerate}
+	\item \textbf{Detecção de Características Locais:} As primeiras camadas convolucionais aprenderiam a detectar características de baixo nível, como \textbf{arestas, linhas, texturas e cantos} em diferentes partes da imagem;
+	\item \textbf{Combinação de Características:} Camadas convolucionais mais profundas combinariam essas características de baixo nível para formar padrões mais complexos, como \textbf{olhos, orelhas, focinhos} (no caso de cães/gatos);
+	\item \textbf{Representação Abstrata:} As camadas mais profundas capturariam características de alto nível, como a "forma geral de um gato" ou a "aparência de um cachorro";
+	\item \textbf{Classificação:} Finalmente, algumas camadas densas (MLP) na parte final da CNN usariam essas representações abstratas para classificar a imagem como "cão" ou "gato".
+\end{enumerate}
+
+Essa abordagem hierárquica e local é o que torna as CNNs tão eficazes.
+
+
+
+\section{Pesos Compartilhados (Shared Weights), Deslizamento de Kernel e Feature Map}
+
+Esses são os conceitos centrais por trás da operação de uma camada convolucional.
+
+\noindent \textbf{a) Pesos Compartilhados (Shared Weights)}
+
+\begin{enumerate}
+	\item \textbf{Ideia:} Em vez de ter um peso único para cada conexão (como em MLPs), um \textbf{único conjunto de pesos} é usado em \textbf{múltiplas localizações} na entrada. Esse conjunto de pesos é chamado de \textbf{filtro} ou \textbf{kernel};
+	\item \textbf{Analogia:} Imagine um pequeno "detector de arestas". Em vez de treinar um detector de arestas para o canto superior esquerdo da imagem, outro para o centro, e outro para o canto inferior direito, usamos o \textbf{mesmo detector de arestas} e o "deslizamos" por toda a imagem;
+	\item \textbf{Vantagem:} Reduz drasticamente o número de parâmetros, tornando a rede mais eficiente em termos de memória e mais rápida para treinar, além de promover a invariância de posição (se uma aresta aparece em outro lugar, o mesmo filtro a detecta).
+\end{enumerate}
+
+
+\noindent \textbf{b) Deslizamento de Kernel (Kernel Sliding ou Convolution)}
+
+\begin{itemize}
+	\item \textbf{Processo:} O filtro (kernel) é uma pequena matriz de pesos (e.g., 3x3, 5x5). Ele é \textbf{deslizado (ou "convoluído")} sobre a imagem de entrada, pixel a pixel (ou com um stride maior), da esquerda para a direita e de cima para baixo;
+	
+	\item \textbf{Operação:} Em cada posição, o filtro realiza uma \textbf{operação de convolução:}
+	\begin{enumerate}
+		\item Multiplica elemento a elemento os valores do filtro pelos pixels correspondentes na região da imagem que ele cobre.
+		\item Soma todos esses produtos;
+		\item Adiciona um viés (bias) único para aquele filtro.
+	\end{enumerate}
+
+	\item \textbf{Resultado:} O resultado dessa soma é um único valor que representa a "intensidade" com que a característica que o filtro procura foi encontrada naquela região da imagem.	
+\end{itemize}
+
+
+\noindent \textbf{c) Feature Map (Mapa de Características)}
+
+\begin{itemize}
+	\item \textbf{Definição:} À medida que o filtro desliza pela imagem e realiza a operação de convolução em cada posição, ele constrói uma nova matriz. Essa matriz é chamada de \textbf{Feature Map} ou \textbf{Mapa de Ativação};
+	\item \textbf{Representação:} Cada valor no Feature Map indica a presença e a força da característica que o filtro detecta em uma parte específica da imagem de entrada;
+	\item \textbf{Múltiplos Filtros:} Uma camada convolucional tipicamente usa \textbf{vários filtros diferentes}. Cada filtro detecta uma característica diferente (e.g., um detecta arestas horizontais, outro arestas verticais, outro texturas específicas), gerando um Feature Map separado para cada filtro. O conjunto de todos esses Feature Maps forma a saída da camada convolucional.
+\end{itemize}
+
+
+\subsection{Exemplo Prático de Pesos Compartilhados, Deslizamento de Kernel e Feature Map}
+
+Vamos usar uma imagem de entrada simples (4x4 pixels em escala de cinza) e um filtro (kernel) 3x3.
+
+Imagem de Entrada (4x4):
+
+```
+[[1, 1, 1, 0],
+[1, 1, 1, 0],
+[1, 1, 1, 0],
+[0, 0, 0, 0]]
+
+```
+
+Filtro/Kernel (3x3): (Este filtro pode ser treinado para detectar, por exemplo, arestas verticais).
+
+```
+[[-1, 0, 1],
+[-1, 0, 1],
+[-1, 0, 1]]
+
+```
+
+\noindent \textbf{Passo 1: Deslizar o Kernel (Primeira Posição).}
+
+O kernel se posiciona sobre a primeira região 3x3 da imagem:
+
+```
+[[1, 1, 1],
+[1, 1, 1],
+[1, 1, 1]]
+
+```
+
+Cálculo:
+$(-1 \cdot 1) + (0 \cdot 1) + (1 \cdot 1) +$
+$(-1 \cdot 1) + (0 \cdot 1) + (1 \cdot 1) +$
+$(-1 \cdot 1) + (0 \cdot 1) + (1 \cdot 1) =$
+$(-1) + 0 + 1 + (-1) + 0 + 1 + (-1) + 0 + 1 = 0$
+
+O primeiro valor do Feature Map é 0.
+
+\noindent \textbf{Passo 2: Deslizar o Kernel (Segunda Posição).}
+
+O kernel desliza uma coluna para a direita:
+
+```
+[[1, 1, 0],
+[1, 1, 0],
+[1, 1, 0]]
+
+```
+
+Cálculo:
+$(-1 \cdot 1) + (0 \cdot 1) + (1 \cdot 0) +$
+$(-1 \cdot 1) + (0 \cdot 1) + (1 \cdot 0) +$
+$(-1 \cdot 1) + (0 \cdot 1) + (1 \cdot 0) =$
+$(-1) + 0 + 0 + (-1) + 0 + 0 + (-1) + 0 + 0 = -3$
+
+O segundo valor do Feature Map é -3.
+
+
+
+\noindent \textbf{Passo 3: Deslizar o Kernel (Terceira Posição - Linha 2, Coluna 1).}
+
+O kernel desliza uma linha para baixo e retorna à primeira coluna:
+
+```
+[[1, 1, 1],
+[1, 1, 1],
+[0, 0, 0]]
+
+```
+
+Cálculo:
+$(-1 \cdot 1) + (0 \cdot 1) + (1 \cdot 1) +$
+$(-1 \cdot 1) + (0 \cdot 1) + (1 \cdot 1) +$
+$(-1 \cdot 0) + (0 \cdot 0) + (1 \cdot 0) =$
+$(-1) + 0 + 1 + (-1) + 0 + 1 + 0 + 0 + 0 = 0$
+
+O terceiro valor do Feature Map é 0.
+
+
+\noindent \textbf{Passo 4: Deslizar o Kernel (Quarta Posição - Linha 2, Coluna 2)}
+
+O kernel desliza uma coluna para a direita:
+
+```
+[[1, 1, 0],
+[1, 1, 0],
+[0, 0, 0]]
+
+```
+
+Cálculo:
+$(-1 \cdot 1) + (0 \cdot 1) + (1 \cdot 0) +$$(-1 \cdot 1) + (0 \cdot 1) + (1 \cdot 0) +$$(-1 \cdot 0) + (0 \cdot 0) + (1 \cdot 0) =$$(-1) + 0 + 0 + (-1) + 0 + 0 + 0 + 0 + 0 = -2$
+
+O quarto valor do Feature Map é -2.
+
+
+\noindent \textbf{Feature Map Final (2x2):}
+
+```
+[[ 0, -3],
+[ 0, -2]]
+
+```
+
+Neste exemplo, o filtro detectou uma "borda" (transição de 1 para 0) no lado direito, resultando em valores negativos. Se o filtro fosse para bordas opostas, os valores seriam positivos.
+
+
+
+\section{Cálculo da Dimensão da Saída da Convolução e Múltiplos Filtros}
+
+\noindent \textbf{Cálculo da Dimensão de Saída}
+
+A dimensão do Feature Map (saída da convolução) depende de quatro fatores:
+
+\begin{enumerate}
+	\item $W$: Largura da entrada;
+	\item $H$: Altura da entrada;
+	\item $F$: Dimensão do filtro (kernel) (geralmente , onde  é ímpar, e.g., 3, 5, 7);
+	\item $S$: Stride (passo) - quantos pixels o filtro se move a cada passo (geralmente 1);
+	\item $P$: Padding (preenchimento) - número de pixels de preenchimento zero adicionados à borda da entrada. O padding é frequentemente usado para que a saída tenha a mesma dimensão da entrada ("\textbf{Same" padding}) ou para evitar que a saída encolha muito rapidamente (\textbf{"Valid" padding} significa sem preenchimento).
+\end{enumerate}
+
+A fórmula para a dimensão da saída (largura ou altura, já que geralmente  e o filtro é quadrado) é:
+
+$$\text{Dimensão de Saída} = \frac{W - F + 2P}{S} + 1$$
+
+No exemplo anterior: $W=4, F=3, S=1, P=0$. Dimensão de Saída = $(4 - 3 + 2 \cdot 0) / 1 + 1 = 1/1 + 1 = 2$. A saída é 2x2.
+
+
+\noindent \textbf{Extensão para Múltiplos Filtros.}
+
+Uma camada convolucional real não usa apenas um filtro. Ela usa \textbf{muitos filtros}, cada um treinado para detectar uma característica diferente.
+
+\begin{itemize}
+	\item Se tivermos \textbf{filtros}, cada um produzirá um Feature Map;
+	\item A saída da camada convolucional será uma pilha de  Feature Maps. Por exemplo, se a entrada é 28x28x3 (RGB) e usamos 32 filtros 5x5, a saída pode ser 24x24x32. Os 32 representam os 32 Feature Maps, um para cada característica detectada pelos 32 filtros.
+\end{itemize}
+
+
+\noindent \textbf{Entradas com Múltiplos Canais (ex: RGB).}
+
+Se a entrada tem múltiplos canais (como uma imagem RGB, que tem 3 canais), o filtro também terá a mesma profundidade dos canais de entrada. Por exemplo, um filtro 3x3 aplicado a uma imagem RGB será, na verdade, 3x3x3. A operação de convolução é feita em todos os canais, e os resultados são somados para produzir um único valor no Feature Map de saída.
+
+
+
+\section{Feature Map e Receptive Field}
+
+\noindent \textbf{Feature Map (Mapa de Características)}
+
+\begin{enumerate}
+	\item \textbf{Definição:} É a saída de uma camada convolucional, onde cada ponto no mapa representa a ativação de um filtro específico em uma região correspondente da entrada;
+	\item \textbf{Hierarquia:} Em CNNs profundas, as primeiras camadas detectam características simples (arestas). Feature Maps de camadas mais profundas combinam essas características simples em padrões mais complexos (formas, partes de objetos), formando uma \textbf{hierarquia de características}.
+\end{enumerate}
+
+\noindent \textbf{Receptive Field (Campo Receptivo)}
+
+\begin{enumerate}
+	\item \textbf{Definição:} O \textbf{campo receptivo} de um neurônio de saída (ou de um ponto em um Feature Map) é a \textbf{área da imagem de entrada original} que esse neurônio está "observando" ou "recebendo informações" para produzir sua saída;
+
+	\item \textbf{Aumento Progressivo:}
+	\begin{itemize}
+		\item Em uma primeira camada convolucional, o campo receptivo de um neurônio é do tamanho do filtro (e.g., 3x3 pixels);
+		\item À medida que adicionamos mais camadas convolucionais (e especialmente camadas de Pooling, que vêm a seguir), o campo receptivo dos neurônios nas camadas mais profundas \textbf{aumenta exponencialmente}. Um neurônio na décima camada pode ter um campo receptivo que abrange uma grande parte da imagem original, ou até mesmo toda ela.
+	\end{itemize}
+	
+	\item \textbf{Importância:} É o Receptive Field que permite que as CNNs capturem informações contextuais e hierárquicas. Neurônios mais próximos da entrada detectam detalhes finos e locais, enquanto neurônios mais profundos "olham" para regiões maiores da imagem, combinando esses detalhes para detectar características de alto nível.
+\end{enumerate}
+
+
+\section{Resumo}
+
+As \textbf{redes neurais totalmente conectadas} funcionam bem para \textbf{dados tabulados}, mas não exploram a estrutura espacial das imagens. Quando aplicadas a imagens, tornam-se inviáveis devido ao \textbf{grande número de parâmetros}, já que cada pixel seria conectado a todos os neurônios da camada seguinte. Isso aumenta o custo computacional e dificulta o treinamento.
+
+As CNNs resolvem esse problema ao explorar a \textbf{localidade espacial} das imagens. Em vez de analisar a imagem inteira de uma só vez, as \textbf{camadas convolucionais} processam pequenas regiões locais, chamadas de \textbf{local receptive fields}. Cada uma dessas regiões é combinada com um \textbf{filtro (ou kernel)} por meio da operação de \textbf{convolução (correlação cruzada)}, que consiste em multiplicações elemento a elemento, soma dos resultados, adição de um \textbf{bias} e aplicação de uma \textbf{função de ativação}.
+
+Um ponto central das CNNs é o uso de \textbf{pesos compartilhados (shared weights)}. O mesmo filtro é aplicado em diferentes posições da imagem por meio do \textbf{deslizamento do kernel}, produzindo uma matriz de saída chamada \textbf{feature map}. Isso reduz drasticamente o número de parâmetros e permite que a rede detecte o mesmo padrão independentemente de sua posição na imagem.
+
+Outro conceito importante é a \textbf{invariância à translação}, que significa que a rede consegue reconhecer um padrão mesmo quando ele aparece em posições diferentes da imagem. Essa propriedade é essencial para tarefas de visão computacional, como reconhecimento de objetos.
+
+
+\subsection{Mapa Mental}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{"Cursos/05 - Redes Neurais e Deep Learning/imagens/MapaMentalCNNIntroducao.png"}
+	\caption{Mapa Mental Redes Neurais Convolucionais}
+	\label{fig:mapamentalcnnintroducao}
+\end{figure}

@@ -1,0 +1,168 @@
+\section{Modelo Conexionista}
+
+O \textbf{Modelo Conexionista}, também conhecido como \textbf{Processamento Distribuído Paralelo (PDP)}, é uma abordagem teórica em inteligência artificial e ciência cognitiva que busca entender a mente e o comportamento através da simulação de redes neurais.
+
+\textbf{Ideia Central:} O processamento de informações não ocorre em uma unidade de controle centralizada e sequencial (como em um computador tradicional, que segue instruções passo a passo), mas sim em uma \textbf{grande rede de unidades simples e interconectadas (neurônios)} que operam em paralelo.
+
+\textbf{Aprendizado e Memória:} A informação (o conhecimento) não é armazenada em locais específicos, mas sim de \textbf{forma distribuída} pelas forças das conexões (os \textbf{pesos}) entre os nós. O aprendizado é o processo de ajuste desses pesos.
+
+\subsection{Inspiração Biológica}
+
+A inspiração para o modelo conexionista é diretamente o \textbf{sistema nervoso biológico} (cérebro e medula espinhal):
+
+\begin{enumerate}
+	\item \textbf{Neurônios:} As unidades básicas do modelo (neurônios artificiais) imitam os \textbf{neurônios biológicos}, que recebem sinais, os processam e, se a soma for forte o suficiente, disparam um novo sinal.
+	\item \textbf{Sinapses:} As conexões e seus \textbf{pesos} representam as \textbf{sinapses biológicas}, onde a força da conexão determina a influência de um neurônio sobre o outro.
+	\item \textbf{Processamento Paralelo:} O cérebro biológico processa informações de forma massivamente paralela. Os Modelos Conexionistas replicam isso ao permitir que milhares ou milhões de neurônios artificiais processem dados simultaneamente.
+\end{enumerate}
+
+
+\subsection{Neurônio Artificial e a Estrutura Matemática}
+
+O neurônio artificial (também chamado de \textbf{percéptron}) é a unidade fundamental do modelo conexionista.
+
+Sua operação pode ser descrita matematicamente em duas etapas principais:
+
+\noindent\textbf{1. Soma Ponderada (Net Input)}
+
+O neurônio recebe múltiplos sinais de entrada ($x_1, x_2, \dots, x_n$). Cada entrada é multiplicada por um \textbf{peso} ($w_1, w_2, \dots, w_n$), que representa a força da conexão. O resultado é somado, e um termo de \textbf{viés (bias, $b$)} é adicionado.
+
+$$u = \sum_{i=1}^{n} (x_i w_i) + b$$
+
+
+\noindent\textbf{2. Função de Ativação (Output)}
+
+O valor somado ($u$) passa por uma \textbf{função de ativação} ($\phi$). Essa função é crucial por dois motivos:
+\begin{itemize}
+	\item \textbf{Introduz Não-Linearidade:} Permite que a rede aprenda relações complexas, não apenas lineares.
+	\item \textbf{Limita a Saída:} Normaliza o resultado (por exemplo, entre 0 e 1, ou -1 e 1), decidindo se o neurônio deve ser "ativado" (disparar) ou não.
+\end{itemize}
+
+$$y = \phi(u)$$
+
+O resultado final ($y$) é a saída do neurônio, que se torna a entrada para a próxima camada. 
+
+
+\subsection{Conhecimento nas Redes Neurais}
+
+No Modelo Conexionista, o conhecimento é codificado e representado de forma única:
+
+\begin{itemize}
+	\item \textbf{Não-Simbolista:} Diferente dos sistemas tradicionais de IA que usam regras lógicas explícitas (simbolismo), o conhecimento aqui é \textbf{implícito}.
+	\item \textbf{Armazenamento Distribuído:} O conhecimento sobre o mundo (por exemplo, como reconhecer um gato) não reside em um único nó, mas é \textbf{espalhado por toda a rede} nas milhares de conexões.
+	\item \textbf{Codificação:} O "conhecimento" reside na \textbf{configuração final dos pesos ($w$)} e dos vieses ($b$) após o treinamento. Mudar um único peso não destrói a informação; é preciso alterar a configuração de muitos pesos para afetar o desempenho significativamente.
+\end{itemize}
+
+
+\subsection{Características do Modelo Conexionista}
+
+\begin{table}[h]
+	\begin{tabular}{p{0.32\textwidth} p{0.60\textwidth} }
+		Característica & Descrição\\
+		\hline
+		\\
+		\textbf{Aprendizado com Dados} & A rede aprende diretamente a partir de exemplos, sem programação explícita de regras.\\
+		\\
+		\textbf{Robustez (Tolerância a Falhas)} & Devido à representação distribuída, se alguns neurônios ou conexões falharem, a rede ainda pode operar, embora com desempenho reduzido (similar ao cérebro).\\
+		\\
+		\textbf{Generalização} & A rede tem a capacidade de lidar com dados \textbf{novos e nunca vistos} que possuem a mesma estrutura dos dados de treinamento.\\
+		\\
+		\textbf{Processamento Paralelo} & Milhões de cálculos ocorrem simultaneamente, tornando-o eficiente para tarefas complexas.\\
+		\\
+	\end{tabular}   
+\end{table}
+
+
+\subsection{Importância do Modelo Conexionista}
+
+O Modelo Conexionista é crucial, pois ele:
+\begin{enumerate}
+	\item \textbf{Fundamentou o Deep Learning:} Ele estabeleceu o arcabouço matemático e teórico que, com o avanço da computação (GPUs) e grandes dados, deu origem à revolução do Deep Learning.
+	\item \textbf{Abordagem Flexível:} Provou ser uma abordagem poderosa para resolver problemas que são difíceis para a IA simbólica, como \textbf{Visão Computacional} e \textbf{Processamento de Linguagem Natural (NLP)}, onde a complexidade e a variabilidade dos dados são enormes.
+	\item \textbf{Simulação Cognitiva:} Permite aos cientistas cognitivos e neurocientistas criar modelos computacionais para testar teorias sobre como o cérebro aprende, armazena e recupera informações.
+\end{enumerate}
+
+
+\section{Resumo}
+
+O \textbf{Modelo Conexionista} é uma abordagem de Inteligência Artificial inspirada no funcionamento do cérebro humano. Seu objetivo é reproduzir, de forma simplificada, o processamento distribuído realizado pelos neurônios biológicos.
+
+\subsection{Inspiração Biológica}
+
+O neurônio artificial é inspirado no neurônio biológico, composto por:
+
+\begin{itemize}
+	\item \textbf{Dendritos:} recebem sinais de outros neurônios.
+	\item \textbf{Corpo celular (soma):} integra esses sinais.
+	\item \textbf{Axônio e mielina:} conduzem o impulso elétrico.
+	\item \textbf{Sinapses:} pontos de comunicação entre neurônios.
+\end{itemize}
+
+As RNAs simplificam esse processo, capturando apenas sua essência: \textbf{combinar sinais de entrada, processá-los e transmitir um resultado}.
+
+
+\subsection{Neurônio Artificial: Estrutura Matemática}
+
+Cada neurônio realiza dois passos:
+
+\begin{enumerate}
+	\item Combinação Linear:
+	$$
+	v = \sum_{i=1}^{n} x_i w_i + b
+	$$
+	
+	\begin{itemize}
+		\item Onde:
+		\subitem (x\_i) = entradas
+		\subitem (w\_i) = pesos (força de cada conexão)
+		\subitem (b) = bias
+	\end{itemize}
+
+	\item Função de Ativação - Define a saída do neurônio:
+	$$
+	y = \phi(v)
+	$$
+\end{enumerate}
+
+
+Funções comuns: degrau, linear, sigmoide, tanh.
+
+As funções de ativação introduzem \textbf{não linearidade}, permitindo que a rede represente padrões complexos.
+
+
+\subsection{Conhecimento nas Redes Neurais}
+
+O conhecimento aprendido é representado nos \textbf{pesos sinápticos}. Durante o treinamento, esses pesos são ajustados para reduzir o erro entre saída real e desejada.
+
+Isso forma a base do \textbf{aprendizado conexionista}, em que:
+
+\begin{center}
+	\text{Aprender} = \text{ajustar pesos}
+\end{center}
+
+
+\subsection{Características do Modelo Conexionista}
+
+\begin{itemize}
+	\item Processamento distribuído.
+	\item Robustez a falhas (mesmo se alguns neurônios falharem).
+	\item Capacidade de generalização.
+	\item Aprendizado adaptativo.
+	\item Representação implícita do conhecimento.
+\end{itemize}
+
+
+\subsection{Importância do Modelo Conexionista}
+
+O modelo conexionista fundamenta praticamente todas as arquiteturas modernas de redes neurais:
+
+\begin{itemize}
+	\item Perceptron.
+	\item MLP (Multilayer Perceptron).
+	\item CNNs.
+	\item RNNs.
+	\item Transformers.
+	\item Modelos generativos.
+\end{itemize}
+
+Ele estabeleceu a base teórica para o \textbf{Deep Learning} atual.

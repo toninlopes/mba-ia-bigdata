@@ -1,0 +1,507 @@
+\chapter{Operações em Redes Neurais Convolucionais (CNNs)}
+
+As operações em Redes Neurais Convolucionais são o que permite a transformação de uma matriz bruta de pixels em uma representação semântica de alto nível (como identificar que aquela imagem contém um "carro").
+
+Enquanto em uma rede densa (MLP) a operação principal é apenas a multiplicação de matrizes, na CNN as operações são projetadas para respeitar a \textbf{localidade espacial} e reduzir a \textbf{redundância dos dados}.
+
+As quatro operações fundamentais que compõem o fluxo de uma CNN são: \textbf{Convolução}, \textbf{Ativação (ReLU)}, \textbf{Pooling} e \textbf{Flattening/Fully Connected}.
+
+\noindent\textbf{1. Convolução (Convolution)}
+
+Esta é a operação primária. Como vimos, um kernel (filtro) desliza pela imagem realizando produtos escalares.
+
+\begin{itemize}
+	\item \textbf{Extração de Características:} Funciona como um scanner que procura por padrões (arestas, curvas, texturas);
+	\item \textbf{Influência na Dimensionalidade:} Tende a reduzir ligeiramente a dimensão da imagem (a menos que seja usado Padding);
+	\item \textbf{Eficiência:} Graças aos \textbf{pesos compartilhados}, o número de parâmetros é drasticamente menor do que se tentássemos conectar cada pixel a um neurônio.
+\end{itemize}
+
+
+\noindent\textbf{2. Ativação (ReLU - Rectified Linear Unit)}
+
+Após cada operação de convolução, aplicamos uma função de ativação, sendo a \textbf{ReLU} a mais comum.
+
+\begin{itemize}
+	\item \textbf{Extração de Características:} Introduz a não-linearidade. Sem ela, a rede seria apenas um modelo linear gigante, incapaz de aprender formas complexas;
+	\item \textbf{Eficiência:} A ReLU é extremamente eficiente computacionalmente (é apenas um limiar em zero) e ajuda a mitigar o problema do desaparecimento do gradiente.
+\end{itemize}
+
+
+\noindent\textbf{3. Agrupamento (Pooling ou Subamostragem)}
+
+O pooling reduz a resolução espacial do Feature Map, mantendo as informações mais importantes. O tipo mais comum é o \textbf{Max Pooling}.
+
+\begin{itemize}
+	\item \textbf{Influência na Dimensionalidade:} Reduz drasticamente a altura e largura dos dados (ex: um Max Pooling 2x2 com stride 2 corta as dimensões pela metade);
+	\item \textbf{Extração de Características:} Cria \textbf{invariância à translação}. Isso significa que, se um padrão (como um olho) se mover alguns pixels, o resultado do Max Pooling continuará sendo o mesmo, tornando a rede robusta a pequenas mudanças na posição do objeto;
+	\item \textbf{Eficiência:} Reduz o custo computacional para as camadas subsequentes, pois há menos dados para processar.
+\end{itemize}
+
+
+\noindent\textbf{4. Achatamento (Flattening) e Camadas Densas}
+
+No final da arquitetura, os Feature Maps 3D (largura x altura x filtros) são "achatados" em um vetor 1D.
+
+\begin{itemize}
+	\item \textbf{Extração de Características:} Aqui a rede deixa de olhar para a estrutura espacial e passa a combinar todas as características extraídas para tomar uma decisão final;
+	\item \textbf{Influência na Dimensionalidade:} Transforma o volume de dados em um vetor de entrada para um Perceptron Multicamadas (MLP).
+\end{itemize}
+
+
+
+\section{Padding}
+
+O \textbf{Padding} (ou preenchimento) é uma técnica essencial para o design de arquiteturas de Redes Neurais Convolucionais. Sem ele, perderíamos informações valiosas nas bordas das imagens e nossa rede ficaria limitada em profundidade.
+
+\subsection{Conceitos: Valid vs. Same Padding}
+
+Quando um filtro desliza sobre uma imagem, os pixels do \textbf{centro} são sobrepostos várias vezes, enquanto os pixels das \textbf{bordas} são tocados apenas uma vez. Isso causa dois problemas: perda de informação nas extremidades e a redução do tamanho da imagem a cada camada.
+
+Existem dois tipos principais de estratégias:
+
+\begin{enumerate}
+	\item \textbf{Valid Padding (Sem Padding):} Não há preenchimento. O filtro só processa áreas onde ele cabe perfeitamente dentro da imagem original. A saída será sempre menor que a entrada;
+	\item \textbf{Same Padding (Com Padding):} Adicionamos uma moldura de pixels (geralmente com valor zero) ao redor da imagem. O objetivo é garantir que o Feature Map de saída tenha \textbf{exatamente o mesmo tamanho} (altura e largura) que o de entrada.
+\end{enumerate}
+
+
+\subsection{Fórmulas: Calculando o Padding e a Saída}
+
+Para determinar o tamanho da saída ($O$) baseando-se na entrada ($I$), no tamanho do filtro ($F$), no stride ($S$) e no padding ($P$), usamos:
+
+$$O = \left\lfloor \frac{I - F + 2P}{S} \right\rfloor + 1$$
+
+Se o seu objetivo é Same Padding (onde $O = I$) e você está usando um stride de $1$, o cálculo para saber quanto preenchimento ($P$) adicionar é:
+
+$$P = \frac{F - 1}{2}$$
+
+\textit{(Por isso filtros costumam ter tamanhos ímpares como 3x3 ou 5x5, para que o preenchimento seja um número inteiro simétrico).}
+
+
+\subsection{Exemplo Prático}
+
+Imagine uma imagem de entrada \textbf{5x5} e um filtro \textbf{3x3} com \textbf{Stride 1}.
+
+\begin{itemize}
+	\item \textbf{Cenário A (Valid Padding):}
+	\subitem $P = 0$
+	\subitem Cálculo: $\frac{5 - 3 + 0}{1} + 1 = 3$.
+	\subitem A saída encolheu para 3x3.
+	
+	\item \textbf{Cenário B (Same Padding):}
+	\subitem Para manter 5x5, precisamos de $P = \frac{3-1}{2} = 1$.
+	\subitem Adicionamos uma borda de zeros em cada lado. A imagem "virtual" agora é 7x7.
+	\subitem Cálculo: $\frac{7 - 3}{1} + 1 = 5$.
+	\subitem A saída continua 5x5.
+\end{itemize}
+
+
+\subsection{Exemplo em Python (usando PyTorch e TensorFlow/Keras)}
+
+As bibliotecas modernas facilitam muito isso.
+
+No Keras, você não precisa calcular o número de pixels manualmente, basta usar a string "same" ou "valid".
+
+\begin{lstlisting}[language=Python]
+	from tensorflow.keras import layers, models
+	
+	model = models.Sequential([
+	# Mantém a dimensão original (ex: 28x28 -> 28x28)
+	layers.Conv2D(32, (3, 3), padding='same', input_shape=(28, 28, 1)),
+	
+	# Reduz a dimensão (ex: 28x28 -> 26x26)
+	layers.Conv2D(64, (3, 3), padding='valid')
+	])
+\end{lstlisting}
+
+O Padding é o que nos permite criar redes com 50, 100 ou até 1000 camadas (como a ResNet), pois ele impede que a resolução da imagem chegue a 1x1 antes de termos extraído características profundas o suficiente.
+
+
+\section{Stride}
+
+Enquanto o \textbf{Padding} é usado para preservar a dimensão, o \textbf{Stride} (ou Passo) é o principal mecanismo de controle para a redução da resolução espacial dentro das camadas convolucionais.
+
+
+\subsection{Conceito: O Deslocamento do Filtro}
+
+O \textbf{Stride} define quantos pixels o kernel (filtro) "pula" a cada movimento enquanto desliza pela imagem de entrada.
+
+\begin{itemize}
+	\item \textbf{Stride = 1:} O filtro se move um pixel por vez. É o padrão, usado para extrair o máximo de detalhes possível, preservando a sobreposição entre as áreas observadas;
+	\item \textbf{Stride = 2 (ou mais):} O filtro salta pixels. Isso faz com que ele cubra a imagem mais rapidamente e gera uma saída significativamente menor.
+\end{itemize}
+
+\noindent\textbf{Por que usar um Stride maior que 1?}
+
+\begin{enumerate}
+	\item \textbf{Redução de Dimensionalidade:} Funciona como uma alternativa ao \textbf{Pooling}. Ao saltar pixels, você "resume" a imagem diretamente na convolução;
+	\item \textbf{Eficiência Computacional:} Menos posições para o filtro calcular significa menos operações matemáticas e menor uso de memória;
+	\item \textbf{Aumento do Campo Receptivo:} Ao saltar pixels, as camadas seguintes conseguem "ver" uma área maior da imagem original com menos camadas.
+\end{enumerate}
+
+
+\subsection{Fórmula: O Impacto no Tamanho da Saída}
+
+O Stride aparece no denominador da fórmula de dimensionalidade. Note como ele tem um impacto drástico no tamanho final:
+
+$$O = \left\lfloor \frac{I - F + 2P}{S} \right\rfloor + 1$$
+
+Onde:
+\begin{itemize}
+	\item $O$: Tamanho da Saída (largura/altura);
+	\item $I$: Tamanho da Entrada;
+	\item $F$: Tamanho do Filtro (Kernel);
+	\item $P$: Padding;
+	\item $S$: Stride
+\end{itemize}
+
+\textit{Nota: O símbolo $\lfloor \dots \rfloor$ indica a função "piso" (arredondamento para baixo), usada caso a divisão não seja exata.}
+
+
+\subsection{Exemplo Prático}
+
+Imagine uma entrada 7x7, um filtro 3x3 e sem padding ($P=0$).
+
+\begin{itemize}
+	\item Cenário A (Stride = 1):
+	\subitem Cálculo: $\frac{7 - 3 + 0}{1} + 1 = \mathbf{5}$;
+	\subitem A saída é 5x5.
+	
+	\item Cenário B (Stride = 2):
+	\subitem Cálculo: $\frac{7 - 3 + 0}{2} + 1 = \frac{4}{2} + 1 = \mathbf{3}$;
+	\subitem A saída é 3x3. Note que com Stride 2, reduzimos a área da saída em quase 64\% em relação ao Stride 1.
+\end{itemize}
+
+
+\subsection{Exemplo em Python}
+
+No Keras, o argumento `strides` aceita um inteiro (para o mesmo passo em H e W) ou uma tupla.
+
+\begin{lstlisting}[language=Python]
+	from tensorflow.keras import layers, models
+	
+	model = models.Sequential([
+	# Convolução padrão (Stride 1)
+	layers.Conv2D(32, (3, 3), strides=1, padding='same', input_shape=(64, 64, 3)),
+	
+	# Convolução que reduz a imagem pela metade (Stride 2)
+	# De 64x64 para 32x32
+	layers.Conv2D(64, (3, 3), strides=2, padding='same')
+	])
+	
+\end{lstlisting}
+
+
+\subsection{Dica de Especialista: Stride vs. Pooling}
+
+Antigamente, usava-se muito `Conv(Stride=1)` seguido de `MaxPooling`. Recentemente, muitas arquiteturas modernas (como a \textbf{ResNet}) preferem usar apenas `Conv(Stride=2)` para reduzir a imagem. O argumento é que a própria rede deve "aprender" a melhor forma de subamostrar os dados, em vez de usar uma função fixa como "pegar o valor máximo".
+
+
+\section{Multiplos Canais}
+
+Entender múltiplos canais é o que separa a teoria acadêmica (imagens binárias 2D) da prática do Deep Learning (imagens coloridas, vídeos e volumes médicos).
+
+\subsection{A Convolução em Volumes}
+
+Diferente de uma matriz simples, uma imagem RGB é um tensor 3D de formato $(H \times W \times 3)$.
+
+\begin{itemize}
+	\item \textbf{A Regra de Ouro:} O filtro (kernel) deve ter sempre a mesma profundidade que a entrada que ele está processando. Se a entrada tem 3 canais, um filtro $3 \times 3$ será, na verdade, um volume de $3 \times 3 \times 3$;
+	\item \textbf{Processamento Paralelo:} O filtro processa cada canal simultaneamente. Ele possui pesos diferentes para o canal Vermelho, para o Verde e para o Azul;
+	\item \textbf{Soma e Consolidação:} Os resultados da convolução em cada canal são somados (junto com um único bias) para gerar um único valor no mapa de características de saída.
+\end{itemize}
+
+
+\subsection{Fórmula: Parâmetros e Saída}
+
+A dimensão espacial (Altura e Largura) segue a mesma fórmula que vimos antes. No entanto, o número de parâmetros muda drasticamente.
+
+\noindent\textbf{Número de Parâmetros de uma Camada:}
+
+\begin{itemize}
+	\item Se temos $K$ filtros de tamanho $F \times F$ aplicados a uma entrada com $C$ canais:
+	
+	$$\text{Total de Pesos} = (F \times F \times C \times K) + K$$
+\end{itemize}
+
+\textit{(O $+K$ refere-se a um bias para cada filtro).}
+
+\textbf{Exemplo:} 32 filtros de $3 \times 3$ aplicados a uma imagem RGB: $(3 \times 3 \times 3 \times 32) + 32 = 864 + 32 = \mathbf{896 \text{ parâmetros}}$.
+
+
+\subsection{Exemplo Prático: Detecção de Cor e Forma}
+
+Imagine que você quer detectar uma \textbf{aresta vermelha vertical}:
+
+\begin{enumerate}
+	\item O filtro terá pesos altos para detectar "verticalidade" no canal R (Red);
+	\item Terá pesos próximos de zero para os canais G e B;
+	\item Quando o filtro passar por um pixel vermelho, a ativação no canal R será alta, a soma final será alta, e o neurônio "disparará".
+\end{enumerate}
+
+Se você tiver \textbf{64 filtros}, cada um deles pode se especializar em uma combinação diferente de cor e forma. A saída dessa camada terá \textbf{64 canais} (um para cada filtro).
+
+
+\subsection{Exemplo em Python}
+
+Nas bibliotecas, só é necessário especificar a quantidade de filtros de saída; a profundidade do filtro de entrada é inferida automaticamente.
+
+
+\begin{lstlisting}[language=python]
+from tensorflow.keras import layers, models
+
+model = models.Sequential([
+# A rede entende que o input tem 3 canais (RGB)
+# e criará 32 filtros de profundidade 3 automaticamente.
+layers.Conv2D(filters=32, kernel_size=(3, 3), input_shape=(100, 100, 3))
+])
+
+print(model.summary()) # Verifique o número de parâmetros
+\end{lstlisting}
+
+
+
+\section{Convolução 1x1}
+
+A \textbf{Convolução 1×1}, também conhecida como \textbf{Network-in-Network (NiN)}, é uma das ferramentas mais inteligentes e eficientes no design de arquiteturas modernas (como Inception e ResNet). Embora pareça matematicamente trivial, sua função vai muito além da simples convolução.
+
+\subsection{Conceitos: O "Pooling" de Canais}
+
+Diferente de filtros $3 \times 3$ ou $5 \times 5$, um filtro $1 \times 1$ não olha para a vizinhança espacial. Ele olha apenas para um pixel por vez, mas através de todos os canais da entrada.
+
+As três principais funções da Convolução 1×1 são:
+
+\begin{enumerate}
+	\item \textbf{Redução de Dimensionalidade (Compressão):} Se você tem 512 canais e quer reduzir para 64 sem perder a resolução espacial (altura e largura), você usa 64 filtros de $1 \times 1$. Isso economiza um poder computacional imenso nas camadas seguintes.
+	\item \textbf{Aumento de Dimensionalidade (Expansão):} O inverso também é verdadeiro; você pode projetar os dados para um espaço de maior dimensão de canais;
+	\item \textbf{Introdução de Não-Linearidade:} Cada camada de convolução 1×1 é seguida por uma função de ativação (como ReLU). Isso permite que a rede aprenda relações complexas entre os canais existentes sem aumentar o custo espacial.
+\end{enumerate}
+
+
+\subsection{Fórmulas e Parâmetros}
+
+A dimensão espacial de saída ($H, W$) permanece idêntica à de entrada (desde que o stride seja 1). O que muda é a profundidade ($C$).
+
+\noindent\textbf{Número de Parâmetros}
+
+Se a entrada tem $C_{in}$ canais e aplicamos $K$ filtros de $1 \times 1$:
+
+$$\text{Total de Pesos} = (1 \times 1 \times C_{in} \times K) + K$$
+
+Por que é eficiente? Compare uma convolução $3 \times 3$ com 512 filtros com uma $1 \times 1$ também com 512 filtros:
+\begin{itemize}
+	\item $3 \times 3$: $9 \times C_{in} \times 512$
+	\item $1 \times 1$: $1 \times C_{in} \times 512$. A convolução 1×1 é 9 vezes mais barata computacionalmente!
+\end{itemize}
+
+
+\subsection{Exemplo Prático: O "Gargalo" (Bottleneck)}
+
+Imagine que você está processando um volume de dados de tamanho $28 \times 28 \times 192$ (comum em arquiteturas como a GoogLeNet).
+
+Se você aplicar diretamente 32 filtros de $5 \times 5$:
+
+\begin{itemize}
+	\item Cálculo: $28 \times 28 \times (5 \times 5 \times 192 \times 32) \approx 120$ milhões de operações.
+\end{itemize}
+
+Se você usar um módulo de gargalo (reduzir com 1×1 antes):
+
+\begin{itemize}
+	\item Aplica 16 filtros de $1 \times 1$ para reduzir de 192 para 16 canais;
+	\item Aplica os 32 filtros de $5 \times 5$ sobre esses 16 canais;
+	\item Cálculo total: $\approx 12$ milhões de operações.
+\end{itemize}
+
+\textbf{Resultado:} Você obteve um resultado similar com 10 vezes menos esforço computacional.
+
+
+\subsection{Exemplo em Python}
+
+Com TensorFlow/Keras.
+
+\begin{lstlisting}[language=python]
+from tensorflow.keras import layers, models
+
+model = models.Sequential([
+# Suponha uma entrada com 128 canais
+layers.Input(shape=(32, 32, 128)),
+
+# Convolução 1x1 para reduzir para 32 canais
+layers.Conv2D(filters=32, kernel_size=(1, 1), activation='relu')
+])
+
+model.summary() # Note que H e W (32, 32) não mudam, apenas os canais
+\end{lstlisting}
+
+
+
+\section{Pooling}
+
+O Pooling (ou Agrupamento/Subamostragem) é uma operação fundamental em CNNs, responsável por reduzir a resolução espacial dos dados, o que ajuda a tornar a rede mais eficiente e menos sensível a pequenas variações na posição de objetos.
+
+Diferente da convolução, o pooling não possui pesos aprendíveis; ele aplica uma regra matemática fixa sobre os dados.
+
+
+\subsection{Conceitos: Redução e Invariância}
+
+A camada de Pooling atua sobre cada canal do feature map de forma independente. Seus principais objetivos são:
+
+\begin{enumerate}
+	\item \textbf{Redução de Dimensionalidade:} Diminui a altura e largura dos dados, reduzindo o custo computacional para as camadas seguintes;
+	\item  \textbf{Invariância Espacial (Robustez):} Ajuda a rede a focar na presença de uma característica, em vez de sua localização exata em pixels. Se uma aresta se mover 1 pixel para o lado, o resultado do pooling provavelmente será o mesmo;
+	\item \textbf{Controle de Overfitting:} Ao resumir as informações, a rede evita decorar detalhes ruidosos da imagem.
+\end{enumerate}
+
+
+\subsection{Max Pooling e o Average Pooling }
+
+Existem dois tipos principais, cada um com uma "filosofia" diferente:
+
+\begin{itemize}
+	\item \textbf{Max Pooling (Mais utilizado):} Seleciona o valor máximo de uma região (ex: 2x2):
+	\subitem \textbf{Uso:} É o padrão em quase todas as redes modernas. Ele foca nas características mais fortes e proeminentes (como bordas e cantos) detectadas pela convolução.
+	
+	\item \textbf{Average Pooling (Média):} Calcula a média aritmética de todos os valores na região:
+	\subitem \textbf{Uso:} Tende a "suavizar" a imagem. É muito usado no final de redes modernas (Global Average Pooling) para colapsar toda a informação espacial antes da classificação final, em vez de usar camadas densas gigantescas.
+\end{itemize}
+
+
+\subsection{Fórmulas e Parâmetros}
+
+Assim como na convolução, o tamanho da saída depende do tamanho da janela de pooling ($F$), do passo (stride $S$) e do padding ($P$):
+
+\begin{itemize}
+	\item $O = \left\lfloor \frac{I - F + 2P}{S} \right\rfloor + 1$
+	\item \textbf{Padrão da Indústria:} O mais comum é usar uma janela 2x2 com Stride 2. Isso reduz a altura e largura da imagem exatamente pela metade, descartando 75\% dos dados espaciais;
+	\item \textbf{Importante:} O Pooling mantém a profundidade (canais) intacta. Se a entrada tem 64 canais, a saída terá 64 canais.
+\end{itemize}
+
+
+\subsection{Exemplo Prático}
+
+Imagine uma região 2x2 de um feature map:
+
+\begin{itemize}
+	\item $	[[10, 20],	[ 5,  8]]$
+	\item \textbf{Max Pooling:} O resultado será 20. (O sinal mais forte sobrevive);
+	\item \textbf{Average Pooling:} O resultado será $(10+20+5+8) / 4 = \mathbf{10.75}$. (A informação é diluída).	
+\end{itemize}
+
+
+\subsection{Exemplo em Python}
+
+Com TensorFlow/Keras.
+
+\begin{lstlisting}[language=python]
+from tensorflow.keras import layers, models
+
+model = models.Sequential([
+layers.Input(shape=(64, 64, 32)),
+
+# Reduz de 64x64 para 32x32
+layers.MaxPooling2D(pool_size=(2, 2), strides=2),
+
+# Exemplo de Average Pooling
+layers.AveragePooling2D(pool_size=(2, 2))
+])
+\end{lstlisting}
+
+
+\subsection{Arquitetura LeNet-5}
+
+Desenvolvida por Yann LeCun em 1998, a \textbf{LeNet-5} foi uma das primeiras redes convolucionais a ter sucesso comercial e estabeleceu o "esqueleto" que quase todas as CNNs modernas seguem até hoje.
+
+A LeNet-5 foi projetada para reconhecer dígitos manuscritos (MNIST). O fluxo de dados segue uma lógica de especialização e abstração:
+
+\begin{enumerate}
+	\item \textbf{Camada de Entrada (Input):}
+	\subitem \textbf{Dado:} Imagem de $32 \times 32$ pixels (tons de cinza).
+	
+	\item \textbf{Bloco Convolucional 1 (Extração de Baixo Nível):}
+	\subitem \textbf{Convolução (C1):} 6 filtros de $5 \times 5$. Saída: $28 \times 28 \times 6$. (Note o encolhimento sem padding);
+	\subitem \textbf{Ativação:} Originalmente usava Sigmoide/Tanh (hoje usamos ReLU);
+	\subitem \textbf{Pooling (S2):} Average Pooling de $2 \times 2$ com stride 2. Saída: $14 \times 14 \times 6$. (Redução espacial pela metade).
+	
+	\item \textbf{Bloco Convolucional 2 (Extração de Médio Nível)}:
+	\subitem \textbf{Convolução (C3):} 16 filtros de $5 \times 5$. Saída: $10 \times 10 \times 16$. (Aumentamos a profundidade/canais);
+	\subitem \textbf{Pooling (S4):} Average Pooling de $2 \times 2$ com stride 2. Saída: $5 \times 5 \times 16$.
+	
+	\item \textbf{Transição e Camadas Totalmente Conectadas (Classificação)}
+	\subitem Neste ponto, a imagem foi reduzida a um "resumo" de $5 \times 5$ com 16 canais.
+	\subitem \textbf{Flattening:} O volume $5 \times 5 \times 16$ é achatado em um vetor de 400 elementos.
+	\subitem \textbf{Fully Connected (C5 e F6):} Camadas densas que combinam as características extraídas para "raciocinar" sobre o que foi visto.
+	\subitem \textbf{Saída (Output):} 10 neurônios com ativação Softmax, representando a probabilidade da imagem ser um dígito de 0 a 9.
+\end{enumerate}
+
+
+\subsection{Exemplo em Python}
+
+Aqui está como construiríamos essa arquitetura clássica usando TensorFlow/Keras.
+
+\begin{lstlisting}[language=python]
+import tensorflow as tf
+from tensorflow.keras import layers, models
+
+def build_lenet5(input_shape=(32, 32, 1), num_classes=10):
+model = models.Sequential([
+# C1: Convolução (6 filtros 5x5) + Ativação ReLU
+layers.Conv2D(6, kernel_size=(5, 5), activation='relu', input_shape=input_shape),
+
+# S2: Max Pooling (Modernizado, originalmente era Average)
+layers.MaxPooling2D(pool_size=(2, 2), strides=2),
+
+# C3: Convolução (16 filtros 5x5)
+layers.Conv2D(16, kernel_size=(5, 5), activation='relu'),
+
+# S4: Max Pooling
+layers.MaxPooling2D(pool_size=(2, 2), strides=2),
+
+# Flatten: Achatando o volume 5x5x16
+layers.Flatten(),
+
+# F5 e F6: Camadas Totalmente Conectadas (Dense)
+layers.Dense(120, activation='relu'),
+layers.Dense(84, activation='relu'),
+
+# Saída: 10 classes
+layers.Dense(num_classes, activation='softmax')
+])
+return model
+
+lenet = build_lenet5()
+lenet.summary()
+\end{lstlisting}
+
+\section{Resumo}
+
+Este capítulo aborda as \textbf{principais operações utilizadas em Redes Neurais Convolucionais (CNNs)}, explicando como elas afetam a \textbf{dimensionalidade dos dados}, a \textbf{extração de características} e a \textbf{eficiência do modelo}. O foco está em \textbf{padding}, \textbf{stride}, \textbf{múltiplos canais}, \textbf{convoluções 1×1}, \textbf{pooling} e na \textbf{organização de uma CNN completa}.
+
+Inicialmente, é apresentado o conceito de \textbf{padding}, técnica utilizada para controlar o tamanho da saída da convolução. Sem padding, a aplicação sucessiva de convoluções reduz rapidamente a dimensão espacial das imagens, causando perda de informação, especialmente nas bordas. O padding resolve esse problema ao adicionar pixels extras (geralmente zeros) ao redor da imagem de entrada, permitindo que todos os pixels contribuam para o aprendizado. Além disso, o padding ajuda a manter a \textbf{consistência dimensional} entre camadas, facilitando o projeto da rede.
+
+Em seguida, é discutido o \textbf{stride}, que define o passo do deslocamento do filtro durante a convolução. Um stride maior que 1 reduz a resolução da saída e o custo computacional, mas pode causar perda de informação se usado de forma inadequada. Por isso, destaca-se que o \textbf{uso combinado de stride e padding} é essencial para equilibrar eficiência e preservação de informações relevantes.
+
+Outro ponto importante é o tratamento de \textbf{múltiplos canais de entrada}, comum em imagens reais, como imagens RGB. Nesses casos, o kernel de convolução precisa ter a mesma quantidade de canais da entrada. A convolução é realizada separadamente em cada canal, e os resultados são somados para gerar um \textbf{feature map bidimensional}. Para ampliar a capacidade de representação, as CNNs utilizam \textbf{múltiplos filtros}, produzindo \textbf{múltiplos canais de saída}, onde cada canal aprende a detectar um tipo distinto de característica.
+
+Também introduz-se a \textbf{convolução 1×1}, que atua exclusivamente na dimensão do canal. Embora não capture relações espaciais entre pixels vizinhos, essa operação permite combinar e transformar os canais de entrada em novos canais de saída. A convolução 1×1 pode ser vista como uma \textbf{camada totalmente conectada aplicada a cada pixel}, sendo muito utilizada para \textbf{reduzir ou expandir a profundidade} da rede e controlar o número de parâmetros.
+
+Em seguida, são apresentadas as \textbf{operações de pooling}, cujo objetivo é reduzir gradualmente a resolução espacial das representações internas, aumentando o \textbf{receptive field efetivo} e tornando a rede mais robusta a pequenas variações de posição. As camadas de pooling não possuem parâmetros treináveis e operam de forma determinística. Os dois principais tipos discutidos são:
+
+\begin{itemize}
+	\item \textbf{Max pooling}, que seleciona o valor máximo da região e enfatiza as características mais proeminentes;
+	\item \textbf{Average pooling}, que calcula a média dos valores da região, produzindo representações mais suaves e menos sensíveis a ruído e outliers.
+\end{itemize}
+
+Por fim, mostra-se como essas operações são combinadas na construção de uma \textbf{CNN completa}, utilizando a \textbf{LeNet-5} como exemplo clássico. A arquitetura ilustra o padrão típico das CNNs: alternância entre \textbf{convolução, função de ativação e pooling}, com \textbf{redução progressiva da resolução espacial} e \textbf{aumento do número de canais}, seguida por camadas totalmente conectadas responsáveis pela decisão final.
+
+Em síntese, as operações apresentadas formam a base do funcionamento das CNNs, permitindo extrair representações hierárquicas das imagens de forma eficiente, robusta e escalável, sendo fundamentais para aplicações modernas de visão computacional.
+
+
+\subsection{Mapa Mental}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{"Cursos/05 - Redes Neurais e Deep Learning/imagens/MapaMentalCNNOperacoes.png"}
+	\caption{Mapa Mental Operações em Redes Neurais Convolucionais (CNNs)}
+	\label{fig:mapamentalcnnoperacoes}
+\end{figure}
