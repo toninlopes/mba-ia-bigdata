@@ -1,0 +1,157 @@
+\chapter{Aprendizado por Reforço}
+
+O Aprendizado por Reforço (Reinforcement Learning - RL) é a terceira grande área do Machine Learning, ao lado do Supervisionado e Não Supervisionado. Aqui, o foco não é prever um rótulo ou encontrar padrões escondidos, mas sim \textbf{tomar decisões sequenciais}.
+
+É a forma como ensinamos IAs a jogar videogame, controlar braços robóticos ou otimizar investimentos financeiros.
+
+A ideia central é inspirada na psicologia behaviorista: um \textbf{Agente} interage com um \textbf{Ambiente} e aprende através de \textbf{tentativa e erro}, recebendo \textbf{Recompensas} ou \textbf{Punições}.
+
+Imagine ensinar um cachorro a sentar:
+
+\begin{itemize}
+	\item Se ele senta, ganha um petisco (Recompensa positiva);
+	\item Se ele corre, não ganha nada (Recompensa neutra/negativa).
+\end{itemize}
+
+Com o tempo, ele associa a ação de sentar à recompensa.
+
+Para modelar esse aprendizado, usamos cinco elementos fundamentais:
+
+\begin{enumerate}
+	\item \textbf{Agente (Agent):} O "cérebro" da IA que toma as decisões;
+	\item \textbf{Ambiente (Environment):} O mundo onde o agente atua (ex: o mapa de um jogo);
+	\item \textbf{Estado ($s$):} A situação atual do agente (ex: a posição atual no mapa);
+	\item Ação ($a$): O que o agente faz (ex: mover para cima, baixo, esquerda ou direita);
+	\item \textbf{Recompensa ($r$):} O feedback do ambiente (pode ser +1 por ganhar pontos ou -1 por bater na parede).
+\end{enumerate}
+
+
+\noindent\textbf{O Objetivo Final: A Política ($\pi$)}
+
+O objetivo do Agente não é apenas ganhar a recompensa imediata, mas maximizar a \textbf{recompensa total acumulada} ao longo do tempo.
+
+Para isso, ele desenvolve uma \textbf{Política ($\pi$)}: uma estratégia que diz qual é a melhor ação a tomar em cada estado possível.
+
+$$G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \dots$$
+
+\textit{(Onde  é o fator de desconto, que define se o agente valoriza mais a recompensa imediata ou a de longo prazo).}
+
+
+\noindent\textbf{Exemplo Prático: O Dilema Exploração vs. Explotação}
+
+Este é o desafio clássico do Aprendizado por Reforço:
+
+\begin{itemize}
+	\item \textbf{Exploração (Exploration):} Tentar ações novas para descobrir se elas levam a recompensas melhores (arriscar um caminho desconhecido no jogo);
+	\item \textbf{Explotação (Exploitation):} Repetir ações que já funcionaram no passado para garantir a recompensa (seguir o caminho que você já sabe que tem moedas).
+\end{itemize}
+
+Uma boa IA precisa equilibrar os dois: explorar no início e explotar quando já conhece bem o ambiente.
+
+
+\section{Q-Learning}
+
+O \textbf{Q-Learning} é um dos algoritmos mais fundamentais e populares do Aprendizado por Reforço. Ele é um algoritmo \textbf{off-policy} e baseado em valor, o que significa que ele tenta aprender o valor de cada ação em cada estado para encontrar a estratégia ideal.
+
+Imagine que o agente possui um "guia" chamado \textbf{Q-Table} (Tabela Q). Nesta tabela, as linhas representam os \textbf{Estados} e as colunas as \textbf{Ações}. Cada célula da tabela contém um valor numérico (o valor \textbf{Q}), que representa a qualidade (o quão "bom" é) de tomar aquela ação naquele estado específico.
+
+\begin{itemize}
+	\item \textbf{Q(s, a):} Representa a recompensa total esperada que o agente receberá se tomar a ação  estando no estado  e seguir a melhor política a partir daí;
+	\item \textbf{No início:} A tabela está cheia de zeros (o agente não sabe nada);
+	\item \textbf{Ao final:} A tabela indica o caminho das pedras para a vitória.
+\end{itemize}
+
+
+\subsection{A Fórmula de Atualização (Equação de Bellman)}
+
+O segredo do Q-Learning é como ele atualiza esses valores conforme o agente interage com o ambiente. Ele usa uma versão da \textbf{Equação de Bellman}:
+
+$$Q(s, a) \leftarrow Q(s, a) + \alpha [R + \gamma \max_{a'} Q(s', a') - Q(s, a)]$$
+
+Tradução da lógica:
+
+\begin{itemize}
+	\item \textbf{Valor Atual ($Q(s, a)$)}: O que eu já achava que essa ação valia;
+	\item \textbf{Aprendizado ($\alpha$):} A taxa com que aceito novas informações;
+	\item \textbf{O Alvo:} A recompensa imediata ($R$) somada ao melhor valor futuro que posso conseguir no próximo estado ($s'$), com um desconto ($\gamma$);
+	\item \textbf{O Erro Temporal:} A diferença entre o que aconteceu (Alvo) e o que eu esperava (Valor Atual).
+\end{itemize}
+
+
+\subsection{Exemplo Prático: O Labirinto}
+
+Imagine um robô em um labirinto 4x4.
+
+\begin{itemize}
+	\item \textbf{Estados:} Cada quadrado do labirinto;
+	\item \textbf{Ações:} Cima, Baixo, Esquerda, Direita;
+	\item \textbf{Recompensas:} -1 para cada passo (incentiva rapidez), +10 se chegar na saída, -10 se cair num buraco.
+\end{itemize}
+
+O robô começa batendo nas paredes. Quando ele finalmente chega na saída por sorte, ele recebe os +10. Na próxima vez que ele estiver no quadrado vizinho à saída, o valor Q desse quadrado aumentará. Gradualmente, esse valor "vaza" de volta para o início do labirinto, criando uma trilha de valores altos que o robô passará a seguir.
+
+
+\section{Deep Reinforcement Learning}
+
+O \textbf{Deep Reinforcement Learning (Deep RL)} é a união do \textbf{Aprendizado por Reforço} (tomada de decisão) com o \textbf{Deep Learning} (reconhecimento de padrões).
+
+Essa combinação resolve o maior problema do RL clássico: a \textbf{escalabilidade}. No Q-Learning tradicional, precisávamos de uma tabela para guardar todos os estados. Mas como lidar com um robô que tem sensores infinitos ou um jogo de Atari com milhões de combinações de pixels? A resposta é: \textbf{trocar a tabela por uma Rede Neural}.
+
+Em vez de consultar uma tabela para saber o valor , passamos o \textbf{estado} (como os pixels de uma tela) por uma rede neural (geralmente uma \textbf{CNN}). A rede, então, prevê o valor  para cada ação possível.
+
+\begin{itemize}
+	\item \textbf{Entrada:} O estado atual (ex: imagem do jogo);
+	\item \textbf{Saída:} Um vetor de valores , um para cada ação (ex: pular, correr, atirar).
+\end{itemize}
+
+Isso permite que a IA generalize: se ela vir uma situação parecida com algo que já aprendeu, ela saberá o que fazer, mesmo que nunca tenha visto aquele exato conjunto de pixels antes.
+
+
+\subsection{Deep Q-Networks (DQN): A Revolução da DeepMind}
+
+Em 2013, a DeepMind publicou um artigo onde uma IA aprendeu a jogar vários jogos de Atari apenas "olhando" para a tela. Eles introduziram duas técnicas cruciais para estabilizar o treino:
+
+\begin{enumerate}
+	\item \textbf{Experience Replay (Replay de Experiência):} O agente guarda suas memórias recentes (Estado, Ação, Recompensa, Próximo Estado) em um banco de dados e treina a rede sorteando amostras aleatórias desse banco. Isso quebra a correlação entre experiências consecutivas e torna o aprendizado mais estável;
+	\item \textbf{Target Network (Rede Alvo):} Usamos duas redes neurais idênticas. Uma é atualizada constantemente, e a outra (a Alvo) é mantida fixa por um tempo para servir como uma referência estável para o cálculo do erro.
+\end{enumerate}
+
+\subsection{Exemplo Prático: Aprender a dirigir}
+
+Imagine um carro autônomo em um simulador:
+
+\begin{enumerate}
+	\item \textbf{Visão:} A câmera envia 30 quadros por segundo para uma CNN;
+	\item \textbf{Raciocínio:} A rede calcula que "virar à direita" tem um valor  alto porque evita um obstáculo à frente;
+	\item \textbf{Ação:} O carro vira;
+	\item \textbf{Feedback:} Se o carro permanece na pista, a rede recebe uma recompensa positiva e reforça aquela conexão neural.
+\end{enumerate}
+
+
+\section{Resumo}
+
+Os três principais assuntos abordam os fundamentos do \textbf{Aprendizado por Reforço (Reinforcement Learning – RL)}, evoluindo do arcabouço conceitual básico até a aplicação de \textbf{Redes Neurais Profundas} no \textbf{Deep Reinforcement Learning (DRL)}.
+
+No Aprendizado por Reforço, um \textbf{agente} aprende a tomar decisões por meio da interação com um \textbf{ambiente}, recebendo \textbf{recompensas} como feedback. O problema é formalizado a partir dos conceitos de \textbf{estado, ação, recompensa, política} e \textbf{função de valor}. O objetivo do agente é \textbf{maximizar a recompensa acumulada ao longo do tempo}, considerando não apenas ganhos imediatos, mas também recompensas futuras, controladas por um \textbf{fator de desconto}. Um conceito fundamental é o \textbf{Estado de Markov}, no qual o estado atual contém toda a informação necessária para a tomada de decisão.
+
+O \textbf{Q-Learning} é apresentado como um algoritmo clássico de Aprendizado por Reforço \textbf{baseado em valor}. Ele aprende uma função ( Q(s,a) ), que representa a qualidade de executar uma ação \textit{a} em um estado \textit{s}. O aprendizado ocorre por meio da atualização iterativa dessa função com base na recompensa recebida e na melhor estimativa de recompensa futura. O Q-Learning é um algoritmo \textbf{off-policy}, pois aprende a política ótima independentemente da política utilizada para explorar o ambiente.
+
+Um aspecto central do Q-Learning é o dilema entre \textbf{exploração e exploitação}. Explorar significa testar novas ações para adquirir conhecimento sobre o ambiente, enquanto exploitar significa escolher ações que já apresentam altos valores de Q. Estratégias como a \textbf{política e-greedy} são utilizadas para equilibrar esses dois comportamentos, evitando que o agente fique preso a soluções subótimas ou demore excessivamente para convergir.
+
+Apesar de sua simplicidade e importância teórica, o Q-Learning tradicional apresenta limitações práticas, pois depende de uma \textbf{tabela Q}, que não escala bem para ambientes com grande número de estados ou estados contínuos. Essa limitação motiva a introdução do \textbf{Deep Reinforcement Learning (DRL)}.
+
+No DRL, a função Q deixa de ser representada por uma tabela e passa a ser \textbf{aproximada por uma rede neural profunda}, dando origem ao modelo conhecido como \textbf{Deep Q-Network (DQN)}. A DQN combina Aprendizado por Reforço com \textbf{Redes Neurais Convolucionais (CNNs)}, permitindo que o agente aprenda diretamente a partir de \textbf{dados de alta dimensionalidade}, como imagens.
+
+Para tornar o treinamento estável, a DQN introduz dois mecanismos fundamentais: o \textbf{Experience Replay}, que armazena experiências passadas e as amostra aleatoriamente para reduzir correlação temporal, e a \textbf{Target Network}, que mantém uma rede separada para o cálculo dos valores-alvo, evitando oscilações bruscas durante o aprendizado. Além disso, técnicas de pré-processamento e normalização das recompensas são utilizadas para melhorar a eficiência do treinamento.
+
+Os resultados clássicos apresentados mostram que agentes baseados em DQN foram capazes de aprender políticas eficazes em jogos do Atari 2600, superando métodos tradicionais e, em alguns casos, alcançando desempenho comparável ao humano.
+
+
+\subsection{Mapa Mental}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{"Cursos/05 - Redes Neurais e Deep Learning/imagens/MapaMentalAprendizadoReforco.png"}
+	\caption{Mapa Mental Aprendizado por Reforço}
+	\label{fig:mapamentalaprendizadoreforco}
+\end{figure}

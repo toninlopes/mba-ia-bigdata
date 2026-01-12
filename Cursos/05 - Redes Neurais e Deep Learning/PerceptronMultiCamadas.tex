@@ -1,0 +1,201 @@
+\chapter{Perceptron Multi-Camadas (MLP)}
+
+O \textbf{Perceptron Multicamadas (MLP)} é a evolução direta do Perceptron simples e o conceito fundamental que permitiu o ressurgimento das Redes Neurais e o nascimento do Deep Learning.
+
+Se o Perceptron simples era apenas um classificador linear, o MLP é uma \textbf{rede neural feedforward (de alimentação direta)} que pode resolver problemas complexos e não-lineares.
+
+\section{Estrutura do Perceptron Multicamadas (MLP)}
+
+O MLP é caracterizado pela presença de, no mínimo, três camadas de nós:
+
+\begin{enumerate}
+	\item \textbf{Camada de Entrada (Input Layer):} Recebe os dados brutos. Os nós nesta camada não realizam processamento, apenas distribuem os valores para a próxima camada.
+	\item \textbf{Camada(s) Oculta(s) (Hidden Layer):} É o "coração" da rede. Uma rede MLP deve ter pelo menos uma camada oculta.
+	\begin{itemize}
+		\item \textbf{Função:} Essas camadas extraem e transformam as características (features) dos dados de entrada em representações cada vez mais abstratas e complexas.
+		\item \textbf{Conexão:} Cada nó em uma camada oculta está tipicamente conectado a \textbf{todos} os nós da camada anterior e a \textbf{todos} os nós da camada subsequente (\textbf{fully connected} ou densa).
+		\item \textbf{Não-Linearidade:} Para que a camada oculta seja útil (e resolva problemas não-lineares como o XOR), seus neurônios devem usar \textbf{Funções de Ativação Não-Lineares} (como Sigmoide, Tangente Hiperbólica ou ReLU).
+	\end{itemize}
+	
+	\item \textbf{Camada de Saída (Output Layer):} Produz o resultado final da rede (previsão, classificação, etc.). O número de nós nesta camada depende da tarefa (e.g., um nó para regressão, $N$ nós para classificação em $N$ classes).
+\end{enumerate}
+
+
+\subsection{O Poder da Camada Oculta}
+
+A adição de uma ou mais camadas ocultas com funções de ativação não-lineares é o que confere ao MLP seu poder:
+
+\begin{itemize}
+	\item \textbf{Universalidade:} O Teorema da Aproximação Universal afirma que um MLP com apenas \textbf{uma} camada oculta e um número finito de neurônios pode aproximar \textbf{qualquer função contínua} com precisão arbitrária.
+	\item \textbf{Resolução do Problema XOR:} O MLP resolve problemas não-linearmente separáveis, como o XOR. A primeira camada oculta transforma as entradas não-lineares (que não podem ser separadas por uma linha) em um novo espaço de características onde elas \textbf{se tornam linearmente separáveis}. A camada de saída então aplica um separador linear a esse novo espaço.
+\end{itemize}
+
+
+\section{Algoritmo de Treinamento: Retropropagação (Backpropagation)}
+
+O Perceptron simples usava uma regra de atualização de pesos baseada no erro local, o que não funcionava bem com múltiplas camadas. O treinamento do MLP só se tornou prático com a redescoberta e a popularização do algoritmo de \textbf{Retropropagação do Erro (Backpropagation)} na década de 1980.
+
+A Backpropagation é essencialmente uma aplicação eficiente da \textbf{Regra da Cadeia} (do cálculo diferencial) para calcular o gradiente da função de custo (erro) em relação a \textbf{cada peso} na rede.
+
+O processo de treinamento do MLP envolve duas fases principais para cada exemplo de treinamento:
+
+\noindent\textit{1. Propagação Direta (Forward Pass)}
+
+\begin{enumerate}
+	\item Os dados de entrada ($x$) são alimentados na Camada de Entrada.
+	\item Os valores são propagados camada por camada, calculando as somas ponderadas e aplicando as funções de ativação, até chegar à Camada de Saída, produzindo a previsão ($\hat{y}$).
+	\item O \textbf{Erro ($E$)} é calculado, geralmente usando uma função de custo (Loss Function) que compara a previsão ($\hat{y}$) com o valor real desejado ($y$).
+\end{enumerate}
+
+
+\noindent\textit{2. Retropropagação (Backward Pass)}
+
+\begin{enumerate}
+	\item O erro calculado na Camada de Saída é \textbf{propagado de volta} (para trás) através da rede.
+	\item A Regra da Cadeia é usada para calcular a contribuição de cada peso (e viés) individual para o erro total. Essa contribuição é chamada de \textbf{Gradiente} ($\nabla E$).
+	\item \textbf{Atualização dos Pesos:} O otimizador (geralmente uma variação do \textbf{Gradiente Descendente}) usa o gradiente para ajustar cada peso na direção que \textbf{reduzirá o erro} na próxima iteração:
+	
+	$$\text{Novo Peso} = \text{Peso Antigo} - (\text{Taxa de Aprendizado} \times \text{Gradiente})$$
+	
+\end{enumerate}
+
+Este processo se repete por milhares de exemplos (e muitas epochs), fazendo com que os pesos convirjam para uma solução ideal, onde a rede consegue mapear entradas para saídas com alta precisão.
+
+
+\section{Resumo}
+
+O \textbf{Perceptron Multi-Camadas (MLP)} é uma das arquiteturas fundamentais das Redes Neurais Artificiais e base para a maioria dos modelos modernos de Deep Learning. Ele supera as limitações do Perceptron simples, permitindo aprender relações não lineares e resolver problemas complexos. Seu treinamento é realizado por meio do algoritmo \textbf{Backpropagation}, responsável pelo cálculo eficiente dos gradientes e pela atualização dos pesos.
+
+\noindent\textbf{1. O que é o MLP? (Visão Geral)}
+
+Um MLP é uma rede neural composta por:
+
+\begin{itemize}
+	\item \textbf{Camada de entrada}.
+	\item \textbf{Uma ou mais camadas ocultas}.
+	\item \textbf{Camada de saída}
+\end{itemize}
+
+É uma \textbf{rede totalmente conectada}, onde cada neurônio de uma camada se conecta a todos os neurônios da próxima.
+
+Seu poder vem de dois fatores:
+
+\begin{enumerate}
+	\item \textbf{Camadas ocultas} (capacidade de representar padrões complexos).
+	\item \textbf{Funções de ativação não lineares} (ReLU, sigmoide, tanh, softmax)
+\end{enumerate}
+
+
+\noindent\textit{2. Por que o MLP é necessário?}
+
+O Perceptron simples resolve apenas problemas \textbf{linearmente separáveis}. O MLP resolve esse limite porque:
+
+\begin{itemize}
+	\item Combina várias funções lineares através das camadas ocultas.
+	\item As ativações não lineares criam \textbf{fronteiras de decisão complexas}
+	\item Possui o Teorema da Aproximação Universal:
+	\subitem Um MLP com ao menos uma camada oculta pode aproximar qualquer função contínua.
+\end{itemize}
+
+Exemplo clássico: o MLP consegue resolver \textbf{XOR}, onde o Perceptron falha.
+
+
+\noindent\textit{3. Funcionamento Interno do MLP}
+
+Cada neurônio realiza duas etapas:
+
+\noindent A) Combinação Linear
+
+$$v = \sum x_i w_i + b$$
+
+\noindent B) Não Linearidade
+
+$$a = \phi(v)$$
+
+A saída da camada se torna entrada da camada seguinte, num processo chamado Forward Pass.
+
+
+\noindent\textit{4. Forward Pass (Propagação para Frente)}
+
+O processo consiste em:
+
+\begin{enumerate}
+	\item Receber entradas.
+	\item Calcular a combinação linear.
+	\item Aplicar a função de ativação.
+	\item Repetir até a camada final.
+\end{enumerate}
+
+O resultado final depende totalmente dos \textbf{pesos e biases}, mas \textbf{não há ajuste nessa fase}.
+
+
+\noindent\textit{5. Função de Custo}
+
+Para treinar, é preciso medir quão distante a saída da rede está da resposta correta.
+
+Exemplos:
+
+\begin{itemize}
+	\item \textbf{MSE (Mean Squared Error)}.
+	\item \textbf{Cross-Entropy} (recomendado em classificação).
+\end{itemize}
+
+A função de custo é a base para o cálculo dos gradientes.
+
+
+\noindent\textit{6. Backpropagation (Retropropagação do Erro)}
+
+O \textbf{Backpropagation} é o algoritmo que ajusta os pesos para minimizar o erro. Ele possui duas fases:
+
+\noindent A) Backward Pass (Retropropagação)
+
+\begin{itemize}
+	\item Calcula o gradiente da loss na camada de saída.
+	\item Propaga esse erro para trás.
+	\item Computa o erro em cada neurônio intermediário.
+\end{itemize}
+
+
+\noindent B) Atualização dos Pesos
+
+Usa o \textbf{Gradiente Descendente}:
+
+$$W_{\text{novo}} = W_{\text{antigo}} - \eta \frac{\partial C}{\partial W}$$
+
+$$b_{\text{novo}} = b_{\text{antigo}} - \eta \frac{\partial C}{\partial b}$$
+
+Onde:
+\begin{itemize}
+	\item $( \eta )$ = learning rate.
+	\item $( \partial C / \partial W )$ = gradiente da perda.
+\end{itemize}
+
+
+\noindent\textit{7. Modos de Treinamento}
+
+\begin{itemize}
+	\item \textbf{Batch:} atualiza após todos os exemplos.
+	\item \textbf{Online (Estocástico):} atualiza a cada exemplo.
+	\item \textbf{Mini-batch:} equilíbrio entre estabilidade e velocidade (o mais usado).
+\end{itemize}
+
+
+\noindent\textit{Por que o Backpropagation é tão importante?}
+
+\begin{itemize}
+	\item Tornou possível treinar redes profundas.
+	\item Resolve o cálculo dos gradientes de forma eficiente.
+	\item Permite treinar redes com \textbf{milhões de parâmetros}.
+	\item É a base do Deep Learning moderno, CNNs, RNNs e Transformers.
+\end{itemize}
+
+
+\noindent\textit{9. Limitações e Cuidados}
+
+\begin{itemize}
+	\item Necessidade de dados normalizados.
+	\item Risco de \textbf{overfitting} em redes grandes
+	\item Problemas de \textbf{vanishing/exploding gradients} (parcialmente resolvidos com ReLU)
+	\item Inicialização adequada é crucial.
+	\item Treinamento pode ser computacionalmente caro.
+\end{itemize}

@@ -1,0 +1,257 @@
+\chapter{Redes Neurais Recorrentes (RNNs)}
+
+As RNAs tradicionais (MLPs) e as CNNs que estudamos são redes \textbf{Feedforward}. Isso significa que a informação flui em uma única direção: da entrada para a saída.
+
+\begin{itemize}
+	\item \textbf{Independência dos Dados:} Elas tratam cada entrada como independente da anterior;
+	\item \textbf{Exemplo:} Se você mostrar a foto de uma maçã hoje e a de uma banana amanhã, para uma CNN, a maçã não influencia em nada o reconhecimento da banana. Elas não têm noção de "antes" ou "depois";
+	\item \textbf{Limitação:} Isso as torna ruins para dados onde a ordem importa, como frases (texto) ou batimentos cardíacos (séries temporais).
+\end{itemize}
+
+As Redes Neurais Recorrentes são projetadas para lidar com \textbf{dados sequenciais}. A grande diferença é que elas possuem conexões que apontam para trás, criando um \textbf{ciclo (loop)}.
+
+\begin{itemize}
+	\item \textbf{Memória Interna:} Em uma RNN, a saída de um neurônio em um determinado momento ($t$) é enviada de volta para ele mesmo como parte da entrada para o momento seguinte ($t+1$);
+	\item \textbf{Estado Oculto (Hidden State):} A rede mantém um "estado interno" que funciona como uma memória de curto prazo. Ela "lembra" o que processou anteriormente para ajudar a interpretar o que está processando agora.
+\end{itemize}
+
+
+\noindent\textbf{Analogia Prática: Lendo uma Frase}
+
+Imagine a frase: \textbf{"O céu está..."}
+
+\begin{enumerate}
+	\item \textbf{Uma RNA/CNN tradicional} veria as palavras como um conjunto. Ela teria dificuldade em entender que "está" depende diretamente de "céu";
+	\item \textbf{Uma RNN} processa "O", guarda na memória. Depois lê "céu", junta com a memória de "O". Quando chega em "está", ela sabe que o sujeito é "céu" e pode prever que a próxima palavra provavelmente é um adjetivo como "azul".
+\end{enumerate}
+
+\textbf{A ordem das palavras altera completamente o significado, e a RNN é a primeira arquitetura que respeita essa ordem.}
+
+
+\section{RNNs Simples}
+
+Para entender as \textbf{RNNs Simples} (também chamadas de \textbf{Vanilla RNNs}), precisamos focar na estrutura do \textbf{laço de repetição}. Enquanto em uma rede comum você tem uma entrada  gerando uma saída , na RNN temos uma entrada , uma saída  e um \textbf{estado oculto}  que viaja no tempo.
+
+Imagine uma célula que possui uma "caixa de memória" ao lado dela. Toda vez que ela processa uma nova informação, ela olha para essa caixa, mistura com o que acabou de receber e atualiza a caixa para o próximo passo.
+
+\begin{itemize}
+	\item \textbf{Entrada atual ($x_t$)}: A informação que chega no instante $t$ (ex: a palavra atual de uma frase);
+	\item \textbf{Estado Oculto Anterior ($h_{t-1}$)}: O que a rede "lembra" do passado;
+	\item \textbf{Novo Estado Oculto ($h_t$)}: A combinação da memória com a nova entrada.
+\end{itemize}
+
+
+\subsection{A Matemática: Unrolling (Desenrolando) no Tempo}
+
+Para treinar uma RNN, os pesquisadores costumam "desenrolar" a rede. Em vez de vê-la como um loop, nós a desenhamos como uma sequência de camadas idênticas ligadas umas às outras.
+
+A fórmula que define o estado oculto é:
+
+$$h_t = f(W_h h_{t-1} + W_x x_t + b)$$
+
+Onde:
+
+\begin{itemize}
+	\item $f$: Geralmente uma função de ativação tanh (para manter os valores entre -1 e 1);
+	\item $W_h$: Pesos aplicados à memória (passado);
+	\item $W_x$: Pesos aplicados à nova entrada (presente);
+	\item $b$: O viés (bias).
+\end{itemize}
+
+\subsection{Exemplo Prático: Previsão de Próxima Letra}
+
+Imagine que a rede está aprendendo a palavra \textbf{"SOL"}:
+
+\begin{enumerate}
+	\item \textbf{Tempo 1 ($t=1$)}: A rede recebe a letra "S". O estado anterior era vazio. Ela gera um estado oculto que guarda a informação "S".
+	\item \textbf{Tempo 2 ($t=2$)}: A rede recebe a letra "O". Ela combina o "O" com a memória do "S". Agora o estado oculto guarda "SO";
+	\item \textbf{Tempo 3 ($t=3$):} A saída da rede no tempo 2 (baseada no estado "SO") deve ser a letra "L".
+\end{enumerate}
+
+
+\subsection{Exemplo em Python (Keras/TensorFlow)}
+
+Nas bibliotecas modernas, implementar uma RNN simples é muito direto:
+
+\begin{lstlisting}[language=python]
+from tensorflow.keras import layers, models
+
+model = models.Sequential([
+	# Input_shape: (passos_de_tempo, caracteristicas_por_passo)
+	# Ex: 10 palavras por frase, cada palavra representada por um vetor de 32 numeros.
+	layers.SimpleRNN(units=64, input_shape=(10, 32)),
+
+	# Camada de saida para classificação
+	layers.Dense(1, activation='sigmoid')
+])
+
+model.summary()
+\end{lstlisting}
+
+
+\subsection{O Grande Problema: A Memória Curta}
+
+Apesar de brilhantes, as RNNs simples sofrem de um defeito fatal: o \textbf{Desaparecimento do Gradiente (Vanishing Gradient)}.
+
+Conforme a sequência fica longa (ex: um parágrafo inteiro), a influência da primeira palavra vai se diluindo tanto que, quando chegamos ao final, a rede já "esqueceu" o que aconteceu no início. Matematicamente, as multiplicações sucessivas fazem com que o sinal da memória desapareça.
+
+
+\chapter{Long Short-Term Memory (LSTM)}
+
+A \textbf{LSTM (Long Short-Term Memory)} é uma evolução genial das RNNs simples, projetada especificamente para resolver o problema do "esquecimento" em sequências longas. Se uma RNN simples é um bloco de notas que apaga as primeiras linhas conforme você escreve no final, a LSTM é um \textbf{arquivo organizado} com pastas, etiquetas e uma trituradora de papel.
+
+A grande inovação da LSTM é o \textbf{Cell State} (Estado da Célula). Imagine-o como uma linha de montagem ou uma autoestrada que atravessa toda a sequência. A informação pode fluir por ela com pouquíssimas alterações, o que permite que um detalhe importante do início de um texto chegue intacto ao final.
+
+Para gerenciar o que entra e o que sai dessa autoestrada, a LSTM usa \textbf{Portões (Gates)}, que são filtros baseados na função sigmoide (que dá valores entre 0 e 1, funcionando como uma torneira: aberta, fechada ou entreaberta).
+
+
+\subsection{Os Três Portões Fundamentais}
+
+Dentro de uma célula LSTM, acontecem três decisões críticas:
+
+\begin{enumerate}
+	\item \textbf{Portão de Esquecimento (Forget Gate):} Decide qual informação do passado não é mais útil e deve ser jogada fora.
+	\subitem \textbf{Exemplo:} Em um texto, se o sujeito mudar de "O rei" para "A rainha", o portão de esquecimento remove o gênero masculino da memória.
+	
+	\item \textbf{Portão de Entrada (Input Gate):} Decide qual informação nova é relevante para ser guardada no Cell State.
+	\subitem \textbf{Exemplo:} Guardar que o novo sujeito é feminino.
+	
+	\item \textbf{Portão de Saída (Output Gate):} Decide o que será mostrado como resultado (output) e passado para o próximo estado oculto.
+\end{enumerate}
+
+
+\subsection{As Fórmulas (Simplificadas)}
+
+A LSTM é matematicamente mais densa que a RNN, mas a lógica segue este fluxo:
+
+\begin{itemize}
+	\item \textbf{Esquecimento:} $f_t = \sigma(W_f \cdot [h_{t-1}, x_t] + b_f)$;
+	\item \textbf{Atualização:} $C_t = f_t * C_{t-1} + i_t * \tilde{C}_t$:
+	\subitem Aqui o novo estado $C_t$ é o resultado do que sobrou do passado mais o que entrou de novo.
+\end{itemize}
+
+
+\subsection{Exemplo Prático: Análise de Sentimento}
+
+Imagine que você está analisando uma crítica de filme de 500 palavras.
+
+\begin{itemize}
+	\item No início, o autor diz: \textbf{"Apesar do começo lento..."};
+	\item Nas 400 palavras seguintes, ele descreve detalhes técnicos chatos;
+	\item No final, ele conclui: \textbf{"...é o melhor filme que já vi."}
+\end{itemize}
+
+Uma RNN simples esqueceria o "Apesar do começo lento" e se perderia nos detalhes técnicos. A \textbf{LSTM} usaria o portão de esquecimento para ignorar os detalhes irrelevantes e manteria a conexão entre o "Apesar" inicial e o elogio final para entender que a crítica é positiva.
+
+
+\subsection{Exemplo em Python (Keras/TensorFlow)}
+
+Implementar uma LSTM é quase tão simples quanto uma RNN, mudando apenas a classe da camada:
+
+\begin{lstlisting}[language=python]
+from tensorflow.keras import layers, models
+
+model = models.Sequential([
+	# units=128 define a dimensao do espaço de memoria interna
+	layers.LSTM(units=128, input_shape=(50, 64), return_sequences=False),
+
+	layers.Dense(64, activation='relu'),
+	layers.Dense(1, activation='sigmoid') # Ex: Classificação binaria
+])
+
+model.summary()
+\end{lstlisting}
+
+
+\chapter{Gated Recurrent Unit (GRU)}
+
+A \textbf{GRU (Gated Recurrent Unit)}, introduzida em 2014 por Cho., é uma variante da LSTM que se tornou extremamente popular por ser mais simples e eficiente. Se a LSTM é um arquivo com três portões e um sistema complexo de armazenamento, a GRU é uma versão \textbf{minimalista e otimizada} que faz quase o mesmo trabalho com menos peças.
+
+A grande diferença da GRU em relação à LSTM é a redução da complexidade estrutural:
+
+\begin{itemize}
+	\item \textbf{Sem Cell State:} A GRU elimina o Cell State (aquela "autoestrada" separada) e usa apenas o \textbf{Hidden State} (Estado Oculto) para transferir informações;
+	
+	\item \textbf{Apenas Dois Portões:} Enquanto a LSTM tem três portões (Forget, Input, Output), a GRU combina o de esquecimento e o de entrada em um único portão, resultando em apenas dois:
+	\subitem \textbf{Update Gate (Portão de Atualização):} Decide quanto da informação anterior deve ser mantida e quanto da nova informação deve ser adicionada;
+	\subitem \textbf{Reset Gate (Portão de Reinicialização):} Decide o quanto da informação passada deve ser esquecida para processar a nova entrada.
+\end{itemize}
+
+
+\subsection{Por que usar GRU em vez de LSTM?}
+
+Existem três motivos principais que levam engenheiros a escolherem a GRU:
+
+\begin{enumerate}
+	\item \textbf{Eficiência Computacional:} Como possui menos parâmetros (menos matrizes de pesos), o treinamento é mais rápido e exige menos memória;
+	\item \textbf{Desempenho em Datasets Pequenos:} Com menos parâmetros para ajustar, a GRU tende a convergir mais rápido e corre menos risco de overfitting em conjuntos de dados menores;
+	\item \textbf{Resultados Similares:} Em muitos casos práticos (como tradução de texto ou previsão de séries temporais), a GRU alcança uma precisão quase idêntica à da LSTM.
+\end{enumerate}
+
+
+\subsection{Funcionamento Matemático (Intuição)}
+
+A lógica da GRU pode ser resumida em uma decisão de "mistura":
+
+\begin{itemize}
+	\item O Update Gate ($z_t$) atua como um interruptor. Se $z_t$ for 1, a rede mantém a memória antiga. Se for 0, ela aceita a nova proposta de estado.
+	\item Isso permite que a rede mantenha informações de passos de tempo muito distantes, combatendo o desaparecimento do gradiente de forma similar à LSTM.
+\end{itemize}
+
+
+\subsection{Exemplo Prático: Previsão de Preços de Ações}
+
+Imagine que você está prevendo o preço de uma ação baseando-se no histórico dos últimos 30 dias:
+
+\begin{itemize}
+	\item O \textbf{Reset Gate} pode ignorar variações bruscas e ruidosas que ocorreram há 25 dias se elas não forem mais relevantes para a tendência atual;
+	\item O \textbf{Update Gate} garante que a tendência de alta detectada no início da semana continue influenciando a previsão de hoje, mesmo após vários dias de pequenas flutuações.
+\end{itemize}
+
+
+\subsection{Exemplo em Python (Keras/TensorFlow)}
+
+A implementação segue o mesmo padrão modular das anteriores:
+
+\begin{lstlisting}[language=python]
+from tensorflow.keras import layers, models
+
+model = models.Sequential([
+	# Input: 30 dias de historico, com 5 variaveis por dia (preco, volume, etc)
+	layers.GRU(units=64, input_shape=(30, 5), return_sequences=True),
+	layers.GRU(units=32),
+
+	layers.Dense(1) # Saida: Preco previsto
+])
+
+model.summary() # Note que o numero de parametros e menor que em uma LSTM equivalente
+\end{lstlisting}
+
+
+\chapter{Resumo}
+
+As \textbf{Redes Neurais Recorrentes (RNNs)} são uma classe de modelos neurais projetados para lidar com \textbf{dados sequenciais}, nos quais a \textbf{ordem dos elementos} e o \textbf{contexto temporal} são fundamentais. Diferentemente das redes feed-forward tradicionais, como MLPs e CNNs, as RNNs possuem \textbf{conexões recorrentes}, permitindo que informações de estados anteriores influenciem o processamento atual.
+
+O princípio central de uma RNN é o \textbf{estado oculto}, que funciona como uma memória dinâmica. A cada passo temporal, a rede recebe uma nova entrada e atualiza seu estado oculto com base na entrada atual e no estado anterior. Dessa forma, a saída da RNN depende não apenas da entrada presente, mas também do \textbf{histórico da sequência}, tornando-a adequada para tarefas como \textbf{modelagem de linguagem}, \textbf{previsão de séries temporais}, \textbf{reconhecimento de fala}, \textbf{tradução automática} e \textbf{análise de sinais}.
+
+O treinamento das RNNs é realizado por meio do \textbf{Backpropagation Through Time (BPTT)}, no qual a rede é desenrolada ao longo do tempo e os gradientes são propagados através dos passos temporais. Embora esse método permita o aprendizado de dependências temporais, ele apresenta limitações importantes, como os problemas de \textbf{desaparecimento e explosão do gradiente}, que dificultam o aprendizado de dependências de longo prazo em sequências extensas.
+
+As \textbf{RNNs simples} são capazes de capturar dependências de curto prazo e podem ser suficientes para tarefas mais simples, como o preenchimento de pequenas lacunas em textos ou previsões baseadas em janelas temporais reduzidas. No entanto, à medida que a distância temporal entre informações relevantes aumenta, o desempenho dessas redes tende a se degradar.
+
+Para superar essas limitações, foram propostas arquiteturas recorrentes mais avançadas, como as \textbf{LSTMs (Long Short-Term Memory)}. As LSTMs introduzem uma \textbf{célula de memória (cell state)} e um conjunto de \textbf{portões} que controlam o fluxo de informações ao longo do tempo. O \textbf{portão de esquecimento} decide quais informações antigas devem ser descartadas, o \textbf{portão de entrada} define quais novas informações devem ser armazenadas e o \textbf{portão de saída} controla quais informações da memória serão utilizadas para gerar a saída. Esse mecanismo permite preservar informações relevantes por longos períodos e reduzir significativamente o problema do desaparecimento do gradiente.
+
+As \textbf{GRUs (Gated Recurrent Units)} surgem como uma alternativa mais simples às LSTMs. Elas combinam memória e estado oculto em uma única estrutura e utilizam apenas dois portões principais: \textbf{reset} e \textbf{update}. Com menos parâmetros, as GRUs são geralmente mais rápidas de treinar e apresentam desempenho comparável ao das LSTMs em diversas aplicações.
+
+Outra extensão importante é o \textbf{LSTM Bidirecional (Bi-LSTM)}, que processa a sequência tanto no sentido direto quanto no reverso. Essa abordagem permite capturar simultaneamente \textbf{contexto passado e futuro}, sendo especialmente útil em tarefas de Processamento de Língua Natural e reconhecimento de padrões em sequências complexas.
+
+Em síntese, as RNNs e suas variações (RNN simples, LSTM, GRU e Bi-LSTM) constituem uma família poderosa de modelos para o aprendizado de dependências temporais. Entretanto, apesar de sua expressividade, essas arquiteturas apresentam desafios relacionados à \textbf{eficiência computacional} e ao \textbf{treinamento em sequências longas}, motivando o desenvolvimento de abordagens alternativas, como as \textbf{Redes Neurais Convolucionais Temporais (TCNs)}.
+
+
+\subsection{Mapa Mental}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{"Cursos/05 - Redes Neurais e Deep Learning/imagens/MapaMentalRNN.png"}
+	\caption{Mapa Mental Redes Neurais Recorrentes}
+	\label{fig:mapamentalrnn}
+\end{figure}

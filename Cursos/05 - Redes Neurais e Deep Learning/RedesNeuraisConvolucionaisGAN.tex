@@ -1,0 +1,159 @@
+\chapter{Introdução às Redes Adversárias Generativas (GANs)}
+
+As \textbf{GANs (Generative Adversarial Networks)}, propostas por Ian Goodfellow em 2014, são baseadas em um conceito de "jogo" entre duas redes neurais.
+
+\noindent\textbf{O Conceito: O Jogo de Gato e Rato}
+
+Imagine a seguinte situação: um \textbf{falsificador} de obras de arte e um \textbf{especialista} do museu.
+
+\begin{enumerate}
+	\item O \textbf{falsificador} tenta criar um quadro que pareça um original de Van Gogh;
+	\item O \textbf{especialista} analisa o quadro e tenta dizer se ele é \textbf{Real} (do museu) ou \textbf{Falso} (do falsificador);
+	\item No início, o falsificador é péssimo, e o especialista detecta a fraude facilmente;
+	\item Com o feedback ("isso foi detectado por causa da pincelada"), o falsificador melhora;
+	\item À medida que o falsificador melhora, o especialista também tem que ficar mais atento para não ser enganado.
+\end{enumerate}
+
+\textbf{Esse duelo faz com que ambas as redes fiquem incrivelmente boas em suas tarefas.}
+
+\chapter{As Duas Peças da GAN}
+
+Uma GAN é composta por duas redes neurais distintas que treinam simultaneamente:
+
+\begin{enumerate}
+	\item \textbf{O Gerador (Generator):}
+	\subitem \textbf{Função:} Criar dados (imagens, áudio, etc.) que pareçam reais;
+	\subitem \textbf{Entrada:} Ele recebe um "ruído aleatório" (um vetor de números aleatórios);
+	\subitem \textbf{Objetivo:} Enganar o Discriminador, fazendo-o acreditar que o dado gerado é autêntico.
+	
+	\item \textbf{O Discriminador (Discriminator):}
+	\subitem \textbf{Função:} Atuar como um classificador binário;
+	\subitem \textbf{Entrada:} Ele recebe tanto dados \textbf{reais} (do conjunto de treinamento) quanto dados \textbf{falsos} (vindos do Gerador);
+	\subitem \textbf{Objetivo:} Distinguir corretamente entre o que é real e o que é gerado.
+\end{enumerate}
+
+\noindent\textbf{Como o treinamento funciona?}
+
+O treinamento das GANs é um \textbf{Equilíbrio de Nash} da teoria dos jogos. Ele utiliza uma função de perda (\textbf{loss function}) única:
+
+\begin{enumerate}
+	\item \textbf{Para o Discriminador:} O erro é alto se ele classificar um dado real como falso ou um dado falso como real;
+	\item \textbf{Para o Gerador:} O erro é alto se o Discriminador conseguir identificar que o seu dado é falso.
+\end{enumerate}
+
+O treinamento termina quando o Gerador cria imagens tão perfeitas que o Discriminador não consegue mais distinguir a diferença (a probabilidade de acerto do especialista cai para 50\%, ou seja, puro chute).
+
+
+\section{A Matemática das GANs}
+
+Entender a matemática das GANs é mergulhar na \textbf{Teoria dos Jogos}. O treinamento não é uma simples minimização de erro (como no caso de um classificador comum), mas sim um jogo de \textbf{soma zero} onde o ganho de um jogador é necessariamente a perda do outro.
+
+\noindent\textbf{A Função de Custo Minimax}
+
+A função objetivo que governa uma GAN é baseada na \textbf{Entropia Cruzada Binária}. Matematicamente, ela é expressa como:
+
+$
+\min_{G} \max_{D} V(D, G) = \mathrm{E}_{x \sim p_{data}(x)} [\log D(x)] + \mathrm{E}_{z \sim p_z(z)} [\log(1 - D(G(z)))]
+$
+
+Vamos "traduzir" essa equação para o português:
+
+\begin{enumerate}
+	\item \textbf{O papel do Discriminador ($D$): Ele quer maximizar essa função:}
+	\subitem $\mathrm{E}_{x \sim p_{data}(x)} [\log D(x)]$: O Discriminador tenta atribuir o valor 1 (Real) para dados que vêm da distribuição real ($x$).
+	\subitem $\log(1 - D(G(z)))$: Ele tenta atribuir o valor 0 (Falso) para dados gerados ($G(z)$). Se $D(G(z))$ for 0, então $(1-0)=1$, e o logaritmo é maximizado.
+	
+	\item \textbf{O papel do Gerador ($G$): Ele quer minimizar essa função:}
+	\subitem O Gerador foca apenas na segunda parte da equação. Ele quer que $D(G(z))$ seja o mais próximo possível de 1 (ou seja, ele quer que o especialista ache que o quadro falso é real). Se $D(G(z)) = 1$, então $(1-1)=0$, e o logaritmo vai para menos infinito, minimizando o valor para o gerador.
+\end{enumerate}
+
+
+\noindent\textbf{O Processo de Otimização}
+
+Diferente de um modelo padrão onde descemos uma montanha até o vale (ponto mínimo), na GAN estamos buscando um \textbf{Equilíbrio de Nash}.
+
+\begin{itemize}
+	\item \textbf{Treino do Discriminador:} Congelamos o Gerador e atualizamos os pesos do Discriminador para que ele aprenda a distinguir melhor as amostras;
+	\item \textbf{Treino do Gerador:} Congelamos o Discriminador e atualizamos o Gerador. O Gerador "vê" o gradiente do erro do Discriminador e aprende em qual direção deve ajustar seus pesos para produzir imagens mais convincentes.
+\end{itemize}
+
+
+\noindent\textbf{O Problema do Gradiente no Início do Treino}
+
+No início, o Gerador é tão ruim que o Discriminador o rejeita com 100\% de certeza. Matematicamente, a curva da função  fica muito "plana" (gradiente desaparecendo).
+
+Para resolver isso, na prática, os pesquisadores costumam treinar o Gerador para \textbf{maximizar}  em vez de minimizar o logaritmo de menos a probabilidade. É o mesmo objetivo final, mas fornece gradientes muito mais fortes no início, quando o gerador mais precisa aprender.
+
+
+\noindent\textbf{Desafio de Intuição}
+
+Se o \textbf{Discriminador} for "esperto" demais e ficar perfeito rápido demais (taxa de acerto de 100\%), o \textbf{Gerador} nunca receberá informações úteis sobre como melhorar, pois qualquer pequena mudança que ele faça continuará sendo classificada como 0.
+
+
+\chapter{Por que as GANs são tão instáveis e o que é o "Mode Collapse"?}
+
+Treinar uma GAN é amplamente considerado uma das tarefas mais difíceis em Deep Learning. Enquanto em uma rede classificadora comum você busca um ponto de mínimo global, na GAN você busca um equilíbrio entre dois adversários. Se um deles "vence" rápido demais ou se perde, o sistema todo entra em colapso.
+
+Vamos explorar os principais desafios técnicos.
+
+\noindent\textbf{1. Instabilidade e Falta de Convergência}
+
+Diferente de outros modelos, a perda (loss) de uma GAN não indica necessariamente que o modelo está melhorando.
+
+\begin{itemize}
+	\item \textbf{O Oscilador:} O Gerador e o Discriminador podem ficar "andando em círculos", onde o Gerador aprende um truque, o Discriminador aprende a detectar esse truque, e o Gerador volta a cometer erros antigos;
+	\item \textbf{Desequilíbrio de Poder:} Se o Discriminador for muito forte, o gradiente desaparece e o Gerador não aprende nada. Se o Discriminador for muito fraco, o Gerador pode criar lixo e o Discriminador ainda assim dizer que está "bom".
+\end{itemize}
+
+\noindent\textbf{2. Mode Collapse (Colapso de Modo)}
+
+Este é o problema mais comum e frustrante.
+
+\begin{itemize}
+	\item \textbf{O que é:} Ocorre quando o Gerador descobre uma única imagem (ou um pequeno grupo de imagens) que engana o Discriminador com muita eficiência. Em vez de aprender a diversidade do mundo (ex: criar vários tipos de cachorros), o Gerador passa a produzir \textbf{exatamente a mesma imagem} repetidamente para cada entrada aleatória;
+	\item \textbf{Por que acontece?} Se o Gerador encontra uma "falha" no Discriminador, ele se fixa nela. O Discriminador eventualmente aprende que aquela imagem específica é falsa, mas o Gerador apenas muda para outra imagem fixa em vez de aprender a distribuição completa dos dados.
+\end{itemize}
+
+
+\noindent\textbf{3. Desaparecimento do Gradiente (Vanishing Gradient)}
+
+Se o Discriminador for perfeito demais, a função de custo se torna plana. Imagine tentar aprender a jogar dardos, mas o seu instrutor apenas diz "Errado" ou "Certo", sem dizer se você jogou muito para a esquerda ou para a direita. Sem essa direção (gradiente), o Gerador fica estagnado.
+
+\noindent\textbf{Como os especialistas resolvem isso?}
+
+Para mitigar esses problemas, a comunidade desenvolveu várias técnicas:
+
+\begin{itemize}
+	\item \textbf{WGAN (Wasserstein GAN):} Utiliza uma métrica matemática diferente (distância do "Earth Mover") para calcular o erro, o que fornece gradientes mais suaves e ajuda a evitar o Mode Collapse;
+	\item \textbf{Batch Normalization:} Ajuda a estabilizar o aprendizado em ambas as redes;
+	\item \textbf{Label Smoothing:} Em vez de treinar o Discriminador com 0 e 1 rígidos, usa-se 0.1 e 0.9 para evitar que ele fique confiante demais (o que mataria o gradiente);
+	\item \textbf{Penalidade de Gradiente:} Força o Discriminador a ter um comportamento mais suave matematicamente.
+\end{itemize}
+
+\section{Resumo}
+
+As **Redes Adversárias Generativas (Generative Adversarial Networks – GANs)**, é um tipo de arquitetura de redes neurais artificiais projetada para \textbf{gerar novas amostras de dados realistas}, semelhantes às utilizadas no treinamento. As GANs são amplamente aplicadas na geração de imagens, vídeos, animações e outros conteúdos sintéticos de alta qualidade.
+
+Inicialmente, é destacado que as GANs aprendem a \textbf{distribuição dos dados de interesse}. Ao serem treinadas com exemplos reais — como dígitos manuscritos, rostos humanos ou objetos —, essas redes aprendem como os dados estão distribuídos. Uma vez aprendida essa distribuição, torna-se possível \textbf{gerar novas amostras} por meio da amostragem dessa distribuição aprendida.
+
+As GANs são compostas por duas redes neurais que \textbf{competem entre si} durante o treinamento:
+
+\begin{itemize}
+	\item \textbf{Gerador (Generator)}: responsável por aprender a distribuição dos dados e gerar amostras sintéticas a partir de uma entrada aleatória (ruído), geralmente extraída de uma distribuição Gaussiana;
+	\item \textbf{Discriminador (Discriminator)}: atua como um classificador binário que avalia se uma amostra é real (proveniente do conjunto de treinamento) ou falsa (gerada pelo gerador).
+\end{itemize}
+
+No início do treinamento, o gerador produz amostras de baixa qualidade, que são facilmente identificadas pelo discriminador. Com o avanço do treinamento, o gerador melhora gradualmente suas saídas, tornando-as cada vez mais realistas, enquanto o discriminador passa a ter dificuldade em diferenciar dados reais de dados gerados.
+
+O \textbf{processo de treinamento} ocorre de forma adversária e alternada. O discriminador é treinado para minimizar o erro ao distinguir amostras reais de falsas, geralmente utilizando a \textbf{entropia cruzada} como função de erro. Já o gerador é treinado para \textbf{maximizar o erro do discriminador}, ou seja, gerar amostras que enganem o discriminador. O erro do discriminador serve como \textbf{feedback indireto} para o ajuste dos pesos do gerador.
+
+Esse treinamento em duas etapas — alternando a atualização do gerador e do discriminador — caracteriza a natureza adversária das GANs. O objetivo final é alcançar um equilíbrio no qual o discriminador não consegue mais distinguir se uma amostra é real ou gerada, indicando que o gerador aprendeu bem a distribuição dos dados.
+
+\subsection{Mapa Mental}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{"Cursos/05 - Redes Neurais e Deep Learning/imagens/MapaMentalCNNGAN.png"}
+	\caption{Mapa Mental Redes Adversárias Generativas (GANs)}
+	\label{fig:mapamentalcnngan}
+\end{figure}

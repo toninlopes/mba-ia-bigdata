@@ -1,0 +1,435 @@
+\chapter{Arquiteturas de Redes Convolucionais}
+
+As arquiteturas de Redes Neurais Convolucionais (CNNs) evoluíram drasticamente desde a LeNet-5 que vimos anteriormente. Essa evolução foi impulsionada por competições como a \textbf{ImageNet}, que desafiou pesquisadores a criarem modelos cada vez mais profundos e precisos para classificar milhões de imagens em mil categorias.
+
+O grande salto aconteceu quando percebemos que, para problemas complexos, precisávamos de mais camadas. No entanto, "apenas empilhar" camadas trazia problemas como o custo computacional e o desaparecimento do gradiente. As arquiteturas que vamos estudar agora criaram soluções engenhosas para esses desafios.
+
+A tabela a seguir mostra as principais arquiteturas e suas características.
+
+\begin{table}[h]
+	\begin{tabular}{p{0.20\textwidth} p{0.30\textwidth} p{0.40\textwidth}}
+		Arquitetura & Características & Pontos Positivos/Negativos\\
+		\hline
+		\\
+		AlexNet (2012) & 5 camadas conv e 3 densas. Introduziu ReLU e Dropout. & (+) Venceu a ImageNet e provou o poder das GPUs e do Deep Learning.
+		
+		(-) Alto número de parâmetros e arquitetura ainda pouco eficiente.\\
+		\\
+		VGG (2014) & Uso de filtros pequenos (3x3) empilhados para criar profundidade. & (+) Simplicidade no design e excelente para extração de características.
+		
+		(-) Extremamente pesada (muitos parâmetros) e lenta para treinar. \\
+		\\
+		NiN (NiN) (2013) & Introduziu a \textbf{Convolução 1x1} e substituiu camadas densas por Global Average Pooling. & (+) Redução drástica de parâmetros e melhor abstração entre canais.
+		
+		(-) Mais difícil de otimizar em comparação com modelos puramente lineares. \\
+		\\
+		GoogLeNet (2014) & Módulos \textbf{Inception}: aplica diferentes filtros (1x1, 3x3, 5x5) em paralelo. & (+) Alta eficiência computacional e profundidade com poucos parâmetros.
+		
+		(-) Arquitetura muito complexa e difícil de implementar do zero. \\
+		\\
+		ResNet (2015) & \textbf{Conexões Residuais} (skips): a entrada "pula" camadas para evitar perda de sinal. & (+) Permitiu redes com centenas de camadas (152+) sem degradar o treino.
+		
+		(-) O tempo de inferência pode ser alto em versões muito profundas. \\
+		\\
+		DenseNet (2017) & Cada camada é conectada a \textbf{todas} as camadas anteriores. & (+) Reuso de características e fluxo de gradiente fortíssimo. 
+		
+		(-) Pode exigir muita memória RAM de vídeo (VRAM) devido às concatenações. \\
+		\\
+	\end{tabular}   
+\end{table}
+
+
+
+\section{AlexNet}
+
+A \textbf{AlexNet} é considerada o "divisor de águas" na história do Deep Learning. Em 2012, ela venceu a competição ImageNet com uma margem de erro tão impressionante que convenceu a comunidade científica de que as Redes Neurais eram o futuro da Inteligência Artificial.
+
+\subsection{Conceito e Características}
+
+A AlexNet foi projetada por Alex Krizhevsky, Ilya Sutskever e Geoffrey Hinton. Ela é uma rede profunda com \textbf{8 camadas} (5 convolucionais e 3 totalmente conectadas).
+
+As principais inovações que ela trouxe foram:
+
+\begin{itemize}
+	\item \textbf{Uso de ReLU (Rectified Linear Unit)}: Antes da AlexNet, usava-se muito a função Sigmoide ou Tanh. A ReLU permitiu que a rede treinasse muito mais rápido, combatendo o problema do "desaparecimento do gradiente";
+	\item \textbf{Dropout:} Uma técnica de regularização que "desliga" neurônios aleatoriamente durante o treino, forçando a rede a aprender representações mais robustas e evitando o overfitting;
+	\item \textbf{Treinamento em Múltiplas GPUs:} Como as GPUs da época tinham pouca memória, a AlexNet foi dividida para rodar em duas placas simultaneamente;
+	\item \textbf{Data Augmentation:} Criação de variações das imagens (espelhamento, cortes) para aumentar o banco de dados artificialmente.
+\end{itemize}
+
+\subsection{Exemplo Prático}
+
+Imagine que você está tentando classificar fotos de animais em alta resolução.
+
+\begin{itemize}
+	\item \textbf{Entrada:} Uma imagem de $224 \times 224$ pixels com 3 canais de cor (RGB).
+	\item \textbf{Primeira Camada:} Diferente das redes anteriores que usavam filtros pequenos, a AlexNet começa com filtros grandes de $11 \times 11$. Isso permite capturar características "grosseiras" da imagem logo de cara.
+	\item \textbf{Hierarquia:} Conforme avançamos, os filtros ficam menores ($5 \times 5$ e $3 \times 3$), focando em detalhes mais finos.
+	\item \textbf{Finalização:} Após as convoluções, temos camadas densas (MLP) que decidem se aqueles padrões combinados formam, por exemplo, um "Guepardo" ou um "Navio".
+\end{itemize}
+
+
+\subsection{Exemplo em Python (Keras/TensorFlow)}
+
+Embora a arquitetura original seja complexa devido à divisão em duas GPUs, podemos criar uma versão simplificada (mas funcional) para entender a estrutura:
+
+\begin{lstlisting}[language=python]
+from tensorflow.keras import layers, models
+
+def SimpleAlexNet(input_shape=(227, 227, 3), num_classes=1000):
+model = models.Sequential([
+# 1ª Camada Conv (Filtros grandes)
+layers.Conv2D(96, (11, 11), strides=4, activation='relu', input_shape=input_shape),
+layers.MaxPooling2D(pool_size=(3, 3), strides=2),
+
+# 2ª Camada Conv
+layers.Conv2D(256, (5, 5), padding='same', activation='relu'),
+layers.MaxPooling2D(pool_size=(3, 3), strides=2),
+
+# 3ª, 4ª e 5ª Camadas Conv
+layers.Conv2D(384, (3, 3), padding='same', activation='relu'),
+layers.Conv2D(384, (3, 3), padding='same', activation='relu'),
+layers.Conv2D(256, (3, 3), padding='same', activation='relu'),
+layers.MaxPooling2D(pool_size=(3, 3), strides=2),
+
+# Achatamento e Camadas Densas
+layers.Flatten(),
+layers.Dropout(0.5),
+layers.Dense(4096, activation='relu'),
+layers.Dropout(0.5),
+layers.Dense(4096, activation='relu'),
+
+# Saída
+layers.Dense(num_classes, activation='softmax')
+])
+return model
+
+# Criando o modelo
+alexnet_model = SimpleAlexNet()
+alexnet_model.summary()
+\end{lstlisting}
+
+
+\section{VGG}
+
+A arquitetura \textbf{VGG} (Visual Geometry Group), criada pela Universidade de Oxford em 2014, levou a simplicidade do design de redes neurais a um novo patamar. Enquanto a AlexNet usava filtros de vários tamanhos  ($11 \times 11$, $5 \times 5$), a VGG provou que podíamos ser muito mais eficientes usando apenas blocos pequenos e repetitivos.
+
+
+\subsection{Conceito e Características}
+
+A grande filosofia da VGG é a \textbf{simplicidade}. Suas principais marcas são:
+
+\begin{itemize}
+	\item \textbf{Filtros Pequenos ($3 \times 3$)}: Em vez de usar filtros grandes para ver áreas maiores da imagem, a VGG empilha vários filtros $3 \times 3$.
+	\subitem Por que isso funciona? Dois filtros $3 \times 3$ empilhados têm o mesmo "campo de visão" que um filtro $5 \times 5$, mas com menos parâmetros e mais funções de ativação (não-linearidade) no caminho.
+	
+	\item \textbf{Configuração Fixa}: Quase todas as camadas convolucionais usam stride 1 e padding "same". O que muda é apenas o número de filtros, que dobra após cada camada de Pooling (de 64 para 128, 256, 512...);
+	
+	\item \textbf{Profundidade Significativa:} As versões mais famosas são a VGG-16 e a VGG-19 (o número indica a quantidade de camadas com pesos). Foi uma das primeiras redes a ultrapassar a barreira das 10 camadas com sucesso.
+\end{itemize}
+
+
+\subsection{Exemplo Prático}
+
+Imagine que a rede está tentando identificar a textura de uma \textbf{colmeia de abelhas}.
+
+\begin{enumerate}
+	\item \textbf{Entrada:} Imagem RGB de $224 \times 224$;
+	\item \textbf{Primeiros Blocos:} Os filtros $3 \times 3$ iniciais capturam as pequenas linhas hexagonais;
+	\item \textbf{Aprofundamento:} À medida que passamos pelos blocos, a resolução espacial diminui (via Max Pooling), mas o número de filtros aumenta. Isso permite que a rede "esqueça" onde exatamente cada hexágono está e passe a entender o padrão geral da "textura de colmeia";
+	\item \textbf{Finalização:} Três camadas densas (Fully Connected) gigantescas processam esses padrões globais para a classificação final.
+\end{enumerate}
+
+\subsection{Exemplo em Python (Keras/TensorFlow)}
+
+Podemos ver como a estrutura da VGG é modular e organizada:
+
+\begin{lstlisting}[language=python]
+from tensorflow.keras import layers, models
+
+def SimpleVGG(input_shape=(224, 224, 3), num_classes=1000):
+model = models.Sequential([
+# Bloco 1
+layers.Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=input_shape),
+layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
+layers.MaxPooling2D((2, 2), strides=(2, 2)),
+
+# Bloco 2
+layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
+layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
+layers.MaxPooling2D((2, 2), strides=(2, 2)),
+
+# ... (mais blocos seriam adicionados aqui para uma VGG-16 completa)
+
+# Cabeça de Classificação
+layers.Flatten(),
+layers.Dense(4096, activation='relu'),
+layers.Dense(4096, activation='relu'),
+layers.Dense(num_classes, activation='softmax')
+])
+return model
+
+vgg_model = SimpleVGG()
+# vgg_model.summary()
+\end{lstlisting}
+
+
+
+\section{NiN}
+
+Vamos explorar a arquitetura \textbf{Network in Network (NiN)}, que foi um marco fundamental para chegarmos ao que hoje chamamos de Deep Learning moderno.
+
+Diferente das arquiteturas que vimos antes (como AlexNet e VGG), a NiN mudou a filosofia de como um neurônio "enxerga" os dados.
+
+
+\subsection{Conceito e Características}
+
+A principal inovação da NiN (publicada em 2013) foi questionar a eficácia das camadas convolucionais lineares tradicionais.
+
+\begin{itemize}
+	\item \textbf{Micro Redes (MLPconv):} Em vez de uma simples operação linear (filtro), a NiN insere uma pequena rede neural (um Perceptron Multicamadas) dentro de cada janela deslizante da convolução. Isso permite que a rede aprenda representações muito mais complexas dentro de cada região local;
+	\item \textbf{Convoluções 1×1:} Para implementar essas micro redes de forma eficiente, a NiN introduziu o uso massivo de convoluções $1 \times 1$. Como discutimos antes, elas servem para misturar informações entre os canais;
+	\item \textbf{Global Average Pooling (GAP):} A NiN eliminou as gigantescas camadas densas (Fully Connected) no final da rede. Em vez disso, ela usa uma camada de pooling que tira a média de cada mapa de características. Isso reduziu drasticamente o número de parâmetros e o risco de overfitting.
+\end{itemize}
+
+\subsection{Exemplo Prático}
+
+Imagine que estamos tentando identificar um \textbf{rosto} em uma imagem:
+
+\begin{enumerate}
+	\item \textbf{Convolução Tradicional:} Detectaria apenas se há uma "borda" ou uma "curva" naquela pequena janela;
+	\item \textbf{NiN (MLPconv):} Como há uma mini-rede dentro da janela, ela pode processar se aquela combinação de pixels já representa algo mais abstrato, como a "textura de pele" ou a "curva de um lábio", antes mesmo de passar para a próxima camada.
+\end{enumerate}
+
+A NiN é como se, em vez de termos apenas um "sensor" passando pela imagem, tivéssemos um "pequeno especialista" analisando cada pedaço.
+
+
+\subsection{Exemplo em Python (Keras/TensorFlow)}
+
+A estrutura da NiN é baseada em "blocos". Veja como um bloco NiN se diferencia de um bloco VGG:
+
+\begin{lstlisting}[language=python]
+from tensorflow.keras import layers, models
+
+def nin_block(num_channels, kernel_size, strides, padding):
+	return models.Sequential([
+		
+		# Camada convolucional principal
+		layers.Conv2D(num_channels, kernel_size, strides=strides, padding=padding, activation='relu'),
+		
+		# As mini-redes MLP representadas por convolucoes 1x1
+		layers.Conv2D(num_channels, kernel_size=(1, 1), activation='relu'),
+		layers.Conv2D(num_channels, kernel_size=(1, 1), activation='relu')
+	])
+\end{lstlisting}
+
+
+\section{GoogLeNet}
+
+Vamos explorar a \textbf{GoogLeNet} (também conhecida como Inception-v1), a arquitetura que venceu o desafio ImageNet em 2014. Ela introduziu uma mudança radical na forma de pensar a profundidade das redes neurais.
+
+\subsection{Conceito e Características}
+
+A principal inovação da GoogLeNet é o \textbf{Módulo Inception}. Enquanto as redes anteriores (como a VGG) focavam em empilhar camadas uma após a outra, os engenheiros do Google pensaram: \textbf{"Por que escolher entre um filtro  ou  se podemos usar todos ao mesmo tempo?"}
+
+As características fundamentais são:
+
+\begin{itemize}
+	\item \textbf{Processamento Paralelo:} Dentro de um único módulo, a rede aplica convoluções de diferentes tamanhos ($1 \times 1, 3 \times 3, 5 \times 5$) e uma operação de pooling em paralelo. Os resultados são concatenados no final;
+	\item \textbf{Convoluções $1 \times 1$ para Redução (Bottleneck):} Para evitar que o custo computacional explodisse, eles usaram filtros $1 \times 1$ antes das convoluções maiores para reduzir o número de canais;
+	\item \textbf{Extrema Eficiência:} Apesar de ter 22 camadas (muito mais que a AlexNet), a GoogLeNet possui cerca de 12 vezes menos parâmetros, tornando-a muito mais rápida e leve;
+	\item \textbf{Global Average Pooling:} Assim como a NiN, ela elimina as camadas densas gigantescas no final, usando a média dos mapas de características.
+\end{itemize}
+
+
+\subsection{Exemplo Prático}
+
+Imagine que a rede está analisando a foto de uma \textbf{paisagem com um cachorro}:
+
+\begin{enumerate}
+	\item \textbf{Filtros $1 \times 1$}: Capturam detalhes minúsculos e variações de cor nos pixels;
+	\item \textbf{Filtros $3 \times 3$:} Identificam texturas médias, como os pelos do cachorro ou as folhas de uma árvore;
+	\item \textbf{Filtros $5 \times 5$:} Conseguem "enxergar" estruturas maiores, como o formato do corpo do animal ou a linha do horizonte.
+\end{enumerate}
+
+Ao usar todos esses filtros em paralelo, o Módulo Inception permite que a rede aprenda padrões em \textbf{múltiplas escalas} simultaneamente na mesma camada.
+
+
+\subsection{Exemplo em Python (Keras/TensorFlow)}
+
+Veja como estruturamos a ideia central de um Módulo Inception simplificado:
+
+\begin{lstlisting}[language=python]
+import tensorflow as tf
+from tensorflow.keras import layers
+
+def inception_module(x, filters_1x1, filters_3x3, filters_5x5):
+	# Ramo 1x1
+	branch1 = layers.Conv2D(filters_1x1, (1, 1), padding='same', activation='relu')(x)
+	
+	# Ramo 3x3 (com redução 1x1 antes)
+	branch2 = layers.Conv2D(filters_3x3 // 2, (1, 1), padding='same', activation='relu')(x)
+	branch2 = layers.Conv2D(filters_3x3, (3, 3), padding='same', activation='relu')(branch2)
+	
+	# Ramo 5x5 (com redução 1x1 antes)
+	branch3 = layers.Conv2D(filters_5x5 // 4, (1, 1), padding='same', activation='relu')(x)
+	branch3 = layers.Conv2D(filters_5x5, (5, 5), padding='same', activation='relu')(branch3)
+	
+	# Concatenar todos os ramos no eixo dos canais
+	output = layers.concatenate([branch1, branch2, branch3], axis=-1)
+	return output
+\end{lstlisting}
+
+
+\section{ResNet}
+
+A \textbf{ResNet} (Residual Network), lançada em 2015, resolveu um dos maiores problemas do Deep Learning: como treinar redes extremamente profundas sem que o desempenho piore. Antes dela, adicionar mais camadas acabava dificultando o aprendizado devido ao desaparecimento do gradiente.
+
+
+\subsection{Conceito e Características}
+
+A grande sacada da ResNet é o conceito de \textbf{Conexões Residuais} (ou \textbf{Skip Connections}).
+
+\begin{itemize}
+	\item \textbf{O Problema da Degradação:} Em redes muito profundas, o sinal do erro (gradiente) vai ficando tão pequeno ao voltar pelas camadas que as primeiras camadas param de aprender;
+	
+	\item \textbf{A Solução (Atalhos):} A ResNet permite que a entrada de uma camada "pule" uma ou mais camadas e seja somada diretamente à saída à frente;
+	
+	\item \textbf{Identidade:} Se as camadas intermediárias não aprenderem nada de útil, a rede pode simplesmente passar a informação adiante (função identidade), garantindo que o desempenho não piore conforme a rede cresce;
+	
+	\item \textbf{Profundidade Incrível:} Isso permitiu criar redes com 50, 101 e até 152 camadas mantendo a eficiência.
+\end{itemize}
+
+
+\subsection{Exemplo Prático}
+
+Imagine que você está tentando ensinar uma rede a reconhecer um \textbf{pássaro} em uma floresta densa:
+
+\begin{enumerate}
+	\item \textbf{Sem Resíduo:} A informação sobre o formato do bico pode se perder depois de 50 camadas de transformações matemáticas complexas;
+	
+	\item \textbf{Com Resíduo (ResNet):} A rede mantém um "atalho" para a informação original. Mesmo que as camadas profundas estejam tentando entender texturas complexas das penas, a estrutura básica do pássaro é preservada através das conexões de salto.
+\end{enumerate}
+
+Isso é como ter um resumo do capítulo anterior sempre à mão enquanto você lê um livro muito longo.
+
+\subsection{Exemplo em Python (Keras/TensorFlow)}
+
+Abaixo, veja como definimos um \textbf{Bloco Residual} básico, que é o coração da ResNet:
+
+\begin{lstlisting}[language=python]
+import tensorflow as tf
+from tensorflow.keras import layers
+
+def residual_block(x, filters, kernel_size=3):
+	# Atalho (identidade)
+	shortcut = x 
+	
+	# Primeira convolucao do bloco
+	x = layers.Conv2D(filters, kernel_size, padding='same')(x)
+	x = layers.BatchNormalization()(x)
+	x = layers.Activation('relu')(x)
+	
+	# Segunda convolucao
+	x = layers.Conv2D(filters, kernel_size, padding='same')(x)
+	x = layers.BatchNormalization()(x)
+	
+	# A MAGICA: Soma a entrada original (shortcut) ao resultado atual
+	x = layers.Add()([x, shortcut])
+	x = layers.Activation('relu')(x)
+	
+	return x
+\end{lstlisting}
+
+
+\section{DenseNet}
+
+A DenseNet (Densely Connected Convolutional Network), introduzida em 2017, levou a ideia das conexões residuais da ResNet a um nível extremo. Em vez de apenas somar a entrada à saída, a DenseNet conecta cada camada a todas as outras camadas subsequentes.
+
+
+\subsection{Conceito e Características}
+
+Nas redes tradicionais, a informação passa sequencialmente. Na DenseNet, a filosofia é o compartilhamento total de recursos:
+
+\begin{itemize}
+	\item \textbf{Conexões Densas:} Cada camada recebe como entrada os feature maps de todas as camadas anteriores e passa seus próprios mapas para todas as camadas seguintes;
+	
+	\item \textbf{Concatenação (e não Soma):} Diferente da ResNet, que soma os valores ($x + f(x)$), a DenseNet concatena os canais. Isso significa que a profundidade da rede (número de canais) vai crescendo conforme avançamos;
+	
+	\item \textbf{Growth Rate (Taxa de Crescimento):} É o parâmetro que define quantos novos canais cada camada adiciona ao "conhecimento global" da rede.
+	
+	\item Vantagens:
+	\subitem \textbf{Reuso de Características:} Camadas profundas podem acessar diretamente características básicas (como bordas) aprendidas no início;
+	\subitem \textbf{Eficiência de Parâmetros:} Como as características são reaproveitadas, as camadas podem ser muito "estreitas" (poucos filtros por camada);
+	\subitem \textbf{Fluxo de Gradiente:} O erro tem um caminho direto para qualquer camada anterior, facilitando muito o treinamento.
+
+\end{itemize}
+
+
+\subsection{Exemplo Prático}
+
+Imagine uma equipe de engenheiros projetando um carro:
+
+\begin{itemize}
+	\item \textbf{Rede Tradicional:} O designer de motores termina o projeto e passa para o designer de chassi, que depois passa para o de aerodinâmica. O último engenheiro só vê o que o penúltimo entregou;
+	
+	\item \textbf{DenseNet:} Todos os engenheiros trabalham em uma mesa redonda. O designer de aerodinâmica tem acesso direto aos desenhos originais do motor, do chassi e de todas as etapas anteriores, podendo ajustar as curvas do carro com base em cada detalhe técnico decidido desde o início.
+\end{itemize}
+
+Isso evita que informações cruciais se percam ou sejam "diluídas" ao longo de uma hierarquia longa.
+
+
+\subsection{Exmplo em Python (Keras/TensorFlow)}
+
+Abaixo, veja como se estrutura um Dense Block, onde a concatenação acontece:
+
+\begin{lstlisting}[language=python]
+import tensorflow as tf
+from tensorflow.keras import layers
+
+def conv_block(x, growth_rate):
+	# Armazena a entrada para a concatenacao final
+	identity = x
+	
+	# Operacao de convolucao (geralmente precedida por BatchNorm e ReLU)
+	x = layers.BatchNormalization()(x)
+	x = layers.Activation('relu')(x)
+	x = layers.Conv2D(growth_rate, kernel_size=3, padding='same')(x)
+	
+	# A MAGICA: Concatena a entrada com a nova caracteristica aprendida
+	# axis=-1 indica que a uniao e feita no eixo dos canais (profundidade)
+	x = layers.Concatenate(axis=-1)([identity, x])
+	
+	return x
+\end{lstlisting}
+
+
+\section{Resumo}
+
+O capítulo discute a evolução de \textbf{diferentes arquiteturas de Redes Neurais Convolucionais (CNNs)}, destacando como escolhas arquiteturais e de hiperparâmetros influenciam significativamente o desempenho dos modelos em tarefas de visão computacional. Também enfatiza que muitas arquiteturas consagradas surgiram a partir de \textbf{intuição, fundamentos matemáticos e extensa experimentação}.
+
+A primeira arquitetura apresentada é a \textbf{AlexNet}, marco histórico no aprendizado profundo aplicado à visão computacional. A AlexNet demonstrou que CNNs profundas são capazes de aprender \textbf{representações hierárquicas}, nas quais camadas iniciais capturam padrões simples (como bordas) e camadas mais profundas aprendem estruturas complexas e semânticas. Em relação à LeNet, a AlexNet introduziu melhorias importantes, como o uso da \textbf{função de ativação ReLU}, \textbf{dropout} para reduzir overfitting nas camadas totalmente conectadas e \textbf{data augmentation} para aumentar a diversidade dos dados de treinamento.
+
+Em seguida, são apresentadas as redes \textbf{VGG}, que introduziram o conceito de \textbf{arquiteturas baseadas em blocos}. Nessas redes, o foco deixa de ser neurônios individuais e passa a ser conjuntos padronizados de camadas. O bloco VGG é composto por várias \textbf{convoluções 3×3 com padding}, seguidas por \textbf{max pooling}. Os experimentos mostraram que empilhar convoluções pequenas e profundas é mais eficiente do que utilizar poucas convoluções grandes, permitindo maior capacidade de representação com um padrão arquitetural simples e repetitivo.
+
+A arquitetura \textbf{Network in Network (NiN)} propõe uma alternativa ao uso tradicional de camadas totalmente conectadas no final da rede. Em vez disso, utiliza \textbf{MLPs aplicadas localmente em cada pixel}, implementadas por meio de \textbf{convoluções 1×1}. Cada bloco NiN combina uma convolução espacial com convoluções 1×1, preservando a estrutura espacial da imagem. Além disso, a NiN substitui as camadas totalmente conectadas finais por um \textbf{global average pooling}, reduzindo drasticamente o número de parâmetros.
+
+A apresentação segue com a \textbf{GoogLeNet}, que introduz o bloco \textbf{Inception}, caracterizado por \textbf{ramificações paralelas} com filtros de diferentes tamanhos aplicados simultaneamente. Essa estratégia permite capturar padrões em múltiplas escalas espaciais. A GoogLeNet empilha vários blocos Inception e utiliza \textbf{global average pooling} ao final, combinando eficiência computacional com alto poder de representação.
+
+As \textbf{Redes Residuais (ResNet)} representam um avanço fundamental ao introduzir as \textbf{skip connections} ou \textbf{conexões residuais}, que permitem que a função identidade seja propagada entre camadas. Isso facilita o fluxo de informação e gradientes, viabilizando o treinamento de \textbf{redes extremamente profundas}. A ideia central é aprender apenas a parte residual da transformação, reduzindo o erro à medida que a profundidade aumenta.
+
+A arquitetura \textbf{ResNeXt} estende a ResNet ao introduzir \textbf{convoluções agrupadas}, inspiradas no conceito de ramificações do Inception. Diferentemente do Inception, todas as ramificações do ResNeXt realizam a mesma transformação, simplificando o design e equilibrando melhor custo computacional e capacidade do modelo.
+
+Por fim, é apresentada a \textbf{DenseNet}, que pode ser vista como uma extensão lógica da ResNet. Nessa arquitetura, \textbf{cada camada é conectada a todas as camadas anteriores}, por meio de \textbf{concatenação} em vez de soma. Isso favorece a reutilização de atributos, melhora o fluxo de gradientes e reduz a redundância de aprendizado, embora resulte em um grafo de conexões mais denso.
+
+Destaca-se que, desde o sucesso da AlexNet, tornou-se comum construir CNNs profundas por meio do \textbf{empilhamento de blocos convolucionais padronizados}. Arquiteturas como VGG, NiN, GoogLeNet, ResNet, ResNeXt e DenseNet representam diferentes estratégias para lidar com profundidade, eficiência, fluxo de informação e capacidade de representação.
+
+
+\subsection{Mapa Mental}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{"Cursos/05 - Redes Neurais e Deep Learning/imagens/MapaMentalCNNArquitetura.png"}
+	\caption{Mapa Mental Arquitetura de Redes Neurais Convolucionais}
+	\label{fig:mapamentalcnnarquitetura}
+\end{figure}
